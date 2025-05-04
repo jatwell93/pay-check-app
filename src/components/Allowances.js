@@ -1,4 +1,5 @@
 import React from 'react';
+import Form from 'react-bootstrap/Form';
 
 const Allowances = ({ allowances, handleAllowanceChange, classification }) => {
   return <div className="md:col-span-1 p-4 border rounded-md bg-gray-50">
@@ -6,48 +7,40 @@ const Allowances = ({ allowances, handleAllowanceChange, classification }) => {
           
           <div className="space-y-3">
             <div className="flex items-center">
-              <input
-                  type="checkbox"
-                  id="homeMedicineReview"
-                  className="mr-2"
-                  checked={allowances.homeMedicineReview}
-                  onChange={() => handleAllowanceChange('homeMedicineReview', !allowances.homeMedicineReview)}
-                  disabled={!['pharmacist', 'experienced-pharmacist', 'pharmacist-in-charge', 'pharmacist-manager'].includes(classification)}
-                />
-                <label htmlFor="homeMedicineReview" className={['pharmacist', 'experienced-pharmacist', 'pharmacist-in-charge', 'pharmacist-manager'].includes(classification) ? "" : "text-gray-500"}>
-                Home Medicine Reviews ($106.40/week)
-              </label>
+              <Form.Check
+                type="checkbox"
+                id="homeMedicineReview"
+                label="Home Medicine Reviews ($106.40/week)"
+                checked={allowances.homeMedicineReview}
+                onChange={() => handleAllowanceChange('homeMedicineReview', !allowances.homeMedicineReview)}
+                disabled={!['pharmacist', 'experienced-pharmacist', 'pharmacist-in-charge', 'pharmacist-manager'].includes(classification)}
+                className={!['pharmacist', 'experienced-pharmacist', 'pharmacist-in-charge', 'pharmacist-manager'].includes(classification) ? "text-gray-500" : ""}
+              />
             </div>
             
             <div className="flex items-center">
-              <input
-                  type="checkbox"
-                  id="laundry"
-                  className="mr-2"
-                  checked={allowances.laundry}
-                  onChange={() => handleAllowanceChange('laundry', !allowances.laundry)}
-                />
-                <label htmlFor="laundry">
-                Laundry Allowance
-              </label>
+              <Form.Check
+                type="checkbox"
+                id="laundry"
+                label="Laundry Allowance"
+                checked={allowances.laundry}
+                onChange={() => handleAllowanceChange('laundry', !allowances.laundry)}
+              />
             </div>
             
             <div className="flex items-center">
-              <input
-                  type="checkbox"
-                  id="brokenHill"
-                  className="mr-2"
-                  checked={allowances.brokenHill}
-                  onChange={() => handleAllowanceChange('brokenHill', !allowances.brokenHill)}
-                />
-                <label htmlFor="brokenHill">
-                Broken Hill Allowance ($44.18/week)
-              </label>
+              <Form.Check
+                type="checkbox"
+                id="brokenHill"
+                label="Broken Hill Allowance ($44.18/week)"
+                checked={allowances.brokenHill}
+                onChange={() => handleAllowanceChange('brokenHill', !allowances.brokenHill)}
+              />
             </div>
             
             <div className="mt-4">
               <label htmlFor="mealAllowance" className="block text-gray-700 mb-1">
-                Meal Allowance (number of overtime occurrences)
+              Meal Allowance (number of overtime occurrences)
               </label>
               <input
                 type="number"

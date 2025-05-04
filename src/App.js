@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Button, ButtonGroup, ToggleButton } from 'react-bootstrap';
 import EmployeeDetails from './components/EmployeeDetails';
 import Allowances from './components/Allowances';
 import PaySummary from './components/PaySummary'; 
@@ -46,6 +47,12 @@ const pharmacyAwardRates = {
     'pharmacy-student-2': { base: 25.99 },
     'pharmacy-student-3': { base: 25.99 },
     'pharmacy-student-4': { base: 25.99 },
+    'pharmacy-intern-1': { base: 28.66 },
+    'pharmacy-intern-2': { base: 29.63 },
+    'pharmacist': { base: 35.20 },
+    'experienced-pharmacist': { base: 38.56 },
+    'pharmacist-in-charge': { base: 39.46 },
+    'pharmacist-manager': { base: 43.97 },
   },
   casual: {
     'pharmacy-assistant-1': { base: 32.49 },
@@ -60,6 +67,12 @@ const pharmacyAwardRates = {
     'pharmacy-student-2': { base: 32.49 },
     'pharmacy-student-3': { base: 32.49 },
     'pharmacy-student-4': { base: 32.49 },
+    'pharmacy-intern-1': { base: 35.83 },
+    'pharmacy-intern-2': { base: 37.04 },
+    'pharmacist': { base: 44.00 },
+    'experienced-pharmacist': { base: 48.20 },
+    'pharmacist-in-charge': { base: 49.33 },
+    'pharmacist-manager': { base: 54.96 },
   },
   juniorPercentages: {
     'under-16': 0.45,
@@ -112,7 +125,7 @@ const App = () => {
     const newWeeklyData = [...weeklyData];
     newWeeklyData[index].publicHoliday = !newWeeklyData[index].publicHoliday;
     if (newWeeklyData[index].publicHoliday) {
-      newWeeklyData[index].day = 'Public Holiday'
+      newWeeklyData[index].day = 'Public Holiday';
     } else {
       newWeeklyData[index].day = weekDays[index]; // Access weekDays as an array
     }
@@ -270,19 +283,65 @@ const App = () => {
       allowanceBreakdown
     });
   };
+
+  const radios = [
+    { name: 'Public Holiday', value: true },
+    { name: 'Regular Day', value: false },
+  ];
+
+  const [radioValue, setRadioValue] = useState(false); // Initialize with false for 'Regular Day'
+
+
+  const handleRadioChange = (index, value) => {
+    handlePublicHolidayChange(index); // Toggle public holiday status
+    setRadioValue(value); // Update the selected radio button value
+  };
+
+
   return (<div className="container">
-      <header className="app-header">
-        <h1 >Pharmacy Award Pay Calculator</h1>
-        <p >Check if you're being paid correctly under the Pharmacy Industry Award (MA000012)</p>
-      </header>
+        <header className="text-center">
+          <h1 className="text-center">Employee Payroll</h1>
+          <p>Check if you're being paid correctly under the Pharmacy Industry Award (MA000012)</p>
+        </header>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 section">
         <EmployeeDetails classification={classification} setClassification={setClassification} employmentType={employmentType} setEmploymentType={setEmploymentType} age={age} setAge={setAge} customRate={customRate} setCustomRate={setCustomRate}/>
         <Allowances allowances={allowances} handleAllowanceChange={handleAllowanceChange} classification={classification}/>
           <PaySummary results={results} setShowDetails={setShowDetails} showDetails={showDetails}/>
       </div> 
-      <WorkHours weeklyData={weeklyData} handleTimeChange={handleTimeChange} handlePublicHolidayChange={handlePublicHolidayChange} calculatePay={calculatePay}/>
-      <DetailedBreakdown results={results} showDetails={showDetails}/>
+      
+      
+        {/* Work Hours and Public Holiday Selectors */}
+        <div className="mb-8 p-4 section">
+          <h2 className="section-header">Work Hours</h2>
+          {weeklyData.map((dayData, index) => (
+            <div key={index} className="mb-4 p-4 border rounded">
+              <h3>{weekDays[index]}</h3>
+              <div className="mb-2">
+                <label htmlFor={`startTime-${index}`} className="mr-2">Start Time:</label>
+                <input type="time" id={`startTime-${index}`} value={dayData.startTime} onChange={(e) => handleTimeChange(index, 'startTime', e.target.value)} />
+              </div>
+              <div className="mb-2">
+                <label htmlFor={`endTime-${index}`} className="mr-2">End Time:</label>
+                <input type="time" id={`endTime-${index}`} value={dayData.endTime} onChange={(e) => handleTimeChange(index, 'endTime', e.target.value)} />
+              </div>
+              {/* Public Holiday Selector */}
+              <div className="mb-2">
+                  <ButtonGroup>
+                    {radios.map((radio, idx) => (
+                      <ToggleButton key={idx} id={`radio-${index}-${idx}`} type="radio" variant={idx % 2 ? 'outline-success' : 'outline-danger'} name={`radio-${index}`} value={radio.value} checked={dayData.publicHoliday === radio.value} onChange={() => handleRadioChange(index,radio.value)}> {radio.name} </ToggleButton>
+                    ))}
+                  </ButtonGroup>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+
+
+      <div className="d-grid gap-2">
+          <Button variant="primary" size="lg" onClick={calculatePay}>Calculate</Button>
+      </div>      <DetailedBreakdown results={results} showDetails={showDetails}/>
       
       {/* Important Notes */}
       <div className="mb-8 p-4  section"> 

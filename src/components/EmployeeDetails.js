@@ -1,11 +1,13 @@
 import React from 'react';
 import { classifications, ageOptions } from '../helpers';
+import Form from 'react-bootstrap/Form';
 
 const EmployeeDetails = ({ classification, setClassification, employmentType, setEmploymentType, age, setAge, customRate, setCustomRate }) => {
    const handleCustomRateChange = (event) => setCustomRate(event.target.value);
   
-
+const employmentTypes = ['full-time', 'part-time', 'casual'];
   return (
+    <>
     <div className="md:col-span-1 p-4 border rounded-md bg-gray-50">
       <h2 className="text-xl font-semibold mb-4 text-blue-700">Employee Details</h2>
       
@@ -45,21 +47,23 @@ const EmployeeDetails = ({ classification, setClassification, employmentType, se
         <label className="block text-gray-700 font-medium mb-2">
           Employment Type
         </label>
-        <div className="flex space-x-4">
+        <div className="mb-3">
           {['full-time', 'part-time', 'casual'].map(type => (
-            <label key={type} className="flex items-center" >
-              <input
+            <Form.Check key={type} type="radio">
+              <Form.Check.Input
                 type="radio"
+                id={`employmentType-${type}`}
                 name="employmentType"
                 value={type}
                 checked={employmentType === type}
-                onChange={() => setEmploymentType(type)}
-                className="mr-2"
-              />
-              {type.charAt(0).toUpperCase() + type.slice(1)}
-            </label>
+                onChange={() => setEmploymentType(type)}/>
+                 <Form.Check.Label>
+                {type.charAt(0).toUpperCase() + type.slice(1)}
+                </Form.Check.Label>
+                </Form.Check>
           ))}
         </div>
+
       </div>
       
       <div className="mb-4">
@@ -82,6 +86,7 @@ const EmployeeDetails = ({ classification, setClassification, employmentType, se
         )}
       </div>
     </div>
+        </>
   );
 };
 
