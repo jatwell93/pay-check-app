@@ -2,21 +2,21 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: Planning → Phase 1 (ready to start)
-status: unknown
-last_updated: "2026-03-07T04:34:22.606Z"
+current_phase: Phase 1 Complete — Phase 2 ready to start
+status: phase-1-complete
+last_updated: "2026-03-07T05:09:05Z"
 progress:
   total_phases: 3
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 2
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # STATE: Pay Check App
 
 **Project:** Pay Check App — Multi-Award Support Initiative
 **Last Updated:** 2026-03-07
-**Current Phase:** Phase 1 — Plan 01 Complete (Plan 02 ready to start)
+**Current Phase:** Phase 1 Complete — Phase 2 (Award-Agnostic Calculation Engine) ready to start
 
 ---
 
@@ -36,10 +36,10 @@ progress:
 
 | Aspect | Status | Details |
 |--------|--------|---------|
-| **Milestone** | Phase 1 In Progress | 3-phase plan created, 100% requirement coverage |
-| **Phase** | Phase 1: Plan 01 Complete | awardRatesService.js built and tested — Plan 02 (AwardSelector) up next |
-| **Progress** | 3/14 requirements complete | API-01, API-02, API-03 marked done |
-| **Blocker** | None | Ready to start Phase 1 Plan 02 |
+| **Milestone** | Phase 1 Complete | 3-phase plan, Phase 1 all plans done — 2/2 summaries created |
+| **Phase** | Phase 1: Both Plans Complete | awardRatesService.js + AwardSelector built, tested, and verified |
+| **Progress** | 3/14 requirements complete | API-01, API-02, API-03 satisfied; Phase 2 unblocked |
+| **Blocker** | None | Ready to start Phase 2 (Award-Agnostic Calculation Engine) |
 
 ---
 
@@ -50,7 +50,7 @@ progress:
 1. **Phase 1: API Foundation & Award Selection** (API-01, API-02, API-03)
    - Integrate FWC MAAPI v1, implement localStorage caching, build AwardSelector component
    - Fallback to Pharmacy rates if API fails
-   - Status: Plan 01 Complete (awardRatesService built), Plan 02 pending
+   - Status: Complete (Plan 01: awardRatesService, Plan 02: AwardSelector — both done)
 
 2. **Phase 2: Award-Agnostic Calculation Engine** (AWARD-01–04, REG-02, REG-03)
    - Refactor calculatePayForTimePeriod, getPenaltyDescription to accept penaltyConfig
@@ -79,9 +79,10 @@ progress:
 
 ### Execution Metrics
 
-| Plan | Duration (s) | Tasks | Files Created |
-|------|-------------|-------|---------------|
-| Phase 01-api-foundation-award-selection P01 | 715 | 2 tasks | 3 files |
+| Plan | Duration | Tasks | Files |
+|------|----------|-------|-------|
+| Phase 01-api-foundation-award-selection P01 | 715s | 2 | 3 |
+| Phase 01-api-foundation-award-selection P02 | ~25min | 2 | 4 |
 
 ---
 
@@ -114,6 +115,15 @@ progress:
 
 7. **Zod schema is z.object({}).passthrough() (Phase 1 Plan 01):**
    - Permissive until Phase 2 confirms real FWC API response shape; tighten in Phase 2
+
+8. **AwardSelector is purely presentational (Phase 1 Plan 02):**
+   - All loading/error/success/timestamp state lives in App.js, flows down as props — keeps component testable in isolation
+
+9. **Award switch resets classification to pharmacy-assistant-1 (Phase 1 Plan 02):**
+   - Hardcoded for Phase 1; Phase 2 will make classification lists award-aware
+
+10. **weeklyData preserved on award switch (Phase 1 Plan 02):**
+    - Only classification and results are cleared on award switch — shift hours are intentionally preserved per CONTEXT.md spec
 
 ### Critical Path
 
@@ -149,7 +159,7 @@ Each phase unblocks the next. No parallel work possible.
 
 ### Blockers
 
-None currently. Ready to start Phase 1 Plan 02 (AwardSelector component).
+None currently. Phase 1 complete. Ready to start Phase 2 (Award-Agnostic Calculation Engine).
 
 ---
 
@@ -170,6 +180,15 @@ None currently. Ready to start Phase 1 Plan 02 (AwardSelector component).
 - Created .env.example documenting REACT_APP_FWC_API_KEY
 - All 11 tests passing; API-01, API-02, API-03 requirements complete
 - Stopped at: 01-api-foundation-award-selection/01-01-PLAN.md complete
+
+**Session 2 (2026-03-07):** Phase 1 Plan 02 execution — AwardSelector component
+- Created src/components/AwardSelector.js (presentational, TDD GREEN — 13 tests)
+- Created src/components/AwardSelector.test.js (13 unit tests, TDD RED→GREEN)
+- Updated src/App.js: 6 new state vars, useEffect cache-first init, handleRefreshRates, handleSelectAward, AwardSelector rendered
+- Updated src/App.test.js: replaced CRA boilerplate with 6 integration tests
+- Total: 30 tests passing across all layers (AwardSelector 13 + awardRatesService 11 + App 6)
+- Human-verify checkpoint approved: award selector UI confirmed working
+- Stopped at: 01-api-foundation-award-selection/01-02-PLAN.md complete — Phase 1 done
 
 ---
 
