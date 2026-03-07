@@ -4,18 +4,25 @@ import {
   clearCache,
   fetchAwardRates,
 } from './awardRatesService';
+import axios from 'axios';
 
-// Mock axios to avoid real HTTP calls
+// Mock axios to avoid real HTTP calls.
+// The factory is hoisted by Jest before imports, so we cannot reference
+// external variables. We store the instance on the mock itself as a property
+// so tests can access it via the imported axios module.
 jest.mock('axios', () => {
-  const mockAxiosInstance = {
+  const mockInstance = {
     get: jest.fn(),
     defaults: { headers: { common: {} } },
+    interceptors: { request: { use: jest.fn() }, response: { use: jest.fn() } },
   };
-  const mockAxios = {
-    create: jest.fn(() => mockAxiosInstance),
+  const axiosMock = {
+    create: jest.fn(() => mockInstance),
     isAxiosError: jest.fn(),
+    // Expose the mock instance for test access
+    __mockInstance: mockInstance,
   };
-  return mockAxios;
+  return axiosMock;
 });
 
 jest.mock('axios-retry', () => jest.fn());
@@ -29,7 +36,12 @@ beforeEach(() => {
   jest.spyOn(Storage.prototype, 'removeItem').mockImplementation(k => { delete store[k]; });
   jest.spyOn(Storage.prototype, 'key').mockImplementation(i => Object.keys(store)[i] ?? null);
   jest.spyOn(Storage.prototype, 'clear').mockImplementation(() => { store = {}; });
-  Object.defineProperty(Storage.prototype, 'length', { get: () => Object.keys(store).length, configurable: true });
+  Object.defineProperty(Storage.prototype, 'length', {
+    get: () => Object.keys(store).length,
+    configurable: true,
+  });
+  // Reset the mock http get between tests
+  axios.__mockInstance.get.mockReset();
 });
 afterEach(() => jest.restoreAllMocks());
 
@@ -127,32 +139,26 @@ test('clearCache() with no argument removes all keys matching the award_rates_v1
 // --- fetchAwardRates ---
 
 test('fetchAwardRates calls the FWC API for each awardId and stores validated results in cache', async () => {
-  const axios = require('axios');
-  const mockGet = axios.create().get;
-  mockGet.mockResolvedValue({ data: { awardId: 'MA000012', name: 'Pharmacy' } });
+  axios.__mockInstance.get.mockResolvedValue({ data: { awardId: 'MA000012', name: 'Pharmacy' } });
 
   const result = await fetchAwardRates(['MA000012']);
 
-  expect(mockGet).toHaveBeenCalledTimes(1);
+  expect(axios.__mockInstance.get).toHaveBeenCalledTimes(1);
   expect(result['MA000012']).toBeDefined();
   // Should be stored in cache
   expect(store[makeKey('MA000012')]).toBeDefined();
 });
 
 test('fetchAwardRates throws when Zod validation fails (malformed response shape)', async () => {
-  const axios = require('axios');
-  const mockGet = axios.create().get;
   // Return null which should fail Zod object validation
-  mockGet.mockResolvedValue({ data: null });
+  axios.__mockInstance.get.mockResolvedValue({ data: null });
 
   await expect(fetchAwardRates(['MA000012'])).rejects.toThrow('Unexpected award rate data format from FWC API');
 });
 
 test('fetchAwardRates surfaces network errors to the caller (not silently swallowed)', async () => {
-  const axios = require('axios');
-  const mockGet = axios.create().get;
   const networkError = new Error('Network Error');
-  mockGet.mockRejectedValue(networkError);
+  axios.__mockInstance.get.mockRejectedValue(networkError);
 
   await expect(fetchAwardRates(['MA000012'])).rejects.toThrow('Network Error');
 });
