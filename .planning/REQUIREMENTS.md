@@ -67,26 +67,32 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| API-01 | — | Pending |
-| API-02 | — | Pending |
-| API-03 | — | Pending |
-| AWARD-01 | — | Pending |
-| AWARD-02 | — | Pending |
-| AWARD-03 | — | Pending |
-| AWARD-04 | — | Pending |
-| PAY-01 | — | Pending |
-| PAY-02 | — | Pending |
-| PAY-03 | — | Pending |
-| PAY-04 | — | Pending |
-| REG-01 | — | Pending |
-| REG-02 | — | Pending |
-| REG-03 | — | Pending |
+| API-01 | Phase 1 | Pending |
+| API-02 | Phase 1 | Pending |
+| API-03 | Phase 1 | Pending |
+| AWARD-01 | Phase 2 | Pending |
+| AWARD-02 | Phase 2 | Pending |
+| AWARD-03 | Phase 2 | Pending |
+| AWARD-04 | Phase 2 | Pending |
+| PAY-01 | Phase 3 | Pending |
+| PAY-02 | Phase 3 | Pending |
+| PAY-03 | Phase 3 | Pending |
+| PAY-04 | Phase 3 | Pending |
+| REG-01 | Phase 3 | Pending |
+| REG-02 | Phase 2 | Pending |
+| REG-03 | Phase 2 | Pending |
 
 **Coverage:**
 - v1 requirements: 14 total
-- Mapped to phases: 0
-- Unmapped: 14 ⚠️
+- Mapped to phases: 14 ✓
+- Unmapped: 0
+
+**Breakdown by phase:**
+- Phase 1 (API Foundation): 3 requirements (API-01, API-02, API-03)
+- Phase 2 (Calculation Engine): 6 requirements (AWARD-01, AWARD-02, AWARD-03, AWARD-04, REG-02, REG-03)
+- Phase 3 (UI & Comparison): 5 requirements (PAY-01, PAY-02, PAY-03, PAY-04, REG-01)
 
 ---
+
 *Requirements defined: 2026-03-07*
-*Last updated: 2026-03-07 after initial definition*
+*Traceability updated: 2026-03-07 after roadmap creation*
