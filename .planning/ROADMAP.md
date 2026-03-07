@@ -61,7 +61,13 @@
 5. Junior rate percentages apply correctly for junior classifications (e.g., Pharmacy Assistant Level 1 at 70% for under-21, or Retail equivalent if applicable to award)
 6. Casual loading is applied according to award rules (e.g., baked-in for Pharmacy casual rate, or separate if per-award rule differs)
 
-**Plans:** TBD
+**Plans:** 4 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Create awardConfig.js (3-award data) + pharmacyRegression.test.js RED baseline
+- [ ] 02-02-PLAN.md — Parameterize calculatePayForTimePeriod in helpers.js, regression tests GREEN
+- [ ] 02-03-PLAN.md — Wire App.js calculatePay() to awardConfig, remove pharmacyAwardRates
+- [ ] 02-04-PLAN.md — Refactor EmployeeDetails + Allowances to accept award props, human-verify
 
 **Implementation notes:**
 - Parameterize calculatePayForTimePeriod(shifts, penaltyConfig) to accept award-specific penalty config
@@ -94,7 +100,13 @@
 5. Fortnightly pay cycle selection (if enabled) continues to work as before; user can calculate for 14 days and compare total paid amount
 6. Weekly pay cycle selection continues to work as before (7 days, same comparison flow)
 
-**Plans:** TBD
+**Plans:** 4 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Create awardConfig.js (3-award data) + pharmacyRegression.test.js RED baseline
+- [ ] 02-02-PLAN.md — Parameterize calculatePayForTimePeriod in helpers.js, regression tests GREEN
+- [ ] 02-03-PLAN.md — Wire App.js calculatePay() to awardConfig, remove pharmacyAwardRates
+- [ ] 02-04-PLAN.md — Refactor EmployeeDetails + Allowances to accept award props, human-verify
 
 **Implementation notes:**
 - ModeToggle component: Overview / Drill-Down / Comparison view buttons
@@ -114,8 +126,8 @@
 
 | Phase | Goal | Plans Complete | Status | Completed |
 |-------|------|----------------|--------|-----------|
-| 1 - API Foundation & Award Selection | 1/2 | In Progress|  | — |
-| 2 - Award-Agnostic Calculation Engine | Decouple calculations, support multi-award penalties | 0/5 | Not started | — |
+| 1 - API Foundation & Award Selection | FWC API + award selector | 2/2 | Complete | 2026-03-07 |
+| 2 - Award-Agnostic Calculation Engine | Decouple calculations, support multi-award penalties | 0/4 | Planned | — |
 | 3 - Multi-View UI & Pay Comparison | Week overview, drill-down, discrepancy detection | 0/3 | Not started | — |
 
 ---
