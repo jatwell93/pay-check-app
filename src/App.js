@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import EmployeeDetails from './components/EmployeeDetails';
 import Allowances from './components/Allowances';
-import PaySummary from './components/PaySummary'; 
-import WorkHours from './components/WorkHours'; 
+import PaySummary from './components/PaySummary';
+import WorkHours from './components/WorkHours';
 import DetailedBreakdown from './components/DetailedBreakdown';
+import AwardSelector from './components/AwardSelector';
 import { calculatePayForTimePeriod, weekDays } from './helpers';
+import { fetchAwardRates, getCachedAwardRates, getLastCacheUpdateTime } from './services/awardRatesService';
 
 const getPenaltyDescription = (segmentDay, timeString, penaltyRate) => {
     if (segmentDay === 'Saturday' && penaltyRate === 1.5) {
@@ -46,6 +48,12 @@ const pharmacyAwardRates = {
     'pharmacy-student-2': { base: 25.99 },
     'pharmacy-student-3': { base: 25.99 },
     'pharmacy-student-4': { base: 25.99 },
+    'pharmacy-intern-1': { base: 28.66 },
+    'pharmacy-intern-2': { base: 29.63 },
+    'pharmacist': { base: 35.20 },
+    'experienced-pharmacist': { base: 38.56 },
+    'pharmacist-in-charge': { base: 39.46 },
+    'pharmacist-manager': { base: 43.97 },
   },
   casual: {
     'pharmacy-assistant-1': { base: 32.49 },
@@ -60,6 +68,12 @@ const pharmacyAwardRates = {
     'pharmacy-student-2': { base: 32.49 },
     'pharmacy-student-3': { base: 32.49 },
     'pharmacy-student-4': { base: 32.49 },
+    'pharmacy-intern-1': { base: 35.83 },
+    'pharmacy-intern-2': { base: 37.04 },
+    'pharmacist': { base: 44.00 },
+    'experienced-pharmacist': { base: 48.20 },
+    'pharmacist-in-charge': { base: 49.33 },
+    'pharmacist-manager': { base: 54.96 },
   },
   juniorPercentages: {
     'under-16': 0.45,
@@ -78,6 +92,14 @@ const pharmacyAwardRates = {
     mealAllowanceOvertime: 19.62,
     mealAllowanceOvertimeExtra: 16.78,
   },
+};
+
+const AWARD_IDS = ['MA000012', 'MA000003', 'MA000009'];
+
+const awardMetadata = {
+  'MA000012': { name: 'Pharmacy Industry Award' },
+  'MA000003': { name: 'General Retail Industry Award' },
+  'MA000009': { name: 'Hospitality Industry (General) Award' },
 };
 
 const App = () => {
@@ -99,6 +121,83 @@ const App = () => {
   
   const [results, setResults] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
+
+  // Award selector state
+  const [selectedAward, setSelectedAward] = useState('MA000012');
+  const [awardRates, setAwardRates] = useState(null);
+  const [awardLoading, setAwardLoading] = useState(true);
+  const [awardError, setAwardError] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(null);
+  const [awardSuccessMessage, setAwardSuccessMessage] = useState(null);
+
+  // Initialize award rates: load from cache or fetch from API
+  useEffect(() => {
+    const initializeAwardRates = async () => {
+      // Check cache for all 3 awards
+      const cachedRates = {};
+      let allCached = true;
+      AWARD_IDS.forEach(id => {
+        const cached = getCachedAwardRates(id);
+        if (cached) { cachedRates[id] = cached; }
+        else { allCached = false; }
+      });
+
+      if (allCached) {
+        setAwardRates(cachedRates);
+        setLastUpdated(getLastCacheUpdateTime(AWARD_IDS[0]));
+        setAwardLoading(false);
+        return;
+      }
+
+      // Fetch from API
+      try {
+        const fetched = await fetchAwardRates(AWARD_IDS);
+        setAwardRates(fetched);
+        setLastUpdated(getLastCacheUpdateTime(AWARD_IDS[0]));
+        setAwardError(null);
+      } catch (err) {
+        // Partial cache fallback (some awards cached, not all)
+        if (Object.keys(cachedRates).length > 0) {
+          setAwardRates(cachedRates);
+          setLastUpdated(getLastCacheUpdateTime(AWARD_IDS[0]));
+          setAwardError("Couldn't load award rates. Using cached rates — Refresh to try again.");
+        } else {
+          // No cache at all: use hardcoded Pharmacy fallback
+          setAwardRates({ 'MA000012': pharmacyAwardRates });
+          setAwardError("Couldn't load award rates. Using Pharmacy defaults — Refresh to try again.");
+        }
+      } finally {
+        setAwardLoading(false);
+      }
+    };
+    initializeAwardRates();
+  }, []);
+
+  // Refresh rates handler
+  const handleRefreshRates = async () => {
+    setAwardLoading(true);
+    setAwardError(null);
+    try {
+      const fetched = await fetchAwardRates(AWARD_IDS);
+      setAwardRates(fetched);
+      setLastUpdated(getLastCacheUpdateTime(AWARD_IDS[0]));
+      setAwardError(null);
+      setAwardSuccessMessage('Rates updated');
+      setTimeout(() => setAwardSuccessMessage(null), 3000);
+    } catch (err) {
+      setAwardError("Couldn't refresh award rates. Check your internet connection and try again.");
+    } finally {
+      setAwardLoading(false);
+    }
+  };
+
+  // Award switch handler: resets classification and results, preserves shift hours
+  const handleSelectAward = (awardId) => {
+    setSelectedAward(awardId);
+    setClassification('pharmacy-assistant-1'); // Reset classification (Phase 2 will make this award-aware)
+    setResults(null); // Clear calculated results
+    // weeklyData (shift hours) is preserved intentionally
+  };
 
   // Handle time input changes
   const handleTimeChange = (index, field, value) => {
@@ -275,7 +374,18 @@ const App = () => {
         <h1 >Pharmacy Award Pay Calculator</h1>
         <p >Check if you're being paid correctly under the Pharmacy Industry Award (MA000012)</p>
       </header>
-      
+
+      <AwardSelector
+        selectedAward={selectedAward}
+        onSelectAward={handleSelectAward}
+        awardMetadata={awardMetadata}
+        isLoading={awardLoading}
+        error={awardError}
+        lastUpdated={lastUpdated}
+        onRefresh={handleRefreshRates}
+        successMessage={awardSuccessMessage}
+      />
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 section">
         <EmployeeDetails classification={classification} setClassification={setClassification} employmentType={employmentType} setEmploymentType={setEmploymentType} age={age} setAge={setAge} customRate={customRate} setCustomRate={setCustomRate}/>
         <Allowances allowances={allowances} handleAllowanceChange={handleAllowanceChange} classification={classification}/>
