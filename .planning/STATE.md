@@ -1,8 +1,22 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+current_phase: Planning → Phase 1 (ready to start)
+status: unknown
+last_updated: "2026-03-07T04:34:22.606Z"
+progress:
+  total_phases: 3
+  completed_phases: 0
+  total_plans: 2
+  completed_plans: 1
+---
+
 # STATE: Pay Check App
 
 **Project:** Pay Check App — Multi-Award Support Initiative
 **Last Updated:** 2026-03-07
-**Current Phase:** Planning → Phase 1 (ready to start)
+**Current Phase:** Phase 1 — Plan 01 Complete (Plan 02 ready to start)
 
 ---
 
@@ -22,10 +36,10 @@
 
 | Aspect | Status | Details |
 |--------|--------|---------|
-| **Milestone** | Roadmap Approved | 3-phase plan created, 100% requirement coverage |
-| **Phase** | Phase 1 Ready | API Foundation & Award Selection — not yet started |
-| **Progress** | 0/14 requirements complete | All in "Pending" status |
-| **Blocker** | None | Ready to start Phase 1 planning |
+| **Milestone** | Phase 1 In Progress | 3-phase plan created, 100% requirement coverage |
+| **Phase** | Phase 1: Plan 01 Complete | awardRatesService.js built and tested — Plan 02 (AwardSelector) up next |
+| **Progress** | 3/14 requirements complete | API-01, API-02, API-03 marked done |
+| **Blocker** | None | Ready to start Phase 1 Plan 02 |
 
 ---
 
@@ -36,7 +50,7 @@
 1. **Phase 1: API Foundation & Award Selection** (API-01, API-02, API-03)
    - Integrate FWC MAAPI v1, implement localStorage caching, build AwardSelector component
    - Fallback to Pharmacy rates if API fails
-   - Status: Not started
+   - Status: Plan 01 Complete (awardRatesService built), Plan 02 pending
 
 2. **Phase 2: Award-Agnostic Calculation Engine** (AWARD-01–04, REG-02, REG-03)
    - Refactor calculatePayForTimePeriod, getPenaltyDescription to accept penaltyConfig
@@ -61,7 +75,13 @@
 | Phase dependencies | Acyclic chain | 1 → 2 → 3 ✓ |
 | API key exposure risk | Mitigated | Research noted, Phase 1 must decide (public tier vs backend proxy) |
 | Pharmacy regression | Identical results | Phase 2 deliverable (must not change existing Pharmacy calculation) |
-| Caching strategy | Versioned, with expiry | Phase 1 implementation detail |
+| Caching strategy | Versioned, with expiry | Implemented: award_rates_v1_{awardId}, 90-day TTL |
+
+### Execution Metrics
+
+| Plan | Duration (s) | Tasks | Files Created |
+|------|-------------|-------|---------------|
+| Phase 01-api-foundation-award-selection P01 | 715 | 2 tasks | 3 files |
 
 ---
 
@@ -85,6 +105,15 @@
 4. **Mock FWC responses for Phase 1 testing:**
    - Phase 1 develops service layer with mocked award rates
    - Real FWC integration deferred (no Phase 6 in coarse roadmap; could be v2 or inline Phase 3)
+
+5. **__mockInstance pattern for jest.mock factories (Phase 1 Plan 01):**
+   - Expose mock instance as named property on jest.mock return object to avoid babel-jest hoisting issues with const variables
+
+6. **clearCache() uses localStorage.key(i)/length loop:**
+   - Object.keys(localStorage) bypasses Storage prototype spies in jsdom; key(i) + length respects mock chain
+
+7. **Zod schema is z.object({}).passthrough() (Phase 1 Plan 01):**
+   - Permissive until Phase 2 confirms real FWC API response shape; tighten in Phase 2
 
 ### Critical Path
 
@@ -120,7 +149,7 @@ Each phase unblocks the next. No parallel work possible.
 
 ### Blockers
 
-None currently. Ready to start Phase 1 planning.
+None currently. Ready to start Phase 1 Plan 02 (AwardSelector component).
 
 ---
 
@@ -133,6 +162,14 @@ None currently. Ready to start Phase 1 planning.
 - Validated 100% requirement coverage
 - Wrote ROADMAP.md, STATE.md, updated REQUIREMENTS.md traceability
 - Ready for Phase 1 planning
+
+**Session 1 (2026-03-07):** Phase 1 Plan 01 execution — awardRatesService
+- Installed axios ^1.13.6, axios-retry ^4.5.0, zod ^4.3.6
+- Created src/services/awardRatesService.js with 4 exports (TDD GREEN)
+- Created src/services/awardRatesService.test.js with 11 tests (TDD RED→GREEN)
+- Created .env.example documenting REACT_APP_FWC_API_KEY
+- All 11 tests passing; API-01, API-02, API-03 requirements complete
+- Stopped at: 01-api-foundation-award-selection/01-01-PLAN.md complete
 
 ---
 

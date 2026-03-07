@@ -32,7 +32,7 @@
 4. User can click a "Refresh Rates" button to manually fetch fresh data from the API
 5. If API is unreachable, app falls back to last-cached rates with clear visual indicator (Pharmacy if no cache exists)
 
-**Plans:** TBD
+**Plans:** 1/2 plans executed
 
 **Implementation notes:**
 - awardRatesService.js with axios + axios-retry for HTTP client
@@ -114,7 +114,7 @@
 
 | Phase | Goal | Plans Complete | Status | Completed |
 |-------|------|----------------|--------|-----------|
-| 1 - API Foundation & Award Selection | Integrate FWC API with caching and award selector | 0/4 | Not started | — |
+| 1 - API Foundation & Award Selection | 1/2 | In Progress|  | — |
 | 2 - Award-Agnostic Calculation Engine | Decouple calculations, support multi-award penalties | 0/5 | Not started | — |
 | 3 - Multi-View UI & Pay Comparison | Week overview, drill-down, discrepancy detection | 0/3 | Not started | — |
 

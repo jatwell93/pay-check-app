@@ -9,9 +9,9 @@ Requirements for this milestone. Each maps to a roadmap phase.
 
 ### API Integration
 
-- [ ] **API-01**: App displays pay rates sourced from the FWC Modern Awards Pay Database API, not hardcoded values
-- [ ] **API-02**: Fetched rates are cached in the browser so the app works without an API call on subsequent visits (rates change at most annually)
-- [ ] **API-03**: User can trigger a manual rate refresh to fetch the latest rates from the API
+- [x] **API-01**: App displays pay rates sourced from the FWC Modern Awards Pay Database API, not hardcoded values
+- [x] **API-02**: Fetched rates are cached in the browser so the app works without an API call on subsequent visits (rates change at most annually)
+- [x] **API-03**: User can trigger a manual rate refresh to fetch the latest rates from the API
 
 ### Multi-Award Support
 
@@ -67,9 +67,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| API-01 | Phase 1 | Pending |
-| API-02 | Phase 1 | Pending |
-| API-03 | Phase 1 | Pending |
+| API-01 | Phase 1 | Complete |
+| API-02 | Phase 1 | Complete |
+| API-03 | Phase 1 | Complete |
 | AWARD-01 | Phase 2 | Pending |
 | AWARD-02 | Phase 2 | Pending |
 | AWARD-03 | Phase 2 | Pending |
