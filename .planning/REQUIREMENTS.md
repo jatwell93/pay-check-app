@@ -1,0 +1,92 @@
+# Requirements: Pay Check App
+
+**Defined:** 2026-03-07
+**Core Value:** A worker can enter their shifts, see exactly how much they should have been paid and why, and know with confidence whether they have been underpaid.
+
+## v1 Requirements
+
+Requirements for this milestone. Each maps to a roadmap phase.
+
+### API Integration
+
+- [ ] **API-01**: App displays pay rates sourced from the FWC Modern Awards Pay Database API, not hardcoded values
+- [ ] **API-02**: Fetched rates are cached in the browser so the app works without an API call on subsequent visits (rates change at most annually)
+- [ ] **API-03**: User can trigger a manual rate refresh to fetch the latest rates from the API
+
+### Multi-Award Support
+
+- [ ] **AWARD-01**: User can select their modern award from a list (Pharmacy Industry Award, General Retail Industry Award, Hospitality Industry Award at minimum)
+- [ ] **AWARD-02**: Classification dropdown updates to show classifications relevant to the selected award
+- [ ] **AWARD-03**: Allowances section shows and calculates allowances specific to the selected award
+- [ ] **AWARD-04**: Penalty rate rules (evening threshold time, Saturday/Sunday/public holiday multipliers) reflect the selected award — not fixed to Pharmacy Award values
+
+### Pay Verification
+
+- [ ] **PAY-01**: After calculating, user sees a week overview with calculated pay per day and a clear pass/fail indicator per day
+- [ ] **PAY-02**: User can enter the amount they were actually paid (for the pay period) to compare against the calculated amount
+- [ ] **PAY-03**: App shows the total discrepancy between calculated pay and actual pay (e.g. "You may have been underpaid $23.33")
+- [ ] **PAY-04**: User can select a specific day from the week overview to see the full segment breakdown (e.g. "Mon: 6hrs ordinary @ $28.42 = $170.52 + 1hr evening penalty @ $35.53 = $35.53")
+
+### Regression
+
+- [ ] **REG-01**: Weekly and fortnightly pay cycle selection continues to work as before
+- [ ] **REG-02**: Pharmacy Award calculations produce identical results to the current hardcoded implementation (no regression in existing functionality)
+- [ ] **REG-03**: Junior rate calculation continues to apply correctly for supported award classifications
+
+## v2 Requirements
+
+Deferred to a future milestone. Tracked but not in current roadmap.
+
+### Resilience
+
+- **RES-01**: App falls back to last-known cached rates (with a visible warning) if the FWC API is unreachable
+- **RES-02**: App notifies users when cached rates are stale (older than 12 months) and prompts a refresh
+
+### Extended Awards
+
+- **EXT-01**: User can search and select from all 121 modern awards available in the FWC database
+- **EXT-02**: App detects the annual wage review date and prompts users to refresh rates after July 1
+
+### Sharing / Export
+
+- **EXP-01**: User can copy or download a summary of the discrepancy for use in a payroll dispute
+
+## Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| Payslip PDF/image upload | High complexity, OCR unreliable — manual entry is sufficient for v1 |
+| User accounts / login | Stateless tool, no data persistence needed |
+| Mobile app | Web-first; responsive web sufficient |
+| Legal advice or dispute lodging | Informational tool only — outside scope of the app |
+| All 121 awards at launch | 2–4 key awards validates the approach; expand in v2 |
+
+## Traceability
+
+Which phases cover which requirements. Updated during roadmap creation.
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| API-01 | — | Pending |
+| API-02 | — | Pending |
+| API-03 | — | Pending |
+| AWARD-01 | — | Pending |
+| AWARD-02 | — | Pending |
+| AWARD-03 | — | Pending |
+| AWARD-04 | — | Pending |
+| PAY-01 | — | Pending |
+| PAY-02 | — | Pending |
+| PAY-03 | — | Pending |
+| PAY-04 | — | Pending |
+| REG-01 | — | Pending |
+| REG-02 | — | Pending |
+| REG-03 | — | Pending |
+
+**Coverage:**
+- v1 requirements: 14 total
+- Mapped to phases: 0
+- Unmapped: 14 ⚠️
+
+---
+*Requirements defined: 2026-03-07*
+*Last updated: 2026-03-07 after initial definition*
