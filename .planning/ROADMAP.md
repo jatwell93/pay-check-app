@@ -61,7 +61,7 @@
 5. Junior rate percentages apply correctly for junior classifications (e.g., Pharmacy Assistant Level 1 at 70% for under-21, or Retail equivalent if applicable to award)
 6. Casual loading is applied according to award rules (e.g., baked-in for Pharmacy casual rate, or separate if per-award rule differs)
 
-**Plans:** 1/4 plans executed
+**Plans:** 2/4 plans executed
 
 Plans:
 - [ ] 02-01-PLAN.md — Create awardConfig.js (3-award data) + pharmacyRegression.test.js RED baseline
@@ -127,7 +127,7 @@ Plans:
 | Phase | Goal | Plans Complete | Status | Completed |
 |-------|------|----------------|--------|-----------|
 | 1 - API Foundation & Award Selection | FWC API + award selector | 2/2 | Complete | 2026-03-07 |
-| 2 - Award-Agnostic Calculation Engine | 1/4 | In Progress|  | — |
+| 2 - Award-Agnostic Calculation Engine | 2/4 | In Progress|  | — |
 | 3 - Multi-View UI & Pay Comparison | Week overview, drill-down, discrepancy detection | 0/3 | Not started | — |
 
 ---
