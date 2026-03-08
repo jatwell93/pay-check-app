@@ -6,6 +6,16 @@ A React single-page application that helps Australian workers verify they are be
 
 **Shipped v1.0:** Multi-award support (Pharmacy, Retail, Hospitality) with FWC API integration, award-agnostic penalty calculation engine, and week-level pay comparison with underpayment detection.
 
+## Current Milestone: v1.1 API Integration & UX Redesign
+
+**Goal:** Fix the broken FWC API integration via a Netlify Functions proxy, wire live rates into calculations, and give the app a full Tailwind-based professional redesign.
+
+**Target features:**
+- Netlify Functions proxy to resolve CORS and enable real FWC API calls
+- Live rate hydration — `calculatePay` reads from live FWC data, not hardcoded config
+- Full Tailwind CSS redesign — clean professional (navy/white, green/red status indicators)
+- Error handling & loading UX — loading states, clear failure messages, graceful fallback
+
 ## Core Value
 
 A worker can enter their shifts, see exactly how much they should have been paid and why, and know with confidence whether they have been underpaid.
@@ -41,7 +51,12 @@ A worker can enter their shifts, see exactly how much they should have been paid
 
 <!-- Current scope — what this project is building. -->
 
-(Define in next milestone — run `/gsd:new-milestone`)
+- [ ] Netlify Functions proxy resolves CORS and enables real FWC API calls
+- [ ] Live FWC award rates hydrate `calculatePay` at runtime
+- [ ] App styled with Tailwind CSS — clean professional look, navy/white palette
+- [ ] Status indicators (Paid Correctly / Underpaid) use green/red colour coding
+- [ ] Loading states and error messages shown clearly when API calls fail or are slow
+- [ ] Graceful fallback to hardcoded rates when proxy is unreachable
 
 ### Out of Scope
 
@@ -82,4 +97,4 @@ A worker can enter their shifts, see exactly how much they should have been paid
 | `actualPaidByDay` empty string = no input | Prevents false Underpaid on untouched rows | ✓ Good — correct UX, $0.01 threshold working |
 
 ---
-*Last updated: 2026-03-09 after v1.0 milestone*
+*Last updated: 2026-03-09 after v1.1 milestone start*
