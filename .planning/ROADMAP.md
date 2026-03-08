@@ -10,7 +10,7 @@
 ## Phases
 
 - [ ] **Phase 1: API Foundation & Award Selection** - Integrate FWC MAAPI v1 with caching and award selector component
-- [ ] **Phase 2: Award-Agnostic Calculation Engine** - Decouple calculation logic from hardcoded Pharmacy data, support multi-award penalty structures
+- [x] **Phase 2: Award-Agnostic Calculation Engine** - Decouple calculation logic from hardcoded Pharmacy data, support multi-award penalty structures (completed 2026-03-08)
 - [ ] **Phase 3: Multi-View UI & Pay Comparison** - Add week overview, drill-down, and pay discrepancy detection
 
 ---
@@ -61,7 +61,7 @@
 5. Junior rate percentages apply correctly for junior classifications (e.g., Pharmacy Assistant Level 1 at 70% for under-21, or Retail equivalent if applicable to award)
 6. Casual loading is applied according to award rules (e.g., baked-in for Pharmacy casual rate, or separate if per-award rule differs)
 
-**Plans:** 3/4 plans executed
+**Plans:** 4/4 plans complete
 
 Plans:
 - [ ] 02-01-PLAN.md — Create awardConfig.js (3-award data) + pharmacyRegression.test.js RED baseline
@@ -127,7 +127,7 @@ Plans:
 | Phase | Goal | Plans Complete | Status | Completed |
 |-------|------|----------------|--------|-----------|
 | 1 - API Foundation & Award Selection | FWC API + award selector | 2/2 | Complete | 2026-03-07 |
-| 2 - Award-Agnostic Calculation Engine | 3/4 | In Progress|  | — |
+| 2 - Award-Agnostic Calculation Engine | 4/4 | Complete   | 2026-03-08 | — |
 | 3 - Multi-View UI & Pay Comparison | Week overview, drill-down, discrepancy detection | 0/3 | Not started | — |
 
 ---
