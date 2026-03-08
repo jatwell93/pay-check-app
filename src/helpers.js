@@ -1,4 +1,6 @@
 import { format, parse, differenceInMinutes, isAfter, addMinutes } from 'date-fns';
+import { getAwardConfig } from './config/awardConfig';
+const DEFAULT_PENALTY_CONFIG = getAwardConfig('MA000012').penaltyConfig;
 
 const calculateBreakTime = (totalHours) => {
     if (totalHours < 4) {
@@ -44,48 +46,45 @@ export const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday',
 
 // Function to get penalty rate multiplier AND description
 // It returns an object { multiplier: number, description: string }
-const getPenaltyRateDetails = (day, time, employmentType, classification) => {
+const getPenaltyRateDetails = (day, time, employmentType, classification, penaltyConfig) => {
     const isAboveAwardClassification = classification === 'above-award';
 
     // Saturday penalty
-    if (day === 'Saturday') return { multiplier: 1.5, description: 'Saturday Rate (150%)' };
+    if (day === 'Saturday') return { multiplier: penaltyConfig.saturdayMultiplier, description: 'Saturday Rate (' + Math.round(penaltyConfig.saturdayMultiplier * 100) + '%)' };
 
     // Sunday or Public Holiday penalty
-    if (day === 'Sunday') return { multiplier: 2, description: 'Sunday Rate (200%)' };
-    if (day === 'Public Holiday') return { multiplier: 2, description: 'Public Holiday Rate (200%)' };
+    if (day === 'Sunday') return { multiplier: penaltyConfig.sundayMultiplier, description: 'Sunday Rate (' + Math.round(penaltyConfig.sundayMultiplier * 100) + '%)' };
+    if (day === 'Public Holiday') return { multiplier: penaltyConfig.phMultiplier, description: 'Public Holiday Rate (' + Math.round(penaltyConfig.phMultiplier * 100) + '%)' };
 
 
     // Casual loading (only applies to standard award rates, not above award)
     if (!isAboveAwardClassification && employmentType === 'casual' && day !== 'Public Holiday') {
-        // If it's casual and not a public holiday, the 1.25 casual loading applies.
-        // We return 1.25 here, and it will be multiplied by the base rate (award rate in this case) later.
-        // Note: If casual loading applies, other time-based penalties might be included in the award rate already.
-        // For simplicity here, we'll just return the casual loading description.
-        // You might need more complex logic if casual loading stacks with other penalties in your award.
-        return { multiplier: 1.25, description: 'Casual Loading (125%)' };
+        // If it's casual and not a public holiday, the casual loading applies.
+        // We return the casualLoadingMultiplier here, and it will be multiplied by the base rate later.
+        return { multiplier: penaltyConfig.casualLoadingMultiplier, description: 'Casual Loading (' + Math.round(penaltyConfig.casualLoadingMultiplier * 100) + '%)' };
     }
 
-    // Early morning (00:00 to 07:00) and evening (19:00 to 23:59) shift penalty
+    // Early morning (00:00 to earlyMorningThreshold) and evening (eveningThreshold to 23:59) shift penalty
     const [hours, minutes] = time.split(':').map(Number);
     const totalMinutesInDay = hours * 60 + minutes;
 
-    const earlyMorningStartMinutes = 0 * 60; // 00:00
-    const earlyMorningEndMinutes = 7 * 60;   // 07:00
-    const eveningStartMinutes = 19 * 60;     // 19:00
+    const earlyMorningStartMinutes = 0; // 00:00
+    const earlyMorningEndMinutes = penaltyConfig.earlyMorningThreshold;
+    const eveningStartMinutes = penaltyConfig.eveningThreshold;
     const eveningEndMinutes = 23 * 60 + 59;  // 23:59
 
     if (
         (totalMinutesInDay >= earlyMorningStartMinutes && totalMinutesInDay < earlyMorningEndMinutes)
     ) {
-         // Apply the 1.25 early morning shift loading
-         return { multiplier: 1.25, description: 'Early Morning Shift (125%)' };
+         // Apply the early morning shift loading
+         return { multiplier: penaltyConfig.earlyMorningMultiplier, description: 'Early Morning Shift (' + Math.round(penaltyConfig.earlyMorningMultiplier * 100) + '%)' };
     }
 
     if (
          (totalMinutesInDay >= eveningStartMinutes && totalMinutesInDay <= eveningEndMinutes)
     ) {
-         // Apply the 1.25 evening shift loading
-         return { multiplier: 1.25, description: 'Evening Shift (125%)' };
+         // Apply the evening shift loading
+         return { multiplier: penaltyConfig.eveningMultiplier, description: 'Evening Shift (' + Math.round(penaltyConfig.eveningMultiplier * 100) + '%)' };
     }
 
 
@@ -93,8 +92,8 @@ const getPenaltyRateDetails = (day, time, employmentType, classification) => {
     return { multiplier: 1, description: 'Ordinary Rate (100%)' };
 };
 
-// Added classification to the parameters
-export const calculatePayForTimePeriod = (day, startTime, endTime, baseRate, employmentType, customRate, classification) => {
+// Added classification and penaltyConfig to the parameters
+export const calculatePayForTimePeriod = (day, startTime, endTime, baseRate, employmentType, customRate, classification, penaltyConfig = DEFAULT_PENALTY_CONFIG) => {
     // Determine the base rate to use: customRate if 'above-award' is selected and customRate is a valid number, otherwise baseRate
     const currentBaseRate = classification === 'above-award' && customRate !== '' && customRate !== null && customRate !== undefined && !isNaN(parseFloat(customRate))
                             ? parseFloat(customRate)
@@ -136,8 +135,8 @@ export const calculatePayForTimePeriod = (day, startTime, endTime, baseRate, emp
     // These are times when a penalty rate *might* change.
     const penaltyBoundaries = [
         0, // Start of the day
-        7 * 60, // 07:00
-        19 * 60, // 19:00
+        penaltyConfig.earlyMorningThreshold, // e.g. 07:00 = 420 for Pharmacy
+        penaltyConfig.eveningThreshold,       // e.g. 19:00 = 1140 for Pharmacy
         24 * 60 // End of the day (start of the next day)
     ];
 
@@ -188,7 +187,7 @@ export const calculatePayForTimePeriod = (day, startTime, endTime, baseRate, emp
             const minuteTimeString = format(segmentCurrentTime, 'HH:mm');
 
             // Get applicable penalty rate multiplier and description for this minute
-            const penaltyDetails = getPenaltyRateDetails(minuteDay, minuteTimeString, employmentType, classification);
+            const penaltyDetails = getPenaltyRateDetails(minuteDay, minuteTimeString, employmentType, classification, penaltyConfig);
             const penaltyRate = penaltyDetails.multiplier;
             // const penaltyDescription = penaltyDetails.description; // Capture the description
 
@@ -206,7 +205,7 @@ export const calculatePayForTimePeriod = (day, startTime, endTime, baseRate, emp
         // Only add a breakdown entry if the segment has a duration
         if (segmentHours > 0) {
              // Determine the penalty rate details for the start of this segment for the description
-             const segmentStartPenaltyDetails = getPenaltyRateDetails(currentDay, format(segmentStartTime, 'HH:mm'), employmentType, classification);
+             const segmentStartPenaltyDetails = getPenaltyRateDetails(currentDay, format(segmentStartTime, 'HH:mm'), employmentType, classification, penaltyConfig);
 
             breakdown.push({
                 startTime: format(segmentStartTime, 'HH:mm'),
