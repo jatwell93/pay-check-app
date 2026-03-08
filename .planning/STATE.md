@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 2
 status: unknown
-last_updated: "2026-03-08T06:20:26.345Z"
+last_updated: "2026-03-08T06:57:05.986Z"
 progress:
   total_phases: 3
   completed_phases: 1
   total_plans: 6
-  completed_plans: 4
+  completed_plans: 5
 ---
 
 # STATE: Pay Check App
@@ -78,6 +78,7 @@ progress:
 | Caching strategy | Versioned, with expiry | Implemented: award_rates_v1_{awardId}, 90-day TTL |
 | Phase 02-award-agnostic-calculation-engine P01 | 8 | 2 tasks | 2 files |
 | Phase 02-award-agnostic-calculation-engine P02 | 18min | 1 tasks | 1 files |
+| Phase 02-award-agnostic-calculation-engine P03 | 15min | 1 tasks | 1 files |
 
 ### Execution Metrics
 
@@ -130,6 +131,9 @@ progress:
 - [Phase 02]: Differentiation test uses identical base rate for both Pharmacy and Retail calls — ensures test is RED because penaltyConfig is ignored, not because of different base rates
 - [Phase 02]: Dynamic description strings in getPenaltyRateDetails use Math.round(multiplier*100) to ensure displayed percentages always match actual config values for any award
 - [Phase 02]: getPenaltyRateDetails receives penaltyConfig as explicit 5th arg (not closure) keeping it pure and independently testable
+- [Phase 02]: pharmacyAwardRates constant in App.js removed entirely — awardConfig.js is now the single source of truth for all award data
+- [Phase 02]: calculatePayForTimePeriod call bug fixed: was passing getPenaltyDescription as 7th arg (classification position); corrected to pass classification as 7th and penaltyConfig as 8th
+- [Phase 02]: currentAwardConfig computed before JSX return (separate from selectedAwardConfig inside calculatePay) for render-time access without calling getAwardConfig inside JSX expressions
 
 ### Critical Path
 
