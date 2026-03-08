@@ -95,30 +95,28 @@ Plans:
 **Success Criteria** (what must be TRUE when complete):
 1. After calculation, user sees a week overview showing each day with calculated pay, actual paid input field, discrepancy amount, and a green/red pass/fail indicator
 2. User can enter the amount they were actually paid (for the pay period) in the overview, and the app immediately shows discrepancy: (calculated - actual)
-3. Discrepancy output clearly displays whether user was underpaid, overpaid, or correctly paid (e.g., "You may have been underpaid $23.33" or "You were paid $5.00 more than owed")
-4. User can select a specific day from the week overview and drill down to see segment-level breakdown (e.g., "Monday: 6 hours ordinary @ $28.42 = $170.52 + 1 hour evening penalty @ $35.53 = $35.53")
+3. Discrepancy output clearly displays whether user was underpaid, overpaid, or correctly paid using neutral factual format: "Calculated: $X.XX | Paid: $Y.YY | Difference: $Z.ZZ"
+4. User can select a specific day from the week overview and drill down to see segment-level breakdown via accordion expansion
 5. Fortnightly pay cycle selection (if enabled) continues to work as before; user can calculate for 14 days and compare total paid amount
 6. Weekly pay cycle selection continues to work as before (7 days, same comparison flow)
 
-**Plans:** 4 plans
+**Plans:** 2 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Create awardConfig.js (3-award data) + pharmacyRegression.test.js RED baseline
-- [ ] 02-02-PLAN.md — Parameterize calculatePayForTimePeriod in helpers.js, regression tests GREEN
-- [ ] 02-03-PLAN.md — Wire App.js calculatePay() to awardConfig, remove pharmacyAwardRates
-- [ ] 02-04-PLAN.md — Refactor EmployeeDetails + Allowances to accept award props, human-verify
+- [ ] 03-01-PLAN.md — TDD: OverviewBreakdown component (week table, status badges, accordion, discrepancy)
+- [ ] 03-02-PLAN.md — Wire App.js (resolve merge conflict, add state, replace PaySummary), REG-01 tests, human-verify
 
 **Implementation notes:**
-- ModeToggle component: Overview / Drill-Down / Comparison view buttons
-- OverviewBreakdown component: week grid table with columns (Day, Hours, Calculated, Actual Paid, Discrepancy, Status)
-- DrillDownBreakdown component: day selector dropdown + segment breakdown table showing per-segment rates and amounts
-- ComparisonView component: actual amount input, discrepancy calculation and display, color-coded indicator (red for underpay, green for overpay)
-- App.js state: viewMode, selectedDayForDrillDown, actualPaidAmount
-- Pass/Fail logic: day is "green" if discrepancy <= $0.01 (Fair Work rounding tolerance), "red" if underpaid by > $0.01
-- localStorage optional persistence of last entered actual paid amount (for UX convenience)
-- Ensure fortnightly cycle: calculate 14 days, compare total actual vs total calculated
-- Ensure weekly cycle: calculate 7 days, compare total actual vs total calculated
-- No changes to underlying penalty calculation or award logic from Phase 2
+- OverviewBreakdown replaces PaySummary as the main post-Calculate view — no separate mode toggle
+- Table columns: Day | Hours | Calculated | Actual Paid (input) | Discrepancy | Status
+- Accordion drill-down: clicking a day row expands segment breakdown inline; one day expanded at a time
+- Segment table reuses same column structure as existing DetailedBreakdown (Time, Hours, Rate Type, Rate, Amount)
+- App.js state additions: selectedDayIndex, actualPaidByDay, totalActualPaid
+- Actual paid inputs clear on Calculate; preserved on award switch
+- Pass/fail threshold: $0.01 (Fair Work rounding tolerance)
+- Period summary format exactly: "Calculated: $X.XX | Paid: $Y.YY | Difference: $Z.ZZ"
+- No changes to penalty calculation or award config from Phase 2
+- App.js has an unresolved git merge conflict from a pre-planning failed merge — Plan 02 resolves it by keeping HEAD (Phase 2) version throughout
 
 ---
 
@@ -128,7 +126,7 @@ Plans:
 |-------|------|----------------|--------|-----------|
 | 1 - API Foundation & Award Selection | FWC API + award selector | 2/2 | Complete | 2026-03-07 |
 | 2 - Award-Agnostic Calculation Engine | 4/4 | Complete   | 2026-03-08 | — |
-| 3 - Multi-View UI & Pay Comparison | Week overview, drill-down, discrepancy detection | 0/3 | Not started | — |
+| 3 - Multi-View UI & Pay Comparison | Week overview, drill-down, discrepancy detection | 0/2 | Not started | — |
 
 ---
 
@@ -166,4 +164,4 @@ Phase 3 builds new UI modes on stable calculation engine.
 
 *Roadmap created: 2026-03-07*
 *Ready for planning: yes*
-*Next step: /gsd:plan-phase 1*
+*Next step: /gsd:execute-phase 03*
