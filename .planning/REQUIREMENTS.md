@@ -15,10 +15,10 @@ Requirements for this milestone. Each maps to a roadmap phase.
 
 ### Multi-Award Support
 
-- [ ] **AWARD-01**: User can select their modern award from a list (Pharmacy Industry Award, General Retail Industry Award, Hospitality Industry Award at minimum)
-- [ ] **AWARD-02**: Classification dropdown updates to show classifications relevant to the selected award
-- [ ] **AWARD-03**: Allowances section shows and calculates allowances specific to the selected award
-- [ ] **AWARD-04**: Penalty rate rules (evening threshold time, Saturday/Sunday/public holiday multipliers) reflect the selected award — not fixed to Pharmacy Award values
+- [x] **AWARD-01**: User can select their modern award from a list (Pharmacy Industry Award, General Retail Industry Award, Hospitality Industry Award at minimum)
+- [x] **AWARD-02**: Classification dropdown updates to show classifications relevant to the selected award
+- [x] **AWARD-03**: Allowances section shows and calculates allowances specific to the selected award
+- [x] **AWARD-04**: Penalty rate rules (evening threshold time, Saturday/Sunday/public holiday multipliers) reflect the selected award — not fixed to Pharmacy Award values
 
 ### Pay Verification
 
@@ -30,8 +30,8 @@ Requirements for this milestone. Each maps to a roadmap phase.
 ### Regression
 
 - [ ] **REG-01**: Weekly and fortnightly pay cycle selection continues to work as before
-- [ ] **REG-02**: Pharmacy Award calculations produce identical results to the current hardcoded implementation (no regression in existing functionality)
-- [ ] **REG-03**: Junior rate calculation continues to apply correctly for supported award classifications
+- [x] **REG-02**: Pharmacy Award calculations produce identical results to the current hardcoded implementation (no regression in existing functionality)
+- [x] **REG-03**: Junior rate calculation continues to apply correctly for supported award classifications
 
 ## v2 Requirements
 
@@ -70,17 +70,17 @@ Which phases cover which requirements. Updated during roadmap creation.
 | API-01 | Phase 1 | Complete |
 | API-02 | Phase 1 | Complete |
 | API-03 | Phase 1 | Complete |
-| AWARD-01 | Phase 2 | Pending |
-| AWARD-02 | Phase 2 | Pending |
-| AWARD-03 | Phase 2 | Pending |
-| AWARD-04 | Phase 2 | Pending |
+| AWARD-01 | Phase 2 | Complete |
+| AWARD-02 | Phase 2 | Complete |
+| AWARD-03 | Phase 2 | Complete |
+| AWARD-04 | Phase 2 | Complete |
 | PAY-01 | Phase 3 | Pending |
 | PAY-02 | Phase 3 | Pending |
 | PAY-03 | Phase 3 | Pending |
 | PAY-04 | Phase 3 | Pending |
 | REG-01 | Phase 3 | Pending |
-| REG-02 | Phase 2 | Pending |
-| REG-03 | Phase 2 | Pending |
+| REG-02 | Phase 2 | Complete |
+| REG-03 | Phase 2 | Complete |
 
 **Coverage:**
 - v1 requirements: 14 total
