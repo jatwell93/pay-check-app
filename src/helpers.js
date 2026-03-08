@@ -14,34 +14,6 @@ const calculateBreakTime = (totalHours) => {
     }
 };
 
-export const classifications = [
-  { id: 'pharmacy-assistant-1', name: 'Pharmacy Assistant Level 1' },
-  { id: 'pharmacy-assistant-2', name: 'Pharmacy Assistant Level 2' },
-  { id: 'pharmacy-assistant-3', name: 'Pharmacy Assistant Level 3' },
-  { id: 'pharmacy-assistant-4', name: 'Pharmacy Assistant Level 4' },
-  { id: 'pharmacy-student-1', name: 'Pharmacy Student - 1st year of course' },
-  { id: 'pharmacy-student-2', name: 'Pharmacy Student - 2nd year of course' },
-  { id: 'pharmacy-student-3', name: 'Pharmacy Student - 3rd year of course' },
-  { id: 'pharmacy-student-4', name: 'Pharmacy Student - 4th year of course' },
-  { id: 'pharmacy-intern-1', name: 'Pharmacy Intern - 1st half of training' },
-  { id: 'pharmacy-intern-2', name: 'Pharmacy Intern - 2nd half of training' },
-  { id: 'pharmacist', name: 'Pharmacist' },
-  { id: 'experienced-pharmacist', name: 'Experienced Pharmacist' },
-  { id: 'pharmacist-in-charge', name: 'Pharmacist in Charge' },
-  { id: 'pharmacist-manager', name: 'Pharmacist Manager' },
-  { id: 'above-award', name: 'Above Award' }
-];
-
-export const ageOptions = [
-  { id: 'adult', name: 'Adult (21 years and over)' },
-  { id: 'under-16', name: 'Under 16 years' },
-  { id: '16', name: '16 years' },
-  { id: '17', name: '17 years' },
-  { id: '18', name: '18 years' },
-  { id: '19', name: '19 years' },
-  { id: '20', name: '20 years' }
-];
-
 export const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 // Function to get penalty rate multiplier AND description

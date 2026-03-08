@@ -343,8 +343,25 @@ const App = () => {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 section">
-        <EmployeeDetails classification={classification} setClassification={setClassification} employmentType={employmentType} setEmploymentType={setEmploymentType} age={age} setAge={setAge} customRate={customRate} setCustomRate={setCustomRate}/>
-        <Allowances allowances={allowances} handleAllowanceChange={handleAllowanceChange} classification={classification}/>
+        <EmployeeDetails
+          classification={classification}
+          setClassification={setClassification}
+          employmentType={employmentType}
+          setEmploymentType={setEmploymentType}
+          age={age}
+          setAge={setAge}
+          customRate={customRate}
+          setCustomRate={setCustomRate}
+          classifications={currentAwardConfig.classifications}
+          ageOptions={currentAwardConfig.ageOptions}
+          juniorClassificationIds={currentAwardConfig.juniorClassificationIds}
+        />
+        <Allowances
+          allowances={allowances}
+          handleAllowanceChange={handleAllowanceChange}
+          classification={classification}
+          allowanceConfig={currentAwardConfig.allowances}
+        />
           <PaySummary results={results} setShowDetails={setShowDetails} showDetails={showDetails}/>
       </div> 
       <WorkHours weeklyData={weeklyData} handleTimeChange={handleTimeChange} handlePublicHolidayChange={handlePublicHolidayChange} calculatePay={calculatePay}/>
