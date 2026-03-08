@@ -29,7 +29,7 @@ Requirements for this milestone. Each maps to a roadmap phase.
 
 ### Regression
 
-- [ ] **REG-01**: Weekly and fortnightly pay cycle selection continues to work as before
+- [x] **REG-01**: Weekly and fortnightly pay cycle selection continues to work as before
 - [x] **REG-02**: Pharmacy Award calculations produce identical results to the current hardcoded implementation (no regression in existing functionality)
 - [x] **REG-03**: Junior rate calculation continues to apply correctly for supported award classifications
 
@@ -78,7 +78,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PAY-02 | Phase 3 | Complete |
 | PAY-03 | Phase 3 | Complete |
 | PAY-04 | Phase 3 | Complete |
-| REG-01 | Phase 3 | Pending |
+| REG-01 | Phase 3 | Complete |
 | REG-02 | Phase 2 | Complete |
 | REG-03 | Phase 2 | Complete |
 
