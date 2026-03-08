@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 2
-status: unknown
-last_updated: "2026-03-08T07:20:55.044Z"
+current_phase: 3
+status: phase-2-complete
+last_updated: "2026-03-08T07:32:43.682Z"
 progress:
   total_phases: 3
   completed_phases: 2
@@ -15,7 +15,7 @@ progress:
 # STATE: Pay Check App
 
 **Project:** Pay Check App — Multi-Award Support Initiative
-**Last Updated:** 2026-03-07
+**Last Updated:** 2026-03-08
 **Current Phase:** 2
 
 ---
@@ -36,10 +36,10 @@ progress:
 
 | Aspect | Status | Details |
 |--------|--------|---------|
-| **Milestone** | Phase 1 Complete | 3-phase plan, Phase 1 all plans done — 2/2 summaries created |
-| **Phase** | Phase 1: Both Plans Complete | awardRatesService.js + AwardSelector built, tested, and verified |
-| **Progress** | 3/14 requirements complete | API-01, API-02, API-03 satisfied; Phase 2 unblocked |
-| **Blocker** | None | Ready to start Phase 2 (Award-Agnostic Calculation Engine) |
+| **Milestone** | Phase 2 Complete | 3-phase plan, Phase 1 and 2 all plans done — 4/4 summaries created for Phase 2 |
+| **Phase** | Phase 2: All 4 Plans Complete | awardConfig.js, parameterized helpers.js, App.js wired, EmployeeDetails/Allowances award-agnostic — human-verified |
+| **Progress** | 9/14 requirements complete | API-01–03, AWARD-01–04, REG-02, REG-03 satisfied; Phase 3 unblocked |
+| **Blocker** | None | Ready to start Phase 3 (Multi-View UI & Pay Comparison) |
 
 ---
 
@@ -79,7 +79,7 @@ progress:
 | Phase 02-award-agnostic-calculation-engine P01 | 8 | 2 tasks | 2 files |
 | Phase 02-award-agnostic-calculation-engine P02 | 18min | 1 tasks | 1 files |
 | Phase 02-award-agnostic-calculation-engine P03 | 15min | 1 tasks | 1 files |
-| Phase 02-award-agnostic-calculation-engine P04 | 11min | 2 tasks | 6 files |
+| Phase 02-award-agnostic-calculation-engine P04 | 11min | 3 tasks | 6 files |
 
 ### Execution Metrics
 
@@ -136,6 +136,7 @@ progress:
 - [Phase 02]: calculatePayForTimePeriod call bug fixed: was passing getPenaltyDescription as 7th arg (classification position); corrected to pass classification as 7th and penaltyConfig as 8th
 - [Phase 02]: currentAwardConfig computed before JSX return (separate from selectedAwardConfig inside calculatePay) for render-time access without calling getAwardConfig inside JSX expressions
 - [Phase 02-award-agnostic-calculation-engine]: pharmacistIds hardcoded in Allowances.js — homeMedicineReview eligibility check uses hardcoded pharmacist IDs since this allowance is only rendered under Pharmacy award (config guards it at the conditional level)
+- [Phase 02-award-agnostic-calculation-engine]: allowanceConfig uses != null not falsy check — allows zero-value allowances to still render if explicitly configured
 
 ### Critical Path
 
