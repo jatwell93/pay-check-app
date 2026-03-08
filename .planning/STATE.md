@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 3
 status: unknown
-last_updated: "2026-03-08T09:06:34.746Z"
+last_updated: "2026-03-08T14:43:21.004Z"
 progress:
   total_phases: 3
   completed_phases: 2
-  total_plans: 6
-  completed_plans: 6
+  total_plans: 8
+  completed_plans: 7
 ---
 
 # STATE: Pay Check App
@@ -80,6 +80,7 @@ progress:
 | Phase 02-award-agnostic-calculation-engine P02 | 18min | 1 tasks | 1 files |
 | Phase 02-award-agnostic-calculation-engine P03 | 15min | 1 tasks | 1 files |
 | Phase 02-award-agnostic-calculation-engine P04 | 11min | 3 tasks | 6 files |
+| Phase 03-multi-view-ui-and-pay-comparison P01 | 153 | 2 tasks | 2 files |
 
 ### Execution Metrics
 
@@ -137,6 +138,8 @@ progress:
 - [Phase 02]: currentAwardConfig computed before JSX return (separate from selectedAwardConfig inside calculatePay) for render-time access without calling getAwardConfig inside JSX expressions
 - [Phase 02-award-agnostic-calculation-engine]: pharmacistIds hardcoded in Allowances.js — homeMedicineReview eligibility check uses hardcoded pharmacist IDs since this allowance is only rendered under Pharmacy award (config guards it at the conditional level)
 - [Phase 02-award-agnostic-calculation-engine]: allowanceConfig uses != null not falsy check — allows zero-value allowances to still render if explicitly configured
+- [Phase 03]: Inline segment table (not importing DetailedBreakdown) to avoid prop shape coupling and keep OverviewBreakdown self-contained
+- [Phase 03]: actualPaidByDay empty string treated as no-input (hint text) not zero — prevents false Underpaid on untouched rows
 
 ### Critical Path
 

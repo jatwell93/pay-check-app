@@ -22,10 +22,10 @@ Requirements for this milestone. Each maps to a roadmap phase.
 
 ### Pay Verification
 
-- [ ] **PAY-01**: After calculating, user sees a week overview with calculated pay per day and a clear pass/fail indicator per day
-- [ ] **PAY-02**: User can enter the amount they were actually paid (for the pay period) to compare against the calculated amount
-- [ ] **PAY-03**: App shows the total discrepancy between calculated pay and actual pay (e.g. "You may have been underpaid $23.33")
-- [ ] **PAY-04**: User can select a specific day from the week overview to see the full segment breakdown (e.g. "Mon: 6hrs ordinary @ $28.42 = $170.52 + 1hr evening penalty @ $35.53 = $35.53")
+- [x] **PAY-01**: After calculating, user sees a week overview with calculated pay per day and a clear pass/fail indicator per day
+- [x] **PAY-02**: User can enter the amount they were actually paid (for the pay period) to compare against the calculated amount
+- [x] **PAY-03**: App shows the total discrepancy between calculated pay and actual pay (e.g. "You may have been underpaid $23.33")
+- [x] **PAY-04**: User can select a specific day from the week overview to see the full segment breakdown (e.g. "Mon: 6hrs ordinary @ $28.42 = $170.52 + 1hr evening penalty @ $35.53 = $35.53")
 
 ### Regression
 
@@ -74,10 +74,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AWARD-02 | Phase 2 | Complete |
 | AWARD-03 | Phase 2 | Complete |
 | AWARD-04 | Phase 2 | Complete |
-| PAY-01 | Phase 3 | Pending |
-| PAY-02 | Phase 3 | Pending |
-| PAY-03 | Phase 3 | Pending |
-| PAY-04 | Phase 3 | Pending |
+| PAY-01 | Phase 3 | Complete |
+| PAY-02 | Phase 3 | Complete |
+| PAY-03 | Phase 3 | Complete |
+| PAY-04 | Phase 3 | Complete |
 | REG-01 | Phase 3 | Pending |
 | REG-02 | Phase 2 | Complete |
 | REG-03 | Phase 2 | Complete |

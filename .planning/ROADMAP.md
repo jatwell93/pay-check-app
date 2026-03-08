@@ -100,7 +100,7 @@ Plans:
 5. Fortnightly pay cycle selection (if enabled) continues to work as before; user can calculate for 14 days and compare total paid amount
 6. Weekly pay cycle selection continues to work as before (7 days, same comparison flow)
 
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
 - [ ] 03-01-PLAN.md — TDD: OverviewBreakdown component (week table, status badges, accordion, discrepancy)
@@ -126,7 +126,7 @@ Plans:
 |-------|------|----------------|--------|-----------|
 | 1 - API Foundation & Award Selection | FWC API + award selector | 2/2 | Complete | 2026-03-07 |
 | 2 - Award-Agnostic Calculation Engine | 4/4 | Complete   | 2026-03-08 | — |
-| 3 - Multi-View UI & Pay Comparison | Week overview, drill-down, discrepancy detection | 0/2 | Not started | — |
+| 3 - Multi-View UI & Pay Comparison | 1/2 | In Progress|  | — |
 
 ---
 
