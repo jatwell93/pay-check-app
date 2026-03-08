@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import EmployeeDetails from './components/EmployeeDetails';
 import Allowances from './components/Allowances';
-import PaySummary from './components/PaySummary';
+import OverviewBreakdown from './components/OverviewBreakdown';
 import WorkHours from './components/WorkHours';
-import DetailedBreakdown from './components/DetailedBreakdown';
 import AwardSelector from './components/AwardSelector';
 import { calculatePayForTimePeriod, weekDays } from './helpers';
 import { fetchAwardRates, getCachedAwardRates, getLastCacheUpdateTime } from './services/awardRatesService';
@@ -66,7 +65,9 @@ const App = () => {
   });
   
   const [results, setResults] = useState(null);
-  const [showDetails, setShowDetails] = useState(false);
+  const [selectedDayIndex, setSelectedDayIndex] = useState(null);
+  const [actualPaidByDay, setActualPaidByDay] = useState([]);
+  const [totalActualPaid, setTotalActualPaid] = useState('');
 
   // Award selector state
   const [selectedAward, setSelectedAward] = useState('MA000012');
@@ -323,6 +324,9 @@ const App = () => {
       dailyBreakdown,
       allowanceBreakdown
     });
+    setSelectedDayIndex(null);
+    setActualPaidByDay(dailyBreakdown.map(() => ''));
+    setTotalActualPaid('');
   };
   const currentAwardConfig = getAwardConfig(selectedAward);
   return (<div className="container">
@@ -362,10 +366,22 @@ const App = () => {
           classification={classification}
           allowanceConfig={currentAwardConfig.allowances}
         />
-          <PaySummary results={results} setShowDetails={setShowDetails} showDetails={showDetails}/>
-      </div> 
+      </div>
       <WorkHours weeklyData={weeklyData} handleTimeChange={handleTimeChange} handlePublicHolidayChange={handlePublicHolidayChange} calculatePay={calculatePay}/>
-      <DetailedBreakdown results={results} showDetails={showDetails}/>
+      <OverviewBreakdown
+        results={results}
+        selectedDayIndex={selectedDayIndex}
+        onDayToggle={(index) => setSelectedDayIndex(selectedDayIndex === index ? null : index)}
+        actualPaidByDay={actualPaidByDay}
+        onActualPaidChange={(index, value) => {
+          const updated = [...actualPaidByDay];
+          updated[index] = value;
+          setActualPaidByDay(updated);
+        }}
+        totalActualPaid={totalActualPaid}
+        onTotalActualPaidChange={(value) => setTotalActualPaid(value)}
+        cycleLength={results ? results.dailyBreakdown.length : 7}
+      />
       
       {/* Important Notes */}
       <div className="mb-8 p-4  section">
