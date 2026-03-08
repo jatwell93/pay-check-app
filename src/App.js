@@ -7,92 +7,38 @@ import DetailedBreakdown from './components/DetailedBreakdown';
 import AwardSelector from './components/AwardSelector';
 import { calculatePayForTimePeriod, weekDays } from './helpers';
 import { fetchAwardRates, getCachedAwardRates, getLastCacheUpdateTime } from './services/awardRatesService';
+import { getAwardConfig } from './config/awardConfig';
 
-const getPenaltyDescription = (segmentDay, timeString, penaltyRate) => {
-    if (segmentDay === 'Saturday' && penaltyRate === 1.5) {
+const getPenaltyDescription = (segmentDay, timeString, penaltyRate, penaltyConfig) => {
+    const earlyMorningEnd = String(Math.floor(penaltyConfig.earlyMorningThreshold / 60)).padStart(2, '0') + ':' + String(penaltyConfig.earlyMorningThreshold % 60).padStart(2, '0'); // e.g., "07:00"
+    const eveningStart = String(Math.floor(penaltyConfig.eveningThreshold / 60)).padStart(2, '0') + ':' + String(penaltyConfig.eveningThreshold % 60).padStart(2, '0'); // e.g., "19:00"
+
+    if (segmentDay === 'Saturday' && penaltyRate === penaltyConfig.saturdayMultiplier) {
         return 'Saturday (Time and a half)';
     }
-    if (segmentDay === 'Sunday' && penaltyRate === 2) {
+    if (segmentDay === 'Sunday' && penaltyRate === penaltyConfig.sundayMultiplier) {
         return 'Sunday (Double Time)';
     }
-    if (segmentDay === 'Public Holiday' && penaltyRate === 2.5) {
+    if (segmentDay === 'Public Holiday' && penaltyRate === penaltyConfig.phMultiplier) {
         return 'Public Holiday (Double Time and a half)';
     }
-    if ((segmentDay === 'Monday' || segmentDay === 'Tuesday' || segmentDay === 'Wednesday' || segmentDay === 'Thursday' || segmentDay === 'Friday' ) && timeString >= '00:00' && timeString <= '07:00' && penaltyRate === 1.25) {
-      return `${segmentDay} (Early Morning Shift)`
+    const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+    if (weekdays.includes(segmentDay) && timeString >= '00:00' && timeString <= earlyMorningEnd && penaltyRate === penaltyConfig.earlyMorningMultiplier) {
+        return `${segmentDay} (Early Morning Shift)`;
     }
-    if ((segmentDay === 'Monday' || segmentDay === 'Tuesday' || segmentDay === 'Wednesday' || segmentDay === 'Thursday' || segmentDay === 'Friday' )&& timeString >= '19:00' && timeString < '00:00' && penaltyRate === 1.25) {
-      return `${segmentDay} (Evening Shift)`
+    if (weekdays.includes(segmentDay) && timeString >= eveningStart && penaltyRate === penaltyConfig.eveningMultiplier) {
+        return `${segmentDay} (Evening Shift)`;
     }
-    if (timeString >= '00:00' && timeString <= '07:00' && penaltyRate === 1.25) {
+    if (timeString >= '00:00' && timeString <= earlyMorningEnd && penaltyRate === penaltyConfig.earlyMorningMultiplier) {
         return 'Early Morning Shift';
     }
-    if (timeString >= '19:00' && timeString < '00:00' && penaltyRate === 1.25) {
+    if (timeString >= eveningStart && penaltyRate === penaltyConfig.eveningMultiplier) {
         return 'Evening Shift';
     }
     if (penaltyRate === 1) return 'Normal rate';
     return '';
 };
 
-const pharmacyAwardRates = {
-  fullTimePartTime: {
-    'pharmacy-assistant-1': { base: 25.99 },
-    'pharmacy-assistant-2': { base: 26.87 },
-    'pharmacy-assistant-3': { base: 27.94 },
-    'pharmacy-assistant-4': { base: 29.03 },
-    'pharmacy-technician-1': { base: 30.21 },
-    'pharmacy-technician-2': { base: 31.15 },
-    'pharmacy-technician-3': { base: 32.36 },
-    'pharmacy-technician-4': { base: 33.15 },
-    'pharmacy-student-1': { base: 25.99 },
-    'pharmacy-student-2': { base: 25.99 },
-    'pharmacy-student-3': { base: 25.99 },
-    'pharmacy-student-4': { base: 25.99 },
-    'pharmacy-intern-1': { base: 28.66 },
-    'pharmacy-intern-2': { base: 29.63 },
-    'pharmacist': { base: 35.20 },
-    'experienced-pharmacist': { base: 38.56 },
-    'pharmacist-in-charge': { base: 39.46 },
-    'pharmacist-manager': { base: 43.97 },
-  },
-  casual: {
-    'pharmacy-assistant-1': { base: 32.49 },
-    'pharmacy-assistant-2': { base: 33.59 },
-    'pharmacy-assistant-3': { base: 34.93 },
-    'pharmacy-assistant-4': { base: 36.29 },
-    'pharmacy-technician-1': { base: 37.76 },
-    'pharmacy-technician-2': { base: 38.94 },
-    'pharmacy-technician-3': { base: 40.45 },
-    'pharmacy-technician-4': { base: 41.44 },
-    'pharmacy-student-1': { base: 32.49 },
-    'pharmacy-student-2': { base: 32.49 },
-    'pharmacy-student-3': { base: 32.49 },
-    'pharmacy-student-4': { base: 32.49 },
-    'pharmacy-intern-1': { base: 35.83 },
-    'pharmacy-intern-2': { base: 37.04 },
-    'pharmacist': { base: 44.00 },
-    'experienced-pharmacist': { base: 48.20 },
-    'pharmacist-in-charge': { base: 49.33 },
-    'pharmacist-manager': { base: 54.96 },
-  },
-  juniorPercentages: {
-    'under-16': 0.45,
-    'age-16': 0.5,
-    'age-17': 0.6,
-    'age-18': 0.7,
-    'age-19': 0.8,
-    'age-20': 0.9,
-  },
-  allowances: {
-    homeMedicineReview: 17.96,
-    laundryFullTime: 17.15,
-    laundryPartTimeCasual: 3.43,
-    brokenHill: 47.80,
-    motorVehiclePerKm: 0.99,
-    mealAllowanceOvertime: 19.62,
-    mealAllowanceOvertimeExtra: 16.78,
-  },
-};
 
 const AWARD_IDS = ['MA000012', 'MA000003', 'MA000009'];
 
@@ -162,8 +108,8 @@ const App = () => {
           setLastUpdated(getLastCacheUpdateTime(AWARD_IDS[0]));
           setAwardError("Couldn't load award rates. Using cached rates — Refresh to try again.");
         } else {
-          // No cache at all: use hardcoded Pharmacy fallback
-          setAwardRates({ 'MA000012': pharmacyAwardRates });
+          // No cache at all: awardConfig.js is the source of truth for calculations
+          setAwardRates({});
           setAwardError("Couldn't load award rates. Using Pharmacy defaults — Refresh to try again.");
         }
       } finally {
@@ -194,7 +140,8 @@ const App = () => {
   // Award switch handler: resets classification and results, preserves shift hours
   const handleSelectAward = (awardId) => {
     setSelectedAward(awardId);
-    setClassification('pharmacy-assistant-1'); // Reset classification (Phase 2 will make this award-aware)
+    const newConfig = getAwardConfig(awardId);
+    setClassification(newConfig.classifications[0].id);
     setResults(null); // Clear calculated results
     // weeklyData (shift hours) is preserved intentionally
   };
@@ -230,6 +177,7 @@ const App = () => {
 
   // Calculate weekly pay
       const calculatePay = () => {
+        const selectedAwardConfig = getAwardConfig(selectedAward);
         let baseRate;
         if (classification === 'above-award') {
           if(customRate){
@@ -238,11 +186,13 @@ const App = () => {
             baseRate = 0
           }
         } else {
-          baseRate = employmentType === "casual" ? pharmacyAwardRates.casual[classification]?.base : pharmacyAwardRates.fullTimePartTime[classification]?.base || 0;
+          baseRate = employmentType === "casual"
+            ? selectedAwardConfig.baseRates.casual[classification]?.base ?? 0
+            : selectedAwardConfig.baseRates.fullTimePartTime[classification]?.base ?? 0;
         }
-    // Apply junior rates if applicable (only for pharmacy assistants levels 1 and 2)
-    if ((classification === 'pharmacy-assistant-1' || classification === 'pharmacy-assistant-2') && age !== 'adult') {
-        const juniorPercentage = pharmacyAwardRates.juniorPercentages[age];
+    // Apply junior rates if applicable (uses award-specific junior classification IDs)
+    if (selectedAwardConfig.juniorClassificationIds.includes(classification) && age !== 'adult') {
+        const juniorPercentage = selectedAwardConfig.juniorPercentages[age] ?? 1;
         baseRate = baseRate * juniorPercentage / (employmentType === "casual" ? 1.25 : 1); // Adjust for casual loading
       if (employmentType === 'casual') {
         baseRate = baseRate * 1.25; // Reapply casual loading to adjusted base
@@ -263,10 +213,11 @@ const App = () => {
                 dayData.startTime,
                 dayData.endTime,
                 baseRate,
-                employmentType
-            ,
-            customRate,
-                getPenaltyDescription);
+                employmentType,
+                customRate,
+                classification,
+                selectedAwardConfig.penaltyConfig
+            );
         
         totalHours += dayResult.hours;
         totalPay += dayResult.pay;
@@ -283,19 +234,19 @@ const App = () => {
     })
     
     // Calculate overtime (for full-time and part-time employees)
-        if (employmentType !== "casual" && totalHours > 38) {
-            overtimeHours = totalHours - 38;
+        if (employmentType !== "casual" && totalHours > selectedAwardConfig.penaltyConfig.overtimeThresholdHours) {
+            overtimeHours = totalHours - selectedAwardConfig.penaltyConfig.overtimeThresholdHours;
             // Apply first 2 hours at time and a half, remainder at double time
             // This is simplified - actual overtime depends on when it was worked
             const first2Hours = Math.min(overtimeHours, 2);
             const remainingHours = overtimeHours - first2Hours;
-      
+
             // Use non-casual base rate for overtime
-            const nonCasualBaseRate = pharmacyAwardRates.fullTimePartTime[classification].base;
-      
-      overtimePay = (first2Hours * nonCasualBaseRate * 1.5) + 
-        (remainingHours * nonCasualBaseRate * 2);
-      
+            const nonCasualBaseRate = selectedAwardConfig.baseRates.fullTimePartTime[classification]?.base ?? baseRate;
+
+      overtimePay = (first2Hours * nonCasualBaseRate * selectedAwardConfig.penaltyConfig.overtimeFirstTierMultiplier) +
+        (remainingHours * nonCasualBaseRate * selectedAwardConfig.penaltyConfig.overtimeSecondTierMultiplier);
+
       // Subtract overtime hours from total pay (they'll be added back with overtime rates)
       totalPay = totalPay - (overtimeHours * baseRate);
     }
@@ -305,50 +256,54 @@ const App = () => {
     let allowanceBreakdown = [];
     
     if (allowances.homeMedicineReview) {
-            totalAllowances += pharmacyAwardRates.allowances.homeMedicineReview;
+            const hmrAmount = selectedAwardConfig.allowances.homeMedicineReview ?? 0;
+            totalAllowances += hmrAmount;
             allowanceBreakdown.push({
                 name: 'Home Medicine Reviews',
-                amount: pharmacyAwardRates.allowances.homeMedicineReview
+                amount: hmrAmount
             });
         }
-    
+
         if (allowances.laundry) {
-            const laundryAmount = employmentType === "full-time" ? pharmacyAwardRates.allowances.laundryFullTime : pharmacyAwardRates.allowances.laundryPartTimeCasual * dailyBreakdown.length;
+            const laundryAmount = employmentType === "full-time"
+                ? (selectedAwardConfig.allowances.laundryFullTime ?? 0)
+                : (selectedAwardConfig.allowances.laundryPartTimeCasual ?? 0) * dailyBreakdown.length;
             totalAllowances += laundryAmount;
             allowanceBreakdown.push({
                 name: 'Laundry Allowance',
                 amount: laundryAmount
             });
         }
-    
+
         if (allowances.brokenHill) {
-            totalAllowances += pharmacyAwardRates.allowances.brokenHill;
+            const brokenHillAmount = selectedAwardConfig.allowances.brokenHill ?? 0;
+            totalAllowances += brokenHillAmount;
             allowanceBreakdown.push({
                 name: 'Broken Hill Allowance',
-                amount: pharmacyAwardRates.allowances.brokenHill
+                amount: brokenHillAmount
             });
         }
-    
+
         if (allowances.motorVehicleKm > 0) {
-            const vehicleAmount = allowances.motorVehicleKm * pharmacyAwardRates.allowances.motorVehiclePerKm;
+            const vehicleAmount = allowances.motorVehicleKm * (selectedAwardConfig.allowances.motorVehiclePerKm ?? 0);
             totalAllowances += vehicleAmount;
             allowanceBreakdown.push({
                 name: 'Motor Vehicle Allowance',
                 amount: vehicleAmount
             });
         }
-    
+
         if (allowances.mealAllowance > 0) {
-            const mealAmount = allowances.mealAllowance * pharmacyAwardRates.allowances.mealAllowanceOvertime;
+            const mealAmount = allowances.mealAllowance * (selectedAwardConfig.allowances.mealAllowanceOvertime ?? 0);
             totalAllowances += mealAmount;
             allowanceBreakdown.push({
                 name: 'Meal Allowance (Overtime)',
                 amount: mealAmount
             });
         }
-    
+
         if (allowances.mealAllowanceExtra > 0) {
-            const mealExtraAmount = allowances.mealAllowanceExtra * pharmacyAwardRates.allowances.mealAllowanceOvertimeExtra;
+            const mealExtraAmount = allowances.mealAllowanceExtra * (selectedAwardConfig.allowances.mealAllowanceOvertimeExtra ?? 0);
             totalAllowances += mealExtraAmount;
             allowanceBreakdown.push({
                 name: 'Extra Meal Allowance (Overtime > 4 hours)',
@@ -369,10 +324,11 @@ const App = () => {
       allowanceBreakdown
     });
   };
+  const currentAwardConfig = getAwardConfig(selectedAward);
   return (<div className="container">
       <header className="app-header">
-        <h1 >Pharmacy Award Pay Calculator</h1>
-        <p >Check if you're being paid correctly under the Pharmacy Industry Award (MA000012)</p>
+        <h1>{currentAwardConfig ? `${currentAwardConfig.name} Pay Calculator` : 'Pay Calculator'}</h1>
+        <p>Check if you're being paid correctly under the {currentAwardConfig?.name || 'selected award'}</p>
       </header>
 
       <AwardSelector
@@ -395,13 +351,13 @@ const App = () => {
       <DetailedBreakdown results={results} showDetails={showDetails}/>
       
       {/* Important Notes */}
-      <div className="mb-8 p-4  section"> 
+      <div className="mb-8 p-4  section">
         <h2 className='section-header'>Important Notes</h2>
         <ul >
-          <li>This calculator is based on the Pharmacy Industry Award (MA000012) effective July 1, 2024.</li>
+          <li>This calculator is based on the {currentAwardConfig?.name || 'selected award'} effective July 1, 2024.</li>
           <li>For overnight shifts, enter times normally (e.g., 10:00 PM to 6:00 AM).</li>
-          <li>Overtime is calculated based on weekly hours exceeding 38 hours for full-time and part-time employees.</li>
-          <li>Junior rates only apply to Pharmacy Assistants Level 1 and 2.</li>
+          <li>Overtime is calculated based on weekly hours exceeding {currentAwardConfig?.penaltyConfig?.overtimeThresholdHours || 38} hours for full-time and part-time employees.</li>
+          <li>Junior rates apply to eligible junior classifications under the selected award.</li>
           <li>This calculator provides an estimate only. Always refer to the full award for specific circumstances.</li>
           <li>Some complex award provisions (such as rostering requirements and meal breaks) may not be fully reflected.</li>
         </ul>
