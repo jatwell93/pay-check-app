@@ -33,7 +33,7 @@ axiosRetry(apiClient, {
   },
 });
 
-// TODO Phase 2: tighten schema once real FWC API response shape is confirmed
+// Schema is intentionally permissive (passthrough) — tighten once real FWC API response shape is confirmed in v2.
 const FWC_AWARD_SCHEMA = z.object({}).passthrough();
 
 /**
@@ -133,6 +133,7 @@ export function getLastCacheUpdateTime(awardId) {
 /**
  * Clears the cache for a specific awardId, or all award rate cache entries
  * if called with no argument.
+ * Reserved for a planned manual cache-clear UI feature — no callers exist yet.
  *
  * @param {string} [awardId] — If omitted, clears all versioned award_rates_v1_ keys
  */
