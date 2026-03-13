@@ -10,14 +10,14 @@ Requirements for this milestone. Each maps to a roadmap phase.
 ### Proxy & Live Rates
 
 - [x] **PROXY-01**: A Netlify Functions proxy routes FWC API requests server-side, eliminating the CORS error that currently prevents the app from loading rates
-- [ ] **PROXY-02**: `calculatePay` reads live award rates hydrated from the FWC API (via proxy + cache), not hardcoded values from `awardConfig.js`
-- [ ] **PROXY-03**: If the proxy is unreachable or returns an error, the app falls back to hardcoded rates from `awardConfig.js` with a visible warning to the user
+- [x] **PROXY-02**: `calculatePay` reads live award rates hydrated from the FWC API (via proxy + cache), not hardcoded values from `awardConfig.js`
+- [x] **PROXY-03**: If the proxy is unreachable or returns an error, the app falls back to hardcoded rates from `awardConfig.js` with a visible warning to the user
 
 ### UX & Styling
 
 - [ ] **UX-01**: All app components are restyled with Tailwind CSS using a clean professional look (navy/white palette)
 - [ ] **UX-02**: Pay verification status indicators use green for "Paid Correctly" and red for "Underpaid" throughout the UI
-- [ ] **UX-03**: Loading states (spinner while fetching rates) and error messages (when API fails) are displayed clearly so the user always knows the app's status
+- [x] **UX-03**: Loading states (spinner while fetching rates) and error messages (when API fails) are displayed clearly so the user always knows the app's status
 
 ### Polish
 
@@ -56,9 +56,9 @@ Tracked but not in current roadmap.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | PROXY-01 | Phase 1 | Complete |
-| PROXY-02 | Phase 1 | Pending |
-| PROXY-03 | Phase 1 | Pending |
-| UX-03 | Phase 1 | Pending |
+| PROXY-02 | Phase 1 | Complete |
+| PROXY-03 | Phase 1 | Complete |
+| UX-03 | Phase 1 | Complete |
 | UX-01 | Phase 2 | Pending |
 | UX-02 | Phase 2 | Pending |
 | POLISH-01 | Phase 3 | Pending |

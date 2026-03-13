@@ -4,12 +4,12 @@ milestone: v1.1
 milestone_name: API Integration & UX Redesign
 current_phase: Not started (defining requirements)
 status: unknown
-last_updated: "2026-03-13T13:47:09.695Z"
+last_updated: "2026-03-13T23:07:30.762Z"
 progress:
   total_phases: 3
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # STATE: Pay Check App
@@ -53,6 +53,8 @@ See: .planning/PROJECT.md (updated 2026-03-09)
 4. **FWC CORS root cause confirmed** — `api.fwc.gov.au` returns 200 but omits `Access-Control-Allow-Origin` header. Not fixable client-side. Requires server-side proxy.
 - [Phase 01-netlify-proxy-live-rate-hydration]: FWC_API_KEY has no REACT_APP_ prefix — server-side only, prevents CRA bundling key into client JS
 - [Phase 01-netlify-proxy-live-rate-hydration]: Wave 0 stubs use test.todo() — test contracts defined before implementation to prevent blockers
+- [Phase 01-netlify-proxy-live-rate-hydration]: calculatePay falls back to getAwardConfig when awardRates[selectedAward] is falsy — ensures no breakage if proxy is down
+- [Phase 01-netlify-proxy-live-rate-hydration]: App.test.js weekly pay cycle uses empty rates map so calculatePay exercises getAwardConfig fallback, avoiding coupling to mock data shape
 
 ### Known Issues
 
