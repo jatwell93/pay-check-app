@@ -30,7 +30,7 @@ Full archive: `.planning/milestones/v1.0-ROADMAP.md`
 
 ### Phases
 
-- [ ] **Phase 1: Netlify Proxy & Live Rate Hydration** — Route FWC API calls through a Netlify Function to bypass CORS, wire live rates into calculatePay, implement fallback and loading/error states
+- [x] **Phase 1: Netlify Proxy & Live Rate Hydration** — Route FWC API calls through a Netlify Function to bypass CORS, wire live rates into calculatePay, implement fallback and loading/error states (completed 2026-03-13)
 - [ ] **Phase 2: Tailwind CSS Redesign** — Full Tailwind CSS redesign of all components with navy/white theme and green/red status indicators
 - [ ] **Phase 3: Polish** — Cache refresh indicator, wire clearCache() to UI, retry logic, user-friendly error messages
 
@@ -46,7 +46,7 @@ Full archive: `.planning/milestones/v1.0-ROADMAP.md`
 
 **Requirements mapped:** PROXY-01, PROXY-02, PROXY-03, UX-03
 
-**Plans:** 3 plans
+**Plans:** 3/3 plans complete
 
 Plans:
 - [ ] 01-01-PLAN.md — Netlify Function proxy + netlify.toml + Wave 0 test stubs
@@ -121,7 +121,7 @@ Plans:
 
 | Phase | Goal | Plans Complete | Status | Completed |
 |-------|------|----------------|--------|-----------|
-| 1 - Netlify Proxy & Live Rate Hydration | Proxy + live rates | 0/3 | In progress | — |
+| 1 - Netlify Proxy & Live Rate Hydration | 3/3 | Complete   | 2026-03-13 | — |
 | 2 - Tailwind CSS Redesign | Full Tailwind redesign | 0/? | Not started | — |
 | 3 - Polish | Cache indicator + retry | 0/? | Not started | — |
 

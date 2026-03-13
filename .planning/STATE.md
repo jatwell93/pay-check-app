@@ -4,12 +4,12 @@ milestone: v1.1
 milestone_name: API Integration & UX Redesign
 current_phase: Not started (defining requirements)
 status: unknown
-last_updated: "2026-03-13T23:07:30.762Z"
+last_updated: "2026-03-13T23:27:29.014Z"
 progress:
   total_phases: 3
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
-  completed_plans: 2
+  completed_plans: 3
 ---
 
 # STATE: Pay Check App
@@ -55,6 +55,7 @@ See: .planning/PROJECT.md (updated 2026-03-09)
 - [Phase 01-netlify-proxy-live-rate-hydration]: Wave 0 stubs use test.todo() — test contracts defined before implementation to prevent blockers
 - [Phase 01-netlify-proxy-live-rate-hydration]: calculatePay falls back to getAwardConfig when awardRates[selectedAward] is falsy — ensures no breakage if proxy is down
 - [Phase 01-netlify-proxy-live-rate-hydration]: App.test.js weekly pay cycle uses empty rates map so calculatePay exercises getAwardConfig fallback, avoiding coupling to mock data shape
+- [Phase 01-netlify-proxy-live-rate-hydration]: netlify dev auto-adds .netlify/ to .gitignore — committed as standard chore in Plan 03 Task 1
 
 ### Known Issues
 
