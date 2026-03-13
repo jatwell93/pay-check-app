@@ -9,7 +9,7 @@ Requirements for this milestone. Each maps to a roadmap phase.
 
 ### Proxy & Live Rates
 
-- [ ] **PROXY-01**: A Netlify Functions proxy routes FWC API requests server-side, eliminating the CORS error that currently prevents the app from loading rates
+- [x] **PROXY-01**: A Netlify Functions proxy routes FWC API requests server-side, eliminating the CORS error that currently prevents the app from loading rates
 - [ ] **PROXY-02**: `calculatePay` reads live award rates hydrated from the FWC API (via proxy + cache), not hardcoded values from `awardConfig.js`
 - [ ] **PROXY-03**: If the proxy is unreachable or returns an error, the app falls back to hardcoded rates from `awardConfig.js` with a visible warning to the user
 
@@ -55,7 +55,7 @@ Tracked but not in current roadmap.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PROXY-01 | Phase 1 | Pending |
+| PROXY-01 | Phase 1 | Complete |
 | PROXY-02 | Phase 1 | Pending |
 | PROXY-03 | Phase 1 | Pending |
 | UX-03 | Phase 1 | Pending |
