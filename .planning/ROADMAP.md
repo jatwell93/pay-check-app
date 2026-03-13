@@ -46,6 +46,13 @@ Full archive: `.planning/milestones/v1.0-ROADMAP.md`
 
 **Requirements mapped:** PROXY-01, PROXY-02, PROXY-03, UX-03
 
+**Plans:** 3 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Netlify Function proxy + netlify.toml + Wave 0 test stubs
+- [ ] 01-02-PLAN.md — Redirect service to proxy + wire calculatePay to awardRates state + Calculate button disabled during load
+- [ ] 01-03-PLAN.md — Human verification checkpoint (netlify dev end-to-end)
+
 **Success Criteria** (what must be TRUE when complete):
 1. App loads without CORS errors — FWC API calls go through the Netlify Function proxy
 2. `calculatePay` reads award rates hydrated from the live FWC API response (via proxy + localStorage cache), not from `awardConfig.js` hardcoded values
@@ -114,7 +121,7 @@ Full archive: `.planning/milestones/v1.0-ROADMAP.md`
 
 | Phase | Goal | Plans Complete | Status | Completed |
 |-------|------|----------------|--------|-----------|
-| 1 - Netlify Proxy & Live Rate Hydration | Proxy + live rates | 0/? | Not started | — |
+| 1 - Netlify Proxy & Live Rate Hydration | Proxy + live rates | 0/3 | In progress | — |
 | 2 - Tailwind CSS Redesign | Full Tailwind redesign | 0/? | Not started | — |
 | 3 - Polish | Cache indicator + retry | 0/? | Not started | — |
 
@@ -148,4 +155,4 @@ Phase 3 (Polish)
 ---
 
 *Roadmap created: 2026-03-13 (from v1.1 research + PROJECT.md active requirements)*
-*Next step: /gsd:plan-phase 1*
+*Phase 1 planned: 2026-03-13*
