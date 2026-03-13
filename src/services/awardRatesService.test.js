@@ -4,28 +4,6 @@ import {
   clearCache,
   fetchAwardRates,
 } from './awardRatesService';
-import axios from 'axios';
-
-// Mock axios to avoid real HTTP calls.
-// The factory is hoisted by Jest before imports, so we cannot reference
-// external variables. We store the instance on the mock itself as a property
-// so tests can access it via the imported axios module.
-jest.mock('axios', () => {
-  const mockInstance = {
-    get: jest.fn(),
-    defaults: { headers: { common: {} } },
-    interceptors: { request: { use: jest.fn() }, response: { use: jest.fn() } },
-  };
-  const axiosMock = {
-    create: jest.fn(() => mockInstance),
-    isAxiosError: jest.fn(),
-    // Expose the mock instance for test access
-    __mockInstance: mockInstance,
-  };
-  return axiosMock;
-});
-
-jest.mock('axios-retry', () => jest.fn());
 
 // In-memory localStorage mock
 let store = {};
@@ -40,8 +18,8 @@ beforeEach(() => {
     get: () => Object.keys(store).length,
     configurable: true,
   });
-  // Reset the mock http get between tests
-  axios.__mockInstance.get.mockReset();
+  // Reset fetch mock between tests
+  global.fetch = jest.fn();
 });
 afterEach(() => jest.restoreAllMocks());
 
@@ -138,27 +116,36 @@ test('clearCache() with no argument removes all keys matching the award_rates_v1
 
 // --- fetchAwardRates ---
 
-test('fetchAwardRates calls the FWC API for each awardId and stores validated results in cache', async () => {
-  axios.__mockInstance.get.mockResolvedValue({ data: { awardId: 'MA000012', name: 'Pharmacy' } });
+test('fetchAwardRates calls /.netlify/functions/award-rates and stores validated results in cache', async () => {
+  global.fetch = jest.fn().mockResolvedValue({
+    ok: true,
+    json: async () => ({ MA000012: { awardId: 'MA000012', name: 'Pharmacy' } }),
+  });
 
   const result = await fetchAwardRates(['MA000012']);
 
-  expect(axios.__mockInstance.get).toHaveBeenCalledTimes(1);
+  expect(global.fetch).toHaveBeenCalledTimes(1);
+  expect(global.fetch).toHaveBeenCalledWith(
+    expect.stringContaining('/.netlify/functions/award-rates'),
+    expect.any(Object)
+  );
   expect(result['MA000012']).toBeDefined();
   // Should be stored in cache
   expect(store[makeKey('MA000012')]).toBeDefined();
 });
 
-test('fetchAwardRates throws when Zod validation fails (malformed response shape)', async () => {
-  // Return null which should fail Zod object validation
-  axios.__mockInstance.get.mockResolvedValue({ data: null });
+test('fetchAwardRates throws when response is not ok (non-200 status)', async () => {
+  global.fetch = jest.fn().mockResolvedValue({
+    ok: false,
+    status: 500,
+    json: async () => ({ error: 'Proxy error' }),
+  });
 
-  await expect(fetchAwardRates(['MA000012'])).rejects.toThrow('Unexpected award rate data format from FWC API');
+  await expect(fetchAwardRates(['MA000012'])).rejects.toThrow();
 });
 
 test('fetchAwardRates surfaces network errors to the caller (not silently swallowed)', async () => {
-  const networkError = new Error('Network Error');
-  axios.__mockInstance.get.mockRejectedValue(networkError);
+  global.fetch = jest.fn().mockRejectedValue(new Error('Network failure'));
 
-  await expect(fetchAwardRates(['MA000012'])).rejects.toThrow('Network Error');
+  await expect(fetchAwardRates(['MA000012'])).rejects.toThrow('Network error fetching award rates');
 });

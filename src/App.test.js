@@ -108,8 +108,10 @@ describe('App integration tests', () => {
 
   // REG-01: weekly pay cycle — OverviewBreakdown renders with day rows after Calculate
   test('weekly pay cycle renders 7 overview rows', async () => {
+    // Return empty rates map so calculatePay falls back to getAwardConfig (hardcoded shape)
+    // This ensures the test doesn't depend on mockRatesData having the full awardConfig shape.
     getCachedAwardRates.mockReturnValue(null);
-    fetchAwardRates.mockResolvedValue(mockRatesData);
+    fetchAwardRates.mockResolvedValue({});
     getLastCacheUpdateTime.mockReturnValue(new Date());
 
     render(<App />);

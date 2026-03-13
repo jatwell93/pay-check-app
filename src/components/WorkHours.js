@@ -1,6 +1,6 @@
 import React from 'react';
 
-const WorkHours = ({ weeklyData, handleTimeChange, handlePublicHolidayChange, calculatePay }) => {
+const WorkHours = ({ weeklyData, handleTimeChange, handlePublicHolidayChange, calculatePay, isLoading }) => {
   return <div className="mb-8 p-4 border rounded-md bg-gray-50">
         <h2 className="text-xl font-semibold mb-4 text-blue-700">Work Hours</h2>
         
@@ -45,8 +45,9 @@ const WorkHours = ({ weeklyData, handleTimeChange, handlePublicHolidayChange, ca
         
         <div className="mt-6 flex justify-center">
           <button
-            className="px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition"
+            className="px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={calculatePay}
+            disabled={isLoading}
           >
             Calculate Pay
           </button>

@@ -178,7 +178,11 @@ const App = () => {
 
   // Calculate weekly pay
       const calculatePay = () => {
-        const selectedAwardConfig = getAwardConfig(selectedAward);
+        // Use live rates from state if available; fall back to hardcoded awardConfig.js
+        // awardRates[selectedAward] must have the full penaltyConfig + baseRates + allowances shape
+        const selectedAwardConfig = (awardRates && awardRates[selectedAward])
+          ? awardRates[selectedAward]
+          : getAwardConfig(selectedAward);
         let baseRate;
         if (classification === 'above-award') {
           if(customRate){
@@ -367,7 +371,7 @@ const App = () => {
           allowanceConfig={currentAwardConfig.allowances}
         />
       </div>
-      <WorkHours weeklyData={weeklyData} handleTimeChange={handleTimeChange} handlePublicHolidayChange={handlePublicHolidayChange} calculatePay={calculatePay}/>
+      <WorkHours weeklyData={weeklyData} handleTimeChange={handleTimeChange} handlePublicHolidayChange={handlePublicHolidayChange} calculatePay={calculatePay} isLoading={awardLoading}/>
       <OverviewBreakdown
         results={results}
         selectedDayIndex={selectedDayIndex}
