@@ -1,5 +1,3 @@
-import axios from 'axios';
-import axiosRetry from 'axios-retry';
 import { z } from 'zod';
 
 // Cache configuration
@@ -14,30 +12,12 @@ function createCacheKey(awardId) {
   return CACHE_KEY_PREFIX + '_' + awardId;
 }
 
-// Axios instance with FWC API base URL and timeout
-const apiClient = axios.create({
-  baseURL: process.env.REACT_APP_FWC_API_BASE_URL || 'https://api.fwc.gov.au',
-  timeout: 10000,
-  headers:
-    process.env.REACT_APP_FWC_API_KEY
-      ? { 'x-api-key': process.env.REACT_APP_FWC_API_KEY }
-      : {},
-});
-
-// Retry on network errors or 5xx only (not on 4xx — bad key, invalid award)
-axiosRetry(apiClient, {
-  retries: 3,
-  retryDelay: axiosRetry.exponentialDelay,
-  retryCondition: (error) => {
-    return !error.response || error.response.status >= 500;
-  },
-});
-
 // Schema is intentionally permissive (passthrough) — tighten once real FWC API response shape is confirmed in v2.
 const FWC_AWARD_SCHEMA = z.object({}).passthrough();
 
 /**
- * Fetch award rates from the FWC API for each awardId in the array.
+ * Fetch award rates from the Netlify proxy for each awardId in the array.
+ * Calls /.netlify/functions/award-rates (same-origin — avoids CORS).
  * Validates responses with Zod before caching.
  * Returns a map of { awardId: validatedData }.
  *
@@ -45,31 +25,53 @@ const FWC_AWARD_SCHEMA = z.object({}).passthrough();
  * @returns {Promise<Object>}
  */
 export async function fetchAwardRates(awardIds) {
-  let responses;
+  const idsString = awardIds.join(',');
+  const proxyUrl = `/.netlify/functions/award-rates?awardIds=${encodeURIComponent(idsString)}`;
+
+  let response;
   try {
-    responses = await Promise.all(
-      awardIds.map((id) => apiClient.get('/awards/' + id))
-    );
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+    try {
+      response = await fetch(proxyUrl, { signal: controller.signal });
+    } finally {
+      clearTimeout(timeoutId);
+    }
   } catch (error) {
-    // Re-throw network/HTTP errors to the caller (not silently swallowed)
-    throw error;
+    throw new Error(`Network error fetching award rates: ${error.message}`);
   }
 
-  const ratesMap = {};
-  for (let i = 0; i < awardIds.length; i++) {
-    const awardId = awardIds[i];
-    const responseData = responses[i].data;
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => ({}));
+    throw new Error(errorBody.error || `Proxy returned ${response.status}`);
+  }
 
-    // Validate with Zod before storing
-    const parseResult = FWC_AWARD_SCHEMA.safeParse(responseData);
+  const data = await response.json();
+
+  // data is expected to be keyed by awardId: { MA000012: {...}, MA000003: {...}, ... }
+  // This shape comes from FWC API via the proxy — exact structure TBD once API tested.
+  // hydrateAwardRates() will transform raw FWC data to awardConfig shape.
+  const ratesMap = {};
+  for (const awardId of awardIds) {
+    const rawAwardData = data[awardId];
+
+    if (!rawAwardData) {
+      // FWC didn't return this award — skip (caller handles partial results)
+      console.warn(`No data returned for award ${awardId}`);
+      continue;
+    }
+
+    // Validate with Zod before caching (permissive passthrough until FWC shape confirmed)
+    const parseResult = FWC_AWARD_SCHEMA.safeParse(rawAwardData);
     if (!parseResult.success) {
-      throw new Error('Unexpected award rate data format from FWC API');
+      console.error(`Validation failed for ${awardId}:`, parseResult.error);
+      throw new Error(`Unexpected response shape for award ${awardId}`);
     }
 
     const validated = parseResult.data;
     ratesMap[awardId] = validated;
 
-    // Cache the validated data with expiry timestamp
+    // Cache with TTL
     const cacheEntry = {
       data: validated,
       timestamp: Date.now(),
