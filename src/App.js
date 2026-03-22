@@ -178,9 +178,10 @@ const App = () => {
 
   // Calculate weekly pay
       const calculatePay = () => {
-        // Use live rates from state if available; fall back to hardcoded awardConfig.js
-        // awardRates[selectedAward] must have the full penaltyConfig + baseRates + allowances shape
-        const selectedAwardConfig = (awardRates && awardRates[selectedAward])
+        // Use live rates from state if available; fall back to hardcoded awardConfig.js.
+        // Guard for baseRates shape — raw FWC payRates array won't have it until
+        // the transformation layer is built in a future phase.
+        const selectedAwardConfig = (awardRates && awardRates[selectedAward]?.baseRates)
           ? awardRates[selectedAward]
           : getAwardConfig(selectedAward);
         let baseRate;

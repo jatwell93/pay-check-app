@@ -1,8 +1,60 @@
 // netlify/functions/award-rates.js
-// Server-side proxy: forwards FWC API requests without CORS restrictions.
+// Server-side proxy: forwards FWC MAPD API requests without CORS restrictions.
 // API key lives in Netlify environment vars only — never exposed to browser.
+//
+// API base: https://api.fwc.gov.au/api/v1
+// Auth: Ocp-Apim-Subscription-Key header
+// award_fixed_id = parseInt(awardCode.replace('MA0*', '')) — e.g. MA000012 → 12
 
-exports.handler = async function(event) {
+const FWC_BASE = 'https://api.fwc.gov.au/api/v1';
+const PAGE_LIMIT = 100; // API max is 100
+
+/**
+ * Fetch all pages of a paginated FWC endpoint.
+ * Returns the combined results array.
+ */
+async function fetchAllPages(path, apiKey, signal) {
+  const headers = {
+    'Ocp-Apim-Subscription-Key': apiKey,
+    'Accept': 'application/json',
+  };
+  let page = 1;
+  let allResults = [];
+
+  while (true) {
+    const sep = path.includes('?') ? '&' : '?';
+    const url = `${FWC_BASE}${path}${sep}limit=${PAGE_LIMIT}&page=${page}`;
+    const response = await fetch(url, { headers, signal });
+
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => '');
+      throw Object.assign(new Error(`FWC API ${response.status}: ${response.statusText}`), {
+        statusCode: response.status,
+        body: errorText,
+      });
+    }
+
+    const data = await response.json();
+    allResults = allResults.concat(data.results || []);
+
+    if (!data._meta?.has_more_results) break;
+    page++;
+  }
+
+  return allResults;
+}
+
+/**
+ * Extract award_fixed_id from an award code like "MA000012" → 12.
+ * The MAPD API uses integer fixed_ids that match the numeric suffix.
+ */
+function codeToFixedId(awardCode) {
+  const match = awardCode.match(/MA0*(\d+)/i);
+  if (!match) throw new Error(`Invalid award code: ${awardCode}`);
+  return parseInt(match[1], 10);
+}
+
+exports.handler = async function (event) {
   const { awardIds } = event.queryStringParameters || {};
 
   if (!awardIds) {
@@ -23,51 +75,48 @@ exports.handler = async function(event) {
     };
   }
 
-  // AbortController gives us a 10-second timeout on slow FWC responses
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10000);
+  const timeoutId = setTimeout(() => controller.abort(), 20000); // 20s for paginated fetches
 
   try {
-    const response = await fetch(
-      `https://api.fwc.gov.au/awardrates/find?awardIds=${encodeURIComponent(awardIds)}`,
-      {
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Accept': 'application/json',
-        },
-        signal: controller.signal,
-      }
+    const codes = awardIds.split(',').map((s) => s.trim()).filter(Boolean);
+
+    // Fetch pay-rates for all awards in parallel
+    const results = await Promise.all(
+      codes.map(async (code) => {
+        const fixedId = codeToFixedId(code);
+        const payRates = await fetchAllPages(
+          `/awards/${fixedId}/pay-rates`,
+          apiKey,
+          controller.signal
+        );
+        return { code, fixedId, payRates };
+      })
     );
+
     clearTimeout(timeoutId);
 
-    if (!response.ok) {
-      const errorText = await response.text().catch(() => '');
-      console.error(`FWC API error ${response.status}:`, errorText);
-      return {
-        statusCode: response.status,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          error: `FWC API returned ${response.status}: ${response.statusText}`,
-        }),
-      };
+    // Shape response as { MA000012: { award_fixed_id, payRates }, ... }
+    const responseData = {};
+    for (const { code, fixedId, payRates } of results) {
+      responseData[code] = { award_fixed_id: fixedId, payRates };
     }
 
-    const data = await response.json();
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      body: JSON.stringify(responseData),
     };
   } catch (error) {
     clearTimeout(timeoutId);
     const isTimeout = error.name === 'AbortError';
     console.error('Award rates proxy error:', error.message);
     return {
-      statusCode: 500,
+      statusCode: error.statusCode || 500,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         error: isTimeout
-          ? 'Request timed out after 10 seconds — FWC API may be slow'
+          ? 'Request timed out — FWC API may be slow'
           : error.message || 'Failed to fetch award rates',
       }),
     };
