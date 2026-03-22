@@ -71,11 +71,14 @@ describe('AwardSelector', () => {
     expect(onRefresh).toHaveBeenCalledTimes(1);
   });
 
-  test('renders error string when error prop is a non-null string', () => {
+  // D-09: error is passed as prop for API compatibility but AwardSelector does NOT render its own error element.
+  // Error display is handled by the App.js error banner.
+  test('does NOT render an error element even when error prop is a non-null string', () => {
     render(<AwardSelector {...defaultProps} error="Couldn't load award rates. Using Pharmacy defaults — Refresh to try again." />);
-    expect(screen.getByText("Couldn't load award rates. Using Pharmacy defaults — Refresh to try again.")).toBeInTheDocument();
+    // The error text should NOT appear in AwardSelector (it is shown in the App.js banner instead)
+    expect(screen.queryByText("Couldn't load award rates. Using Pharmacy defaults — Refresh to try again.")).not.toBeInTheDocument();
     const errorDiv = document.querySelector('.award-selector__error');
-    expect(errorDiv).toBeInTheDocument();
+    expect(errorDiv).not.toBeInTheDocument();
   });
 
   test('does NOT render error element when error is null', () => {
@@ -98,13 +101,26 @@ describe('AwardSelector', () => {
   test('renders successMessage when it is a non-null string', () => {
     render(<AwardSelector {...defaultProps} successMessage="Rates updated" />);
     expect(screen.getByText('Rates updated')).toBeInTheDocument();
-    const successDiv = document.querySelector('.award-selector__success');
-    expect(successDiv).toBeInTheDocument();
   });
 
   test('does NOT render success element when successMessage is null', () => {
     render(<AwardSelector {...defaultProps} successMessage={null} />);
-    const successDiv = document.querySelector('.award-selector__success');
-    expect(successDiv).not.toBeInTheDocument();
+    expect(screen.queryByText(/rates updated/i)).not.toBeInTheDocument();
+  });
+
+  // NEW: successMessage renders with green text styling
+  test('successMessage renders with green text class when provided', () => {
+    const { container } = render(<AwardSelector {...defaultProps} successMessage="Rates refreshed successfully" />);
+    const successEl = container.querySelector('.text-green-600');
+    expect(successEl).toBeInTheDocument();
+    expect(successEl).toHaveTextContent('Rates refreshed successfully');
+  });
+
+  // NEW: refresh button is disabled and shows "Refreshing..." when isLoading is true (combined)
+  test('refresh button is disabled and shows "Refreshing..." text when isLoading is true', () => {
+    render(<AwardSelector {...defaultProps} isLoading={true} />);
+    const button = screen.getByRole('button');
+    expect(button).toBeDisabled();
+    expect(button).toHaveTextContent('Refreshing...');
   });
 });
