@@ -5,21 +5,24 @@ import { formatDistanceToNow } from 'date-fns';
  * AwardSelector — pure presentational component.
  * No internal state, no API calls.
  * All behavior is controlled via props.
+ *
+ * Note: the `error` prop is accepted for API compatibility but is NOT rendered here.
+ * Error display is handled by the App.js error banner (D-09).
  */
 function AwardSelector({
   selectedAward,
   onSelectAward,
   awardMetadata,
   isLoading,
-  error,
+  error, // eslint-disable-line no-unused-vars — accepted for API compat, not rendered
   lastUpdated,
   onRefresh,
   successMessage,
 }) {
   return (
-    <div className="award-selector">
-      <div className="award-selector__row">
-        <label htmlFor="award-select" className="award-selector__label">
+    <div className="mb-6 bg-white border border-gray-200 rounded-md shadow-sm p-4">
+      <div className="flex flex-wrap items-center gap-3">
+        <label htmlFor="award-select" className="text-sm font-medium text-gray-700 whitespace-nowrap">
           Award:
         </label>
         <select
@@ -27,7 +30,7 @@ function AwardSelector({
           value={selectedAward}
           onChange={(e) => onSelectAward(e.target.value)}
           disabled={isLoading}
-          className="award-selector__select"
+          className="flex-1 min-w-0 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
         >
           {Object.entries(awardMetadata).map(([awardId, meta]) => (
             <option key={awardId} value={awardId}>
@@ -38,28 +41,20 @@ function AwardSelector({
         <button
           onClick={onRefresh}
           disabled={isLoading}
-          className="award-selector__refresh-btn"
+          className="px-4 py-2 bg-slate-700 text-white text-sm font-medium rounded-md hover:bg-slate-800 disabled:bg-gray-400 disabled:cursor-not-allowed whitespace-nowrap"
         >
           {isLoading ? 'Refreshing...' : 'Refresh Rates'}
         </button>
       </div>
 
       {lastUpdated && (
-        <div className="award-selector__timestamp">
+        <p className="text-xs text-gray-500 mt-2">
           Rates last updated {formatDistanceToNow(lastUpdated, { addSuffix: true })}
-        </div>
-      )}
-
-      {error && (
-        <div className="award-selector__error">
-          {error}
-        </div>
+        </p>
       )}
 
       {successMessage && (
-        <div className="award-selector__success">
-          {successMessage}
-        </div>
+        <p className="text-xs text-green-600 font-medium mt-2">{successMessage}</p>
       )}
     </div>
   );
