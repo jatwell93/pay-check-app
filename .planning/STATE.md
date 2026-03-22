@@ -4,7 +4,7 @@ milestone: v1.1
 milestone_name: API Integration & UX Redesign
 current_phase: 02
 status: unknown
-last_updated: "2026-03-22T05:50:28.362Z"
+last_updated: "2026-03-22T05:50:43.201Z"
 progress:
   total_phases: 3
   completed_phases: 1
@@ -61,6 +61,8 @@ Plan: 4 of 4
 - [Phase 02-tailwind-css-redesign]: Install tailwindcss@3 (not v4) — npm resolves v4 by default; v4 incompatible with CRA 5.0.1 (no config file, no PostCSS plugin pattern)
 - [Phase 02-tailwind-css-redesign]: Pass error={null} to AwardSelector — App.js banner is primary error UI (D-09/D-10); prevents duplicate error text causing findByText test failures
 - [Phase 02]: AwardSelector error prop accepted but not rendered (D-09) — App.js banner is primary error display layer, prevents duplicate error text in child components
+- [Phase 02-tailwind-css-redesign]: Weekly summary visibility gated on actualPaidByDay.some() not totalActualPaid — matches D-13 spec
+- [Phase 02-tailwind-css-redesign]: ImportantNotes.js component accepts awardName and overtimeThresholdHours props — decouples notes from App.js
 
 ### Known Issues
 
