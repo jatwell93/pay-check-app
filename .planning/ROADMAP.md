@@ -49,9 +49,9 @@ Full archive: `.planning/milestones/v1.0-ROADMAP.md`
 **Plans:** 3/3 plans complete
 
 Plans:
-- [ ] 01-01-PLAN.md — Netlify Function proxy + netlify.toml + Wave 0 test stubs
-- [ ] 01-02-PLAN.md — Redirect service to proxy + wire calculatePay to awardRates state + Calculate button disabled during load
-- [ ] 01-03-PLAN.md — Human verification checkpoint (netlify dev end-to-end)
+- [x] 01-01-PLAN.md — Netlify Function proxy + netlify.toml + Wave 0 test stubs
+- [x] 01-02-PLAN.md — Redirect service to proxy + wire calculatePay to awardRates state + Calculate button disabled during load
+- [x] 01-03-PLAN.md — Human verification checkpoint (netlify dev end-to-end)
 
 **Success Criteria** (what must be TRUE when complete):
 1. App loads without CORS errors — FWC API calls go through the Netlify Function proxy
@@ -121,7 +121,7 @@ Plans:
 
 | Phase | Goal | Plans Complete | Status | Completed |
 |-------|------|----------------|--------|-----------|
-| 1 - Netlify Proxy & Live Rate Hydration | 3/3 | Complete   | 2026-03-13 | — |
+| 1 - Netlify Proxy & Live Rate Hydration | Proxy + live rate hydration | 3/3 | Complete | 2026-03-20 |
 | 2 - Tailwind CSS Redesign | Full Tailwind redesign | 0/? | Not started | — |
 | 3 - Polish | Cache indicator + retry | 0/? | Not started | — |
 
