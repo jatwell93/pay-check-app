@@ -79,12 +79,12 @@ Plans:
 
 **Requirements mapped:** UX-01, UX-02
 
-**Plans:** 1/4 plans executed
+**Plans:** 3/4 plans executed
 
 Plans:
 - [x] 02-01-PLAN.md — Install Tailwind CSS v3, configure index.css/tailwind.config.js, redesign App.js shell (header, loading overlay, error banner)
-- [ ] 02-02-PLAN.md — Redesign AwardSelector, EmployeeDetails, Allowances with Tailwind form styling
-- [ ] 02-03-PLAN.md — Redesign WorkHours (horizontal scroll table), OverviewBreakdown (weekly summary row), ImportantNotes
+- [x] 02-02-PLAN.md — Redesign AwardSelector, EmployeeDetails, Allowances with Tailwind form styling
+- [x] 02-03-PLAN.md — Redesign WorkHours (horizontal scroll table), OverviewBreakdown (weekly summary row), ImportantNotes
 - [ ] 02-04-PLAN.md — Human verification checkpoint (visual + mobile responsive + full test suite)
 
 **Success Criteria** (what must be TRUE when complete):
@@ -131,7 +131,7 @@ Plans:
 | Phase | Goal | Plans Complete | Status | Completed |
 |-------|------|----------------|--------|-----------|
 | 1 - Netlify Proxy & Live Rate Hydration | Proxy + live rate hydration | 3/3 | Complete | 2026-03-20 |
-| 2 - Tailwind CSS Redesign | Full Tailwind redesign | 1/4 | In Progress|  |
+| 2 - Tailwind CSS Redesign | Full Tailwind redesign | 3/4 | In Progress|  |
 | 3 - Polish | Cache indicator + retry | 0/? | Not started | — |
 
 ---
