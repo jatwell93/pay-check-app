@@ -178,4 +178,29 @@ describe('App integration tests', () => {
       expect(screen.queryByText("Couldn't load award rates. Using Pharmacy defaults — Refresh to try again.")).not.toBeInTheDocument();
     });
   });
+
+  test('handleRefreshRates shows D-08 error wording when refresh fails after all retries', async () => {
+    getCachedAwardRates.mockReturnValue(null);
+    // First call (initial load) resolves; subsequent call (manual refresh) rejects
+    fetchAwardRates
+      .mockResolvedValueOnce(mockRatesData)
+      .mockRejectedValue(new Error('Network error'));
+    getLastCacheUpdateTime.mockReturnValue(new Date());
+
+    render(<App />);
+
+    // Wait for initial load to complete (select is enabled)
+    await waitFor(() => {
+      expect(document.getElementById('award-select')).not.toBeDisabled();
+    });
+
+    // Click "Refresh Rates" button
+    fireEvent.click(screen.getByText('Refresh Rates'));
+
+    // D-08: exact error wording must appear in banner
+    const errorMsg = await screen.findByText(
+      "Couldn't connect to Fair Work Commission — using saved rates"
+    );
+    expect(errorMsg).toBeInTheDocument();
+  });
 });
