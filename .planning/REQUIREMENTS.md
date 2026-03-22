@@ -15,7 +15,7 @@ Requirements for this milestone. Each maps to a roadmap phase.
 
 ### UX & Styling
 
-- [ ] **UX-01**: All app components are restyled with Tailwind CSS using a clean professional look (navy/white palette)
+- [x] **UX-01**: All app components are restyled with Tailwind CSS using a clean professional look (navy/white palette)
 - [ ] **UX-02**: Pay verification status indicators use green for "Paid Correctly" and red for "Underpaid" throughout the UI
 - [x] **UX-03**: Loading states (spinner while fetching rates) and error messages (when API fails) are displayed clearly so the user always knows the app's status
 
@@ -59,7 +59,7 @@ Tracked but not in current roadmap.
 | PROXY-02 | Phase 1 | Complete |
 | PROXY-03 | Phase 1 | Complete |
 | UX-03 | Phase 1 | Complete |
-| UX-01 | Phase 2 | Pending |
+| UX-01 | Phase 2 | Complete |
 | UX-02 | Phase 2 | Pending |
 | POLISH-01 | Phase 3 | Pending |
 
