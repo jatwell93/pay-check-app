@@ -53,9 +53,9 @@ A worker can enter their shifts, see exactly how much they should have been paid
 
 - [ ] Netlify Functions proxy resolves CORS and enables real FWC API calls
 - [ ] Live FWC award rates hydrate `calculatePay` at runtime
-- [ ] App styled with Tailwind CSS — clean professional look, navy/white palette
-- [ ] Status indicators (Paid Correctly / Underpaid) use green/red colour coding
-- [ ] Loading states and error messages shown clearly when API calls fail or are slow
+- [x] App styled with Tailwind CSS — clean professional look, navy/white palette (Validated in Phase 02: tailwind-css-redesign)
+- [x] Status indicators (Paid Correctly / Underpaid) use green/red colour coding (Validated in Phase 02: tailwind-css-redesign)
+- [x] Loading states and error messages shown clearly when API calls fail or are slow (Validated in Phase 02: tailwind-css-redesign)
 - [ ] Graceful fallback to hardcoded rates when proxy is unreachable
 
 ### Out of Scope
