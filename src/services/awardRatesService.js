@@ -28,59 +28,72 @@ export async function fetchAwardRates(awardIds) {
   const idsString = awardIds.join(',');
   const proxyUrl = `/.netlify/functions/award-rates?awardIds=${encodeURIComponent(idsString)}`;
 
-  let response;
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000);
+  let lastError;
+  for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      response = await fetch(proxyUrl, { signal: controller.signal });
-    } finally {
-      clearTimeout(timeoutId);
+      let response;
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+        try {
+          response = await fetch(proxyUrl, { signal: controller.signal });
+        } finally {
+          clearTimeout(timeoutId);
+        }
+      } catch (error) {
+        throw new Error(`Network error fetching award rates: ${error.message}`);
+      }
+
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw new Error(errorBody.error || `Proxy returned ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // data is expected to be keyed by awardId: { MA000012: {...}, MA000003: {...}, ... }
+      // This shape comes from FWC API via the proxy — exact structure TBD once API tested.
+      // hydrateAwardRates() will transform raw FWC data to awardConfig shape.
+      const ratesMap = {};
+      for (const awardId of awardIds) {
+        const rawAwardData = data[awardId];
+
+        if (!rawAwardData) {
+          // FWC didn't return this award — skip (caller handles partial results)
+          console.warn(`No data returned for award ${awardId}`);
+          continue;
+        }
+
+        // Validate with Zod before caching (permissive passthrough until FWC shape confirmed)
+        const parseResult = FWC_AWARD_SCHEMA.safeParse(rawAwardData);
+        if (!parseResult.success) {
+          console.error(`Validation failed for ${awardId}:`, parseResult.error);
+          throw new Error(`Unexpected response shape for award ${awardId}`);
+        }
+
+        const validated = parseResult.data;
+        ratesMap[awardId] = validated;
+
+        // Cache with TTL
+        const cacheEntry = {
+          data: validated,
+          timestamp: Date.now(),
+          expiry: Date.now() + CACHE_TTL_MS,
+        };
+        localStorage.setItem(createCacheKey(awardId), JSON.stringify(cacheEntry));
+      }
+
+      return ratesMap;  // Success — return early, skip remaining retry attempts
+    } catch (error) {
+      lastError = error;
+      if (attempt < 2) {
+        // Exponential backoff: 1s → 2s → 4s (per D-05, Claude's discretion)
+        const backoffMs = Math.pow(2, attempt) * 1000;
+        await new Promise(resolve => setTimeout(resolve, backoffMs));
+      }
     }
-  } catch (error) {
-    throw new Error(`Network error fetching award rates: ${error.message}`);
   }
-
-  if (!response.ok) {
-    const errorBody = await response.json().catch(() => ({}));
-    throw new Error(errorBody.error || `Proxy returned ${response.status}`);
-  }
-
-  const data = await response.json();
-
-  // data is expected to be keyed by awardId: { MA000012: {...}, MA000003: {...}, ... }
-  // This shape comes from FWC API via the proxy — exact structure TBD once API tested.
-  // hydrateAwardRates() will transform raw FWC data to awardConfig shape.
-  const ratesMap = {};
-  for (const awardId of awardIds) {
-    const rawAwardData = data[awardId];
-
-    if (!rawAwardData) {
-      // FWC didn't return this award — skip (caller handles partial results)
-      console.warn(`No data returned for award ${awardId}`);
-      continue;
-    }
-
-    // Validate with Zod before caching (permissive passthrough until FWC shape confirmed)
-    const parseResult = FWC_AWARD_SCHEMA.safeParse(rawAwardData);
-    if (!parseResult.success) {
-      console.error(`Validation failed for ${awardId}:`, parseResult.error);
-      throw new Error(`Unexpected response shape for award ${awardId}`);
-    }
-
-    const validated = parseResult.data;
-    ratesMap[awardId] = validated;
-
-    // Cache with TTL
-    const cacheEntry = {
-      data: validated,
-      timestamp: Date.now(),
-      expiry: Date.now() + CACHE_TTL_MS,
-    };
-    localStorage.setItem(createCacheKey(awardId), JSON.stringify(cacheEntry));
-  }
-
-  return ratesMap;
+  throw lastError;
 }
 
 /**

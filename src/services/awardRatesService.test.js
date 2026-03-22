@@ -152,61 +152,40 @@ test('fetchAwardRates surfaces network errors to the caller (not silently swallo
 
 // --- fetchAwardRates retry logic ---
 
-// Helper: flush pending microtasks + advance fake timers by a given amount
-async function flushAndAdvance(ms) {
-  jest.advanceTimersByTime(ms);
-  // Multiple flushes to let promise chains fully resolve
-  await Promise.resolve();
-  await Promise.resolve();
-  await Promise.resolve();
-  await Promise.resolve();
-}
-
 test('fetchAwardRates retries 3 times on persistent network error before throwing', async () => {
-  jest.useFakeTimers();
+  // Mock setTimeout: run backoff delays (ms < 15000) immediately; leave abort timer (15000ms) alone
+  jest.spyOn(global, 'setTimeout').mockImplementation((fn, ms) => {
+    if (ms < 15000) { fn(); return 0; }
+    return jest.requireActual('timers').setTimeout(fn, ms);
+  });
   global.fetch = jest.fn().mockRejectedValue(new Error('Network failure'));
 
-  // Attach rejection handler immediately to avoid unhandled rejection crash
-  let caught;
-  const promise = fetchAwardRates(['MA000012']).catch(err => { caught = err; });
-
-  // Flush attempt 0 microtasks, then advance past 1s backoff, then attempt 1, then 2s, then attempt 2
-  await flushAndAdvance(1000);  // attempt 0 fails, 1s backoff passes, attempt 1 starts
-  await flushAndAdvance(2000);  // attempt 1 fails, 2s backoff passes, attempt 2 starts
-  await flushAndAdvance(4000);  // attempt 2 fails, no more retries
-  await promise;
-
-  expect(caught).toBeDefined();
-  expect(caught.message).toContain('Network error fetching award rates');
+  await expect(fetchAwardRates(['MA000012'])).rejects.toThrow('Network error fetching award rates');
   expect(global.fetch).toHaveBeenCalledTimes(3);
-
-  jest.useRealTimers();
 });
 
 test('fetchAwardRates retries 3 times on persistent HTTP 5xx error before throwing', async () => {
-  jest.useFakeTimers();
+  // Mock setTimeout: run backoff delays (ms < 15000) immediately; leave abort timer (15000ms) alone
+  jest.spyOn(global, 'setTimeout').mockImplementation((fn, ms) => {
+    if (ms < 15000) { fn(); return 0; }
+    return jest.requireActual('timers').setTimeout(fn, ms);
+  });
   global.fetch = jest.fn().mockResolvedValue({
     ok: false,
     status: 503,
     json: async () => ({ error: 'Service Unavailable' }),
   });
 
-  let caught;
-  const promise = fetchAwardRates(['MA000012']).catch(err => { caught = err; });
-
-  await flushAndAdvance(1000);
-  await flushAndAdvance(2000);
-  await flushAndAdvance(4000);
-  await promise;
-
-  expect(caught).toBeDefined();
+  await expect(fetchAwardRates(['MA000012'])).rejects.toThrow();
   expect(global.fetch).toHaveBeenCalledTimes(3);
-
-  jest.useRealTimers();
 });
 
 test('fetchAwardRates resolves successfully if second attempt succeeds (retry recovers)', async () => {
-  jest.useFakeTimers();
+  // Mock setTimeout: run backoff delays (ms < 15000) immediately; leave abort timer (15000ms) alone
+  jest.spyOn(global, 'setTimeout').mockImplementation((fn, ms) => {
+    if (ms < 15000) { fn(); return 0; }
+    return jest.requireActual('timers').setTimeout(fn, ms);
+  });
   global.fetch = jest.fn()
     .mockRejectedValueOnce(new Error('Transient failure'))
     .mockResolvedValueOnce({
@@ -214,20 +193,7 @@ test('fetchAwardRates resolves successfully if second attempt succeeds (retry re
       json: async () => ({ MA000012: { awardId: 'MA000012', name: 'Pharmacy' } }),
     });
 
-  let result;
-  let caught;
-  const promise = fetchAwardRates(['MA000012'])
-    .then(r => { result = r; })
-    .catch(err => { caught = err; });
-
-  // Advance past 1s backoff for attempt 0 failing, attempt 1 should succeed
-  await flushAndAdvance(1000);
-  await flushAndAdvance(1000);  // extra flush to let attempt 1 complete
-  await promise;
-
-  expect(caught).toBeUndefined();
+  const result = await fetchAwardRates(['MA000012']);
   expect(result['MA000012']).toBeDefined();
   expect(global.fetch).toHaveBeenCalledTimes(2);
-
-  jest.useRealTimers();
 });
