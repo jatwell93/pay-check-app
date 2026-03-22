@@ -146,4 +146,36 @@ describe('App integration tests', () => {
     // App.js passes results.dailyBreakdown.length as cycleLength automatically.
     expect(true).toBe(true);
   });
+
+  test('header renders with title "Pay Check App"', async () => {
+    getCachedAwardRates.mockReturnValue(null);
+    fetchAwardRates.mockResolvedValue(mockRatesData);
+    getLastCacheUpdateTime.mockReturnValue(new Date());
+
+    render(<App />);
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Pay Check App');
+    });
+  });
+
+  test('error banner dismiss: clicking × button removes the banner', async () => {
+    getCachedAwardRates.mockReturnValue(null);
+    fetchAwardRates.mockRejectedValue(new Error('Network error'));
+    getLastCacheUpdateTime.mockReturnValue(null);
+
+    render(<App />);
+
+    // Wait for error banner to appear
+    await screen.findByText("Couldn't load award rates. Using Pharmacy defaults — Refresh to try again.");
+
+    // Click the dismiss button
+    const dismissBtn = screen.getByRole('button', { name: /dismiss error/i });
+    fireEvent.click(dismissBtn);
+
+    // Banner should be gone
+    await waitFor(() => {
+      expect(screen.queryByText("Couldn't load award rates. Using Pharmacy defaults — Refresh to try again.")).not.toBeInTheDocument();
+    });
+  });
 });
