@@ -21,7 +21,7 @@ Requirements for this milestone. Each maps to a roadmap phase.
 
 ### Polish
 
-- [ ] **POLISH-01**: A cache status indicator shows when rates were last fetched and a manual refresh button lets the user trigger a fresh rate fetch
+- [x] **POLISH-01**: A cache status indicator shows when rates were last fetched and a manual refresh button lets the user trigger a fresh rate fetch
 
 ## Deferred to v2
 
@@ -61,7 +61,7 @@ Tracked but not in current roadmap.
 | UX-03 | Phase 1 | Complete |
 | UX-01 | Phase 2 | Complete |
 | UX-02 | Phase 2 | Complete |
-| POLISH-01 | Phase 3 | Pending |
+| POLISH-01 | Phase 3 | Complete |
 
 **Coverage:**
 - v1.1 requirements: 7 total

@@ -2,21 +2,21 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: API Integration & UX Redesign
-current_phase: 3
+current_phase: 03
 status: unknown
-last_updated: "2026-03-22T06:45:06.764Z"
+last_updated: "2026-03-22T08:17:54.286Z"
 progress:
   total_phases: 3
-  completed_phases: 2
-  total_plans: 7
-  completed_plans: 7
+  completed_phases: 3
+  total_plans: 8
+  completed_plans: 8
 ---
 
 # STATE: Pay Check App
 
 **Project:** Pay Check App — API Integration & UX Redesign
 **Last Updated:** 2026-03-20
-**Current Phase:** 3
+**Current Phase:** 03
 
 ---
 
@@ -25,14 +25,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-09)
 
 **Core value:** A worker can enter their shifts, see exactly how much they should have been paid and why, and know with confidence whether they have been underpaid.
-**Current focus:** Phase 03 — Polish
+**Current focus:** Phase 03 — polish
 
 ---
 
 ## Current Position
 
-Phase: 02 (tailwind-css-redesign) — COMPLETE
-Phase: 03 (polish) — NEXT
+Phase: 03 (polish) — EXECUTING
+Plan: 1 of 1
 
 ## Accumulated Context
 
@@ -64,6 +64,9 @@ Phase: 03 (polish) — NEXT
 - [Phase 02-tailwind-css-redesign]: Weekly summary visibility gated on actualPaidByDay.some() not totalActualPaid — matches D-13 spec
 - [Phase 02-tailwind-css-redesign]: ImportantNotes.js component accepts awardName and overtimeThresholdHours props — decouples notes from App.js
 - [Phase 02-tailwind-css-redesign]: Phase 02 visual verification performed manually — automated tests confirm logic correctness but visual/responsive fidelity requires human sign-off
+- [Phase 03-polish]: Jest 27 setTimeout spy for retry tests: bypass backoff delays (ms < 15000) immediately while leaving AbortController timer real — runAllTimersAsync not available in Jest 27
+- [Phase 03-polish]: D-03/D-04: clearCache() called with no argument before fetchAwardRates to force fresh API call on manual refresh
+- [Phase 03-polish]: D-08: refresh failure error wording locked to 'Couldn't connect to Fair Work Commission — using saved rates'
 
 ### Known Issues
 

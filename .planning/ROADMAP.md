@@ -32,7 +32,7 @@ Full archive: `.planning/milestones/v1.0-ROADMAP.md`
 
 - [x] **Phase 1: Netlify Proxy & Live Rate Hydration** — Route FWC API calls through a Netlify Function to bypass CORS, wire live rates into calculatePay, implement fallback and loading/error states (completed 2026-03-13)
 - [x] **Phase 2: Tailwind CSS Redesign** — Full Tailwind CSS redesign of all components with navy/white theme and green/red status indicators (completed 2026-03-22)
-- [ ] **Phase 3: Polish** — Cache refresh indicator, wire clearCache() to UI, retry logic, user-friendly error messages
+- [x] **Phase 3: Polish** — Cache refresh indicator, wire clearCache() to UI, retry logic, user-friendly error messages (completed 2026-03-22)
 
 ---
 
@@ -112,10 +112,10 @@ Plans:
 
 **Requirements mapped:** POLISH-01
 
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
-- [ ] 03-01-PLAN.md — Retry logic in fetchAwardRates, wire clearCache() in handleRefreshRates, fix error message wording per D-08
+- [x] 03-01-PLAN.md — Retry logic in fetchAwardRates, wire clearCache() in handleRefreshRates, fix error message wording per D-08
 
 **Success Criteria** (what must be TRUE when complete):
 1. A cache status line shows "Rates last updated: [date]" near the award selector
@@ -137,7 +137,7 @@ Plans:
 |-------|------|----------------|--------|-----------|
 | 1 - Netlify Proxy & Live Rate Hydration | Proxy + live rate hydration | 3/3 | Complete | 2026-03-20 |
 | 2 - Tailwind CSS Redesign | Full Tailwind redesign | 4/4 | Complete   | 2026-03-22 |
-| 3 - Polish | Cache indicator + retry | 0/1 | Not started | — |
+| 3 - Polish | Cache indicator + retry | 1/1 | Complete   | 2026-03-22 |
 
 ---
 
