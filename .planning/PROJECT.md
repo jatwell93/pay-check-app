@@ -6,15 +6,7 @@ A React single-page application that helps Australian workers verify they are be
 
 **Shipped v1.0:** Multi-award support (Pharmacy, Retail, Hospitality) with FWC API integration, award-agnostic penalty calculation engine, and week-level pay comparison with underpayment detection.
 
-## Current Milestone: v1.1 API Integration & UX Redesign
-
-**Goal:** Fix the broken FWC API integration via a Netlify Functions proxy, wire live rates into calculations, and give the app a full Tailwind-based professional redesign.
-
-**Target features:**
-- Netlify Functions proxy to resolve CORS and enable real FWC API calls
-- Live rate hydration — `calculatePay` reads from live FWC data, not hardcoded config
-- Full Tailwind CSS redesign — clean professional (navy/white, green/red status indicators)
-- Error handling & loading UX — loading states, clear failure messages, graceful fallback
+**Shipped v1.1:** Netlify Functions CORS proxy for live FWC rate fetching, full Tailwind CSS professional redesign (navy/white, green/red status indicators), mobile-responsive layout, and polish (retry logic, cache refresh, user-friendly errors).
 
 ## Core Value
 
@@ -46,38 +38,42 @@ A worker can enter their shifts, see exactly how much they should have been paid
 - ✓ Day-level drill-down shows segment breakdown via accordion — v1.0
 - ✓ User can enter actual paid amount and see discrepancy — v1.0
 - ✓ Penalty rate rules (evening threshold, Saturday/Sunday/PH multipliers) reflect selected award — v1.0
+- ✓ Netlify Functions proxy routes FWC API requests server-side (CORS resolved) — v1.1
+- ✓ `calculatePay` reads live FWC award rates via proxy with `awardConfig.js` shape-guard fallback — v1.1
+- ✓ App styled with Tailwind CSS — clean professional look, navy/white palette — v1.1
+- ✓ Status indicators (Paid Correctly / Underpaid) use green/red colour coding — v1.1
+- ✓ Loading states and error messages shown clearly when API calls fail or are slow — v1.1
+- ✓ Graceful fallback to hardcoded rates with user-friendly error message when proxy unreachable — v1.1
+- ✓ 3-attempt exponential backoff retry on proxy failure; manual "Refresh Rates" button wired to clearCache() — v1.1
 
 ### Active
 
-<!-- Current scope — what this project is building. -->
+<!-- Current scope — what this project is building next. -->
 
-- [ ] Netlify Functions proxy resolves CORS and enables real FWC API calls
-- [ ] Live FWC award rates hydrate `calculatePay` at runtime
-- [x] App styled with Tailwind CSS — clean professional look, navy/white palette (Validated in Phase 02: tailwind-css-redesign)
-- [x] Status indicators (Paid Correctly / Underpaid) use green/red colour coding (Validated in Phase 02: tailwind-css-redesign)
-- [x] Loading states and error messages shown clearly when API calls fail or are slow (Validated in Phase 02: tailwind-css-redesign)
-- [x] Graceful fallback to hardcoded rates when proxy is unreachable (Validated in Phase 03: polish — retry + error banner + clearCache wiring)
+*(To be defined in v2.0 milestone planning via `/gsd:new-milestone`)*
 
 ### Out of Scope
 
 - Payslip PDF/image upload and parsing — too complex, manual entry sufficient
 - All 121 modern awards at launch — 3 key awards shipped in v1.0; expand in v2
 - User accounts or login — stateless tool, no data persistence needed
-- Mobile app — web-first; responsive web sufficient
+- Mobile app — web-first; responsive web is now shipped (v1.1 Tailwind redesign) ✓
 - Legal advice or dispute lodging — informational tool only
-- FWC API live rate hydration in calculatePay — awardConfig.js is source of truth; API state retained for v2
+- FWC API full rate hydration in calculatePay — `hydrateAwardRates` stub deferred to v2 (175 raw records need non-trivial mapping)
+- All 121 modern awards — 3 key awards validate approach; expand in v2
 
 ## Context
 
-- **Codebase:** React 19 SPA (Create React App). All state in App.js. Business logic in helpers.js (minute-by-minute penalty calculation). Service layer in awardRatesService.js. Config in awardConfig.js. ~1,700 LOC source, 61 tests across 7 suites.
-- **Architecture:** `App.js` holds all state. Components are presentational. `calculatePayForTimePeriod` in `helpers.js` accepts `penaltyConfig` to support any award's penalty boundaries. `awardConfig.js` defines 3 awards (MA000012, MA000003, MA000009) with penalty configs, classifications, and allowances.
-- **FWC MAAPI v1:** Official Fair Work Commission API. Integration is live in `awardRatesService.js` with 90-day localStorage caching and Zod validation. API responses are cached but `calculatePay` currently reads from `awardConfig.js` directly — live rate hydration is deferred to v2.
-- **Known tech debt (non-blocking):** `awardRates` state in App.js retained for planned v2 API hydration; `act()` warnings in test console (pre-existing). Timer leak warning from retry backoff tests (cosmetic, tests pass).
+- **Codebase:** React 19 SPA (Create React App). All state in App.js. Business logic in helpers.js (minute-by-minute penalty calculation). Service layer in awardRatesService.js. Config in awardConfig.js. ~3,000 LOC source, 93 tests across 12 suites.
+- **Architecture:** `App.js` holds all state. Components are presentational (all Tailwind-styled as of v1.1). `calculatePayForTimePeriod` in `helpers.js` accepts `penaltyConfig` to support any award's penalty boundaries. `awardConfig.js` defines 3 awards (MA000012, MA000003, MA000009) with penalty configs, classifications, and allowances.
+- **Deployment:** Netlify (SPA with Netlify Functions proxy). `netlify.toml` configures build, functions dir (esbuild bundler), and SPA redirect rule. `FWC_API_KEY` is Netlify env var only — never bundled into client JS.
+- **FWC MAAPI v1:** Official Fair Work Commission API (Azure API Management, `Ocp-Apim-Subscription-Key` auth). Proxy at `netlify/functions/award-rates.js` with 3-attempt exponential backoff. 90-day localStorage caching. `hydrateAwardRates` is a passthrough stub — 175 raw pay-rate records not yet mapped to `calculatePay` shape (deferred to v2).
+- **Known tech debt (non-blocking):** `hydrateAwardRates` passthrough stub means live FWC rates not yet powering calculations (fallback to `awardConfig.js` always active). `act()` warnings in test console (pre-existing). `z.object({}).passthrough()` schema — permissive until FWC shape tightened in v2.
 
 ## Constraints
 
 - **Tech stack:** React SPA — must remain a static frontend with no backend server
-- **API key:** FWC MAAPI v1 subscription key handled client-side via `REACT_APP_FWC_API_KEY` env var
+- **API key:** FWC MAAPI v1 subscription key (`FWC_API_KEY`) is server-side only in Netlify env vars — never bundled into client JS
 - **Backwards compatibility:** Weekly and fortnightly pay cycle support maintained
 - **Penalty logic:** Minute-by-minute calculation in `helpers.js` is correct — extend via `penaltyConfig`, don't replace
 
@@ -95,6 +91,12 @@ A worker can enter their shifts, see exactly how much they should have been paid
 | `OverviewBreakdown` replaces PaySummary | Single output view is simpler than mode toggle | ✓ Good — cleaner UX, no toggle complexity |
 | Inline segment table in OverviewBreakdown | Avoid prop coupling with DetailedBreakdown | ✓ Good — self-contained, independently testable |
 | `actualPaidByDay` empty string = no input | Prevents false Underpaid on untouched rows | ✓ Good — correct UX, $0.01 threshold working |
+| Tailwind v3 (not v4) | CRA 5.0.1 incompatible with v4 (no config file, no PostCSS plugin) | ✓ Good — v3.4.19 works cleanly with CRA |
+| App-level error banner (not child props) | Single error source prevents duplicate text in tests | ✓ Good — AwardSelector error prop accepted but unused |
+| 3-attempt retry as for-loop (not library) | Service uses native fetch; no axios-retry available | ✓ Good — simple loop with Math.pow(2, attempt)*1000 |
+| Weekly summary visibility via actualPaidByDay | Show section as soon as any per-day amount entered (D-13) | ✓ Good — matches intended UX spec |
+| netlify dev [dev] block in netlify.toml | Required for function routing in local dev | ✓ Good — confirmed during Phase 1 verification |
+| hydrateAwardRates as passthrough stub | 175 raw records need non-trivial mapping; deferred | — Pending (v2: build mapping layer) |
 
 ---
-*Last updated: 2026-03-22 after Phase 03 complete — v1.1 milestone all phases done*
+*Last updated: 2026-03-22 after v1.1 milestone*
