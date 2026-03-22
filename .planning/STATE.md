@@ -4,7 +4,7 @@ milestone: v1.1
 milestone_name: API Integration & UX Redesign
 current_phase: 02
 status: unknown
-last_updated: "2026-03-22T05:55:09.085Z"
+last_updated: "2026-03-22T06:38:32.653Z"
 progress:
   total_phases: 3
   completed_phases: 2
@@ -25,14 +25,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-09)
 
 **Core value:** A worker can enter their shifts, see exactly how much they should have been paid and why, and know with confidence whether they have been underpaid.
-**Current focus:** Phase 02 — tailwind-css-redesign
+**Current focus:** Phase 03 — Polish
 
 ---
 
 ## Current Position
 
-Phase: 02 (tailwind-css-redesign) — EXECUTING
-Plan: 4 of 4
+Phase: 02 (tailwind-css-redesign) — COMPLETE
+Phase: 03 (polish) — NEXT
 
 ## Accumulated Context
 
@@ -67,8 +67,6 @@ Plan: 4 of 4
 
 ### Known Issues
 
-- App title still says "Pharmacy Industry Award Pay Calculator" (not updated for multi-award) — will be fixed in Phase 02 Tailwind redesign
-- UI is completely unstyled (browser defaults) — v1.0 built components but no CSS applied; Phase 02 addresses this
 - hydrateAwardRates is a passthrough stub — live FWC rates flow through proxy but are not yet mapped to calculatePay's expected shape; app uses hardcoded fallback until mapping is built
 
 ### Phase 01 Complete
@@ -81,8 +79,19 @@ All Phase 01 success criteria human-verified and approved (2026-03-20):
 - Calculate button disabled during fetch; enabled after rates resolve
 - All tests pass (0 failures)
 
+### Phase 02 Complete
+
+All Phase 02 success criteria human-verified and approved (2026-03-22):
+
+- All components redesigned with Tailwind CSS (no raw browser-default styles)
+- Navy header (slate-900), white content card panels
+- Green/red/yellow status badges in OverviewBreakdown
+- Forms usable on mobile at 375px; WorkHours table scrolls horizontally
+- Weekly summary row hidden until actual-paid data entered (D-13)
+- All 89 tests pass (0 failures)
+
 ---
 
 *State file created: 2026-03-09*
-*Updated: 2026-03-20 — Phase 01 complete, ready for Phase 02*
+*Updated: 2026-03-22 — Phase 02 complete, ready for Phase 03*
 *Maintained by: /gsd:new-milestone orchestrator*
