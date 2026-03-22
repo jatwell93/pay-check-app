@@ -9,35 +9,6 @@ import { calculatePayForTimePeriod, weekDays } from './helpers';
 import { fetchAwardRates, getCachedAwardRates, getLastCacheUpdateTime, clearCache } from './services/awardRatesService';
 import { getAwardConfig } from './config/awardConfig';
 
-const getPenaltyDescription = (segmentDay, timeString, penaltyRate, penaltyConfig) => {
-    const earlyMorningEnd = String(Math.floor(penaltyConfig.earlyMorningThreshold / 60)).padStart(2, '0') + ':' + String(penaltyConfig.earlyMorningThreshold % 60).padStart(2, '0'); // e.g., "07:00"
-    const eveningStart = String(Math.floor(penaltyConfig.eveningThreshold / 60)).padStart(2, '0') + ':' + String(penaltyConfig.eveningThreshold % 60).padStart(2, '0'); // e.g., "19:00"
-
-    if (segmentDay === 'Saturday' && penaltyRate === penaltyConfig.saturdayMultiplier) {
-        return 'Saturday (Time and a half)';
-    }
-    if (segmentDay === 'Sunday' && penaltyRate === penaltyConfig.sundayMultiplier) {
-        return 'Sunday (Double Time)';
-    }
-    if (segmentDay === 'Public Holiday' && penaltyRate === penaltyConfig.phMultiplier) {
-        return 'Public Holiday (Double Time and a half)';
-    }
-    const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-    if (weekdays.includes(segmentDay) && timeString >= '00:00' && timeString <= earlyMorningEnd && penaltyRate === penaltyConfig.earlyMorningMultiplier) {
-        return `${segmentDay} (Early Morning Shift)`;
-    }
-    if (weekdays.includes(segmentDay) && timeString >= eveningStart && penaltyRate === penaltyConfig.eveningMultiplier) {
-        return `${segmentDay} (Evening Shift)`;
-    }
-    if (timeString >= '00:00' && timeString <= earlyMorningEnd && penaltyRate === penaltyConfig.earlyMorningMultiplier) {
-        return 'Early Morning Shift';
-    }
-    if (timeString >= eveningStart && penaltyRate === penaltyConfig.eveningMultiplier) {
-        return 'Evening Shift';
-    }
-    if (penaltyRate === 1) return 'Normal rate';
-    return '';
-};
 
 
 const AWARD_IDS = ['MA000012', 'MA000003', 'MA000009'];
