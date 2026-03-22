@@ -119,14 +119,18 @@ describe('OverviewBreakdown', () => {
     expect(onTotalActualPaidChange).toHaveBeenCalledWith('280.00');
   });
 
-  test('period summary hidden when empty: not rendered when totalActualPaid is ""', () => {
-    render(<OverviewBreakdown {...defaultProps} totalActualPaid="" />);
-    expect(screen.queryByText(/Calculated:.*Paid:.*Difference:/)).not.toBeInTheDocument();
+  test('period summary hidden when empty: not rendered when totalActualPaid is "" and no per-day amounts', () => {
+    render(<OverviewBreakdown {...defaultProps} actualPaidByDay={['', '']} totalActualPaid="" />);
+    // Weekly summary heading should not be present
+    expect(screen.queryByText('Weekly Summary')).not.toBeInTheDocument();
   });
 
-  test('period summary format: renders correct format when totalActualPaid is populated', () => {
-    render(<OverviewBreakdown {...defaultProps} totalActualPaid="326.67" results={{ ...mockResults, total: 350.00 }} />);
-    expect(screen.getByText(/Calculated: \$350\.00 \| Paid: \$326\.67 \| Difference: \$-23\.33/)).toBeInTheDocument();
+  test('period summary format: renders calculated, paid, and difference when totalActualPaid is populated', () => {
+    render(<OverviewBreakdown {...defaultProps} totalActualPaid="326.67" actualPaidByDay={['326.67', '']} results={{ ...mockResults, total: 350.00 }} />);
+    expect(screen.getByText('$350.00')).toBeInTheDocument(); // Calculated amount
+    expect(screen.getByText('$326.67')).toBeInTheDocument(); // Paid amount
+    // Difference is negative: paid - calculated = 326.67 - 350.00 = -23.33
+    expect(screen.getByText('$-23.33')).toBeInTheDocument();
   });
 
   test('accordion expand: clicking a day row calls onDayToggle with that row index', () => {
@@ -154,5 +158,42 @@ describe('OverviewBreakdown', () => {
     const segmentTables = screen.getAllByRole('table');
     // Main table + 1 accordion segment table (not 2)
     expect(segmentTables.length).toBe(2);
+  });
+
+  test('weekly summary hidden: not shown when actualPaidByDay is all empty strings', () => {
+    render(<OverviewBreakdown {...defaultProps} actualPaidByDay={['', '']} totalActualPaid="" />);
+    expect(screen.queryByText(/Weekly Summary/)).not.toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: /weekly summary/i })).not.toBeInTheDocument();
+  });
+
+  test('weekly summary shown: appears when at least one actualPaidByDay entry is a valid number', () => {
+    render(<OverviewBreakdown {...defaultProps} actualPaidByDay={['200.00', '']} totalActualPaid="200.00" />);
+    expect(screen.getByText('Weekly Summary')).toBeInTheDocument();
+  });
+
+  test('weekly summary OK badge: shows green "OK" badge when totalActualPaid matches results.total', () => {
+    render(<OverviewBreakdown
+      {...defaultProps}
+      actualPaidByDay={['200.00', '100.00']}
+      totalActualPaid="300.00"
+      results={{ ...mockResults, total: 300.00 }}
+    />);
+    // The weekly summary section heading should be visible
+    expect(screen.getByText('Weekly Summary')).toBeInTheDocument();
+    // There should be an "OK" badge (may also appear in per-day status cells)
+    const okBadges = screen.getAllByText('OK');
+    expect(okBadges.length).toBeGreaterThanOrEqual(1);
+  });
+
+  test('weekly summary Underpaid badge: shows red "Underpaid" badge when results.total > totalActualPaid', () => {
+    render(<OverviewBreakdown
+      {...defaultProps}
+      actualPaidByDay={['190.00', '']}
+      totalActualPaid="190.00"
+      results={{ ...mockResults, total: 300.00 }}
+    />);
+    expect(screen.getByText('Weekly Summary')).toBeInTheDocument();
+    // At least one Underpaid badge visible (per-day or weekly summary)
+    expect(screen.getAllByText('Underpaid').length).toBeGreaterThanOrEqual(1);
   });
 });

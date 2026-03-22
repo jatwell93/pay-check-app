@@ -4,6 +4,7 @@ import Allowances from './components/Allowances';
 import OverviewBreakdown from './components/OverviewBreakdown';
 import WorkHours from './components/WorkHours';
 import AwardSelector from './components/AwardSelector';
+import ImportantNotes from './components/ImportantNotes';
 import { calculatePayForTimePeriod, weekDays } from './helpers';
 import { fetchAwardRates, getCachedAwardRates, getLastCacheUpdateTime } from './services/awardRatesService';
 import { getAwardConfig } from './config/awardConfig';
@@ -436,18 +437,11 @@ const App = () => {
           cycleLength={results ? results.dailyBreakdown.length : 7}
         />
 
-        {/* Important Notes — D-07: position 8 in section order */}
-        <div className="mb-8 p-4 bg-white border border-gray-200 rounded-md shadow-sm">
-          <h2 className="text-xl font-semibold mb-4 text-gray-800 border-b border-gray-200 pb-2">Important Notes</h2>
-          <ul className="space-y-2 text-sm text-gray-600 list-disc list-inside">
-            <li>This calculator is based on the {currentAwardConfig?.name || 'selected award'} effective July 1, 2024.</li>
-            <li>For overnight shifts, enter times normally (e.g., 10:00 PM to 6:00 AM).</li>
-            <li>Overtime is calculated based on weekly hours exceeding {currentAwardConfig?.penaltyConfig?.overtimeThresholdHours || 38} hours for full-time and part-time employees.</li>
-            <li>Junior rates apply to eligible junior classifications under the selected award.</li>
-            <li>This calculator provides an estimate only. Always refer to the full award for specific circumstances.</li>
-            <li>Some complex award provisions (such as rostering requirements and meal breaks) may not be fully reflected.</li>
-          </ul>
-        </div>
+        {/* Important Notes — D-07: position in section order */}
+        <ImportantNotes
+          awardName={currentAwardConfig?.name || 'selected award'}
+          overtimeThresholdHours={currentAwardConfig?.penaltyConfig?.overtimeThresholdHours || 38}
+        />
 
         {/* Footer */}
         <footer className="text-center text-gray-500 text-sm pb-8">
