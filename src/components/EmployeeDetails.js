@@ -12,12 +12,12 @@ const EmployeeDetails = ({
   const handleCustomRateChange = (event) => setCustomRate(event.target.value);
 
   return (
-    <div className="md:col-span-1 p-4 border rounded-md bg-gray-50">
-      <h2 className="text-xl font-semibold mb-4 text-blue-700">Employee Details</h2>
+    <div className="md:col-span-2 bg-white border border-gray-200 rounded-md shadow-sm p-4">
+      <h2 className="text-xl font-semibold mb-4 text-gray-800 border-b border-gray-200 pb-2">Employee Details</h2>
 
       <div className="mb-4">
         <label
-          className="block text-gray-700 font-medium mb-2"
+          className="block text-sm font-medium text-gray-700 mb-1"
           htmlFor="classification"
         >
           Classification
@@ -26,7 +26,7 @@ const EmployeeDetails = ({
           value={classification}
           onChange={(e) => setClassification(e.target.value)}
           id="classification"
-          className="w-full p-2 border rounded"
+          className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 bg-white"
         >
           {classifications.map(option => (
             <option key={option.id} value={option.id}>{option.name}</option>
@@ -37,29 +37,36 @@ const EmployeeDetails = ({
       {classification === 'above-award' && (
         <div className="mb-4">
           <label
-            className="block text-gray-700 font-medium mb-2"
+            className="block text-sm font-medium text-gray-700 mb-1"
             htmlFor="customRate"
           >
             Custom Hourly Rate
           </label>
-          <input type="number" id="customRate" className="w-full p-2 border rounded" value={customRate} onChange={handleCustomRateChange} min={0} />
+          <input
+            type="number"
+            id="customRate"
+            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 text-gray-700"
+            value={customRate}
+            onChange={handleCustomRateChange}
+            min={0}
+          />
         </div>
       )}
 
       <div className="mb-4">
-        <label className="block text-gray-700 font-medium mb-2">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
           Employment Type
         </label>
-        <div className="flex space-x-4">
+        <div className="flex flex-wrap gap-4">
           {['full-time', 'part-time', 'casual'].map(type => (
-            <label key={type} className="flex items-center">
+            <label key={type} className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
               <input
                 type="radio"
                 name="employmentType"
                 value={type}
                 checked={employmentType === type}
                 onChange={() => setEmploymentType(type)}
-                className="mr-2"
+                className="accent-blue-600 cursor-pointer"
               />
               {type.charAt(0).toUpperCase() + type.slice(1)}
             </label>
@@ -68,12 +75,12 @@ const EmployeeDetails = ({
       </div>
 
       <div className="mb-4">
-        <label className="block text-gray-700 font-medium mb-2" htmlFor="age">
+        <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="age">
           Age
         </label>
         <select
           id="age"
-          className="w-full p-2 border rounded"
+          className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 bg-white disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
           value={age}
           onChange={(e) => setAge(e.target.value)}
           disabled={!juniorClassificationIds.includes(classification)}
@@ -83,7 +90,7 @@ const EmployeeDetails = ({
           ))}
         </select>
         {!juniorClassificationIds.includes(classification) && (
-          <p className="text-xs text-gray-500 mt-1">Junior rates only apply to junior classifications for this award</p>
+          <p className="text-xs text-gray-400 mt-1">Junior rates only apply to junior classifications for this award</p>
         )}
       </div>
     </div>
