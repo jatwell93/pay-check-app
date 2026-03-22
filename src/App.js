@@ -6,7 +6,7 @@ import WorkHours from './components/WorkHours';
 import AwardSelector from './components/AwardSelector';
 import ImportantNotes from './components/ImportantNotes';
 import { calculatePayForTimePeriod, weekDays } from './helpers';
-import { fetchAwardRates, getCachedAwardRates, getLastCacheUpdateTime } from './services/awardRatesService';
+import { fetchAwardRates, getCachedAwardRates, getLastCacheUpdateTime, clearCache } from './services/awardRatesService';
 import { getAwardConfig } from './config/awardConfig';
 
 const getPenaltyDescription = (segmentDay, timeString, penaltyRate, penaltyConfig) => {
@@ -126,6 +126,7 @@ const App = () => {
     setAwardLoading(true);
     setAwardError(null);
     try {
+      clearCache();  // D-03: clear all award caches before fetching to force fresh API call
       const fetched = await fetchAwardRates(AWARD_IDS);
       setAwardRates(fetched);
       setLastUpdated(getLastCacheUpdateTime(AWARD_IDS[0]));
@@ -133,7 +134,7 @@ const App = () => {
       setAwardSuccessMessage('Rates updated');
       setTimeout(() => setAwardSuccessMessage(null), 3000);
     } catch (err) {
-      setAwardError("Couldn't refresh award rates. Check your internet connection and try again.");
+      setAwardError("Couldn't connect to Fair Work Commission — using saved rates");  // D-08
     } finally {
       setAwardLoading(false);
     }
