@@ -14,7 +14,7 @@ function AwardSelector({
   onSelectAward,
   awardMetadata,
   isLoading,
-  error, // eslint-disable-line no-unused-vars — accepted for API compat, not rendered
+  error, // eslint-disable-line no-unused-vars
   lastUpdated,
   onRefresh,
   successMessage,
