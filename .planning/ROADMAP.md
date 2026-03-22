@@ -79,6 +79,14 @@ Plans:
 
 **Requirements mapped:** UX-01, UX-02
 
+**Plans:** 4 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Install Tailwind CSS v3, configure index.css/tailwind.config.js, redesign App.js shell (header, loading overlay, error banner)
+- [ ] 02-02-PLAN.md — Redesign AwardSelector, EmployeeDetails, Allowances with Tailwind form styling
+- [ ] 02-03-PLAN.md — Redesign WorkHours (horizontal scroll table), OverviewBreakdown (weekly summary row), ImportantNotes
+- [ ] 02-04-PLAN.md — Human verification checkpoint (visual + mobile responsive + full test suite)
+
 **Success Criteria** (what must be TRUE when complete):
 1. All components use Tailwind utility classes — no raw browser-default styles remain
 2. Colour palette: navy (`#1e3a5f` or similar) for header/navigation, white for content areas
@@ -87,11 +95,12 @@ Plans:
 5. All existing functionality preserved — no changes to calculation logic or data flow
 
 **Implementation notes:**
-- Install Tailwind CSS v4, configure via `tailwind.config.js`
-- Redesign in component order: layout shell → EmployeeDetails → WorkHours → Allowances → OverviewBreakdown
+- Install Tailwind CSS v3 (not v4 — CRA 5.0.1 compatibility), configure via `tailwind.config.js` + `postcss.config.js`
+- Redesign order: App.js shell (Wave 1) → form components + result components (Wave 2, parallel) → checkpoint (Wave 3)
 - Preserve accordion drill-down UX from Phase 3 v1.0 — just restyle
 - Loading spinner and error banner (from Phase 1) get Tailwind classes here
 - App title updated: "Pay Check App" (remove "Pharmacy Industry Award Pay Calculator")
+- Weekly summary row added to OverviewBreakdown per CONTEXT.md D-12/D-13
 
 ---
 
@@ -122,7 +131,7 @@ Plans:
 | Phase | Goal | Plans Complete | Status | Completed |
 |-------|------|----------------|--------|-----------|
 | 1 - Netlify Proxy & Live Rate Hydration | Proxy + live rate hydration | 3/3 | Complete | 2026-03-20 |
-| 2 - Tailwind CSS Redesign | Full Tailwind redesign | 0/? | Not started | — |
+| 2 - Tailwind CSS Redesign | Full Tailwind redesign | 0/4 | In planning | — |
 | 3 - Polish | Cache indicator + retry | 0/? | Not started | — |
 
 ---
@@ -156,3 +165,4 @@ Phase 3 (Polish)
 
 *Roadmap created: 2026-03-13 (from v1.1 research + PROJECT.md active requirements)*
 *Phase 1 planned: 2026-03-13*
+*Phase 2 planned: 2026-03-22*
