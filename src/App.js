@@ -334,81 +334,141 @@ const App = () => {
     setTotalActualPaid('');
   };
   const currentAwardConfig = getAwardConfig(selectedAward);
-  return (<div className="container">
-      <header className="app-header">
-        <h1>{currentAwardConfig ? `${currentAwardConfig.name} Pay Calculator` : 'Pay Calculator'}</h1>
-        <p>Check if you're being paid correctly under the {currentAwardConfig?.name || 'selected award'}</p>
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Navy header — D-01, D-02, D-03 */}
+      <header className="bg-slate-900 text-white py-4 shadow-md">
+        <div className="max-w-4xl mx-auto px-4">
+          <h1 className="text-3xl font-bold text-white">Pay Check App</h1>
+          <p className="text-gray-300 text-sm mt-1">Check if you're being paid correctly</p>
+        </div>
       </header>
 
-      <AwardSelector
-        selectedAward={selectedAward}
-        onSelectAward={handleSelectAward}
-        awardMetadata={awardMetadata}
-        isLoading={awardLoading}
-        error={awardError}
-        lastUpdated={lastUpdated}
-        onRefresh={handleRefreshRates}
-        successMessage={awardSuccessMessage}
-      />
+      {/* Error banner — D-09, D-10: below header, above AwardSelector, dismissible */}
+      {awardError && (
+        <div className="max-w-4xl mx-auto px-4 pt-4">
+          <div className="bg-red-50 border-l-4 border-red-600 p-4 rounded">
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className="font-bold text-red-700 mb-1">Unable to Load Award Rates</h3>
+                <p className="text-red-600 text-sm">{awardError}</p>
+              </div>
+              <button
+                onClick={() => setAwardError(null)}
+                className="ml-4 text-red-700 hover:text-red-900 hover:bg-red-100 rounded p-1 font-bold text-lg leading-none"
+                aria-label="Dismiss error"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 section">
-        <EmployeeDetails
-          classification={classification}
-          setClassification={setClassification}
-          employmentType={employmentType}
-          setEmploymentType={setEmploymentType}
-          age={age}
-          setAge={setAge}
-          customRate={customRate}
-          setCustomRate={setCustomRate}
-          classifications={currentAwardConfig.classifications}
-          ageOptions={currentAwardConfig.ageOptions}
-          juniorClassificationIds={currentAwardConfig.juniorClassificationIds}
+      {/* Loading overlay — D-08: covers content area, header remains visible */}
+      {awardLoading && (
+        <div className="fixed inset-0 bg-black/50 z-40 flex items-center justify-center" style={{ top: '68px' }}>
+          <div className="bg-white p-8 rounded-lg shadow-2xl">
+            <div className="w-10 h-10 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mx-auto"></div>
+            <p className="text-center mt-4 text-gray-600 font-medium">Loading award rates...</p>
+          </div>
+        </div>
+      )}
+
+      {/* Main content */}
+      <main className="max-w-4xl mx-auto px-4 py-6">
+        {/* D-04: AwardSelector below header */}
+        {/* error={null} — error display handled by the App-level banner above (D-09/D-10) */}
+        <AwardSelector
+          selectedAward={selectedAward}
+          onSelectAward={handleSelectAward}
+          awardMetadata={awardMetadata}
+          isLoading={awardLoading}
+          error={null}
+          lastUpdated={lastUpdated}
+          onRefresh={handleRefreshRates}
+          successMessage={awardSuccessMessage}
         />
-        <Allowances
-          allowances={allowances}
-          handleAllowanceChange={handleAllowanceChange}
-          classification={classification}
-          allowanceConfig={currentAwardConfig.allowances}
+
+        {/* D-05: 3-col grid collapses to 1-col on mobile */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <EmployeeDetails
+            classification={classification}
+            setClassification={setClassification}
+            employmentType={employmentType}
+            setEmploymentType={setEmploymentType}
+            age={age}
+            setAge={setAge}
+            customRate={customRate}
+            setCustomRate={setCustomRate}
+            classifications={currentAwardConfig.classifications}
+            ageOptions={currentAwardConfig.ageOptions}
+            juniorClassificationIds={currentAwardConfig.juniorClassificationIds}
+          />
+          <Allowances
+            allowances={allowances}
+            handleAllowanceChange={handleAllowanceChange}
+            classification={classification}
+            allowanceConfig={currentAwardConfig.allowances}
+          />
+        </div>
+
+        <WorkHours
+          weeklyData={weeklyData}
+          handleTimeChange={handleTimeChange}
+          handlePublicHolidayChange={handlePublicHolidayChange}
+          calculatePay={calculatePay}
+          isLoading={awardLoading}
         />
-      </div>
-      <WorkHours weeklyData={weeklyData} handleTimeChange={handleTimeChange} handlePublicHolidayChange={handlePublicHolidayChange} calculatePay={calculatePay} isLoading={awardLoading}/>
-      <OverviewBreakdown
-        results={results}
-        selectedDayIndex={selectedDayIndex}
-        onDayToggle={(index) => setSelectedDayIndex(selectedDayIndex === index ? null : index)}
-        actualPaidByDay={actualPaidByDay}
-        onActualPaidChange={(index, value) => {
-          const updated = [...actualPaidByDay];
-          updated[index] = value;
-          setActualPaidByDay(updated);
-        }}
-        totalActualPaid={totalActualPaid}
-        onTotalActualPaidChange={(value) => setTotalActualPaid(value)}
-        cycleLength={results ? results.dailyBreakdown.length : 7}
-      />
-      
-      {/* Important Notes */}
-      <div className="mb-8 p-4  section">
-        <h2 className='section-header'>Important Notes</h2>
-        <ul >
-          <li>This calculator is based on the {currentAwardConfig?.name || 'selected award'} effective July 1, 2024.</li>
-          <li>For overnight shifts, enter times normally (e.g., 10:00 PM to 6:00 AM).</li>
-          <li>Overtime is calculated based on weekly hours exceeding {currentAwardConfig?.penaltyConfig?.overtimeThresholdHours || 38} hours for full-time and part-time employees.</li>
-          <li>Junior rates apply to eligible junior classifications under the selected award.</li>
-          <li>This calculator provides an estimate only. Always refer to the full award for specific circumstances.</li>
-          <li>Some complex award provisions (such as rostering requirements and meal breaks) may not be fully reflected.</li>
-        </ul>
-      </div>
-      
-      {/* Footer */}
-      <footer className="text-center text-gray-500 text-sm">
-        <p>This calculator is provided for informational purposes only and should not be considered legal advice.</p>
-        <p>Always consult the <a href="https://www.fairwork.gov.au/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Fair Work Ombudsman</a> or a legal professional for specific employment advice.</p>
-      </footer>
+
+        <OverviewBreakdown
+          results={results}
+          selectedDayIndex={selectedDayIndex}
+          onDayToggle={(index) => setSelectedDayIndex(selectedDayIndex === index ? null : index)}
+          actualPaidByDay={actualPaidByDay}
+          onActualPaidChange={(index, value) => {
+            const updated = [...actualPaidByDay];
+            updated[index] = value;
+            setActualPaidByDay(updated);
+          }}
+          totalActualPaid={totalActualPaid}
+          onTotalActualPaidChange={(value) => setTotalActualPaid(value)}
+          cycleLength={results ? results.dailyBreakdown.length : 7}
+        />
+
+        {/* Important Notes — D-07: position 8 in section order */}
+        <div className="mb-8 p-4 bg-white border border-gray-200 rounded-md shadow-sm">
+          <h2 className="text-xl font-semibold mb-4 text-gray-800 border-b border-gray-200 pb-2">Important Notes</h2>
+          <ul className="space-y-2 text-sm text-gray-600 list-disc list-inside">
+            <li>This calculator is based on the {currentAwardConfig?.name || 'selected award'} effective July 1, 2024.</li>
+            <li>For overnight shifts, enter times normally (e.g., 10:00 PM to 6:00 AM).</li>
+            <li>Overtime is calculated based on weekly hours exceeding {currentAwardConfig?.penaltyConfig?.overtimeThresholdHours || 38} hours for full-time and part-time employees.</li>
+            <li>Junior rates apply to eligible junior classifications under the selected award.</li>
+            <li>This calculator provides an estimate only. Always refer to the full award for specific circumstances.</li>
+            <li>Some complex award provisions (such as rostering requirements and meal breaks) may not be fully reflected.</li>
+          </ul>
+        </div>
+
+        {/* Footer */}
+        <footer className="text-center text-gray-500 text-sm pb-8">
+          <p>This calculator is provided for informational purposes only and should not be considered legal advice.</p>
+          <p className="mt-1">
+            Always consult the{' '}
+            <a
+              href="https://www.fairwork.gov.au/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-700 underline"
+            >
+              Fair Work Ombudsman
+            </a>
+            {' '}or a legal professional for specific employment advice.
+          </p>
+        </footer>
+      </main>
     </div>
   );
-  
+
 };
 
 // Make sure to export the App component as default
