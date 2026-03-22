@@ -56,7 +56,7 @@ A worker can enter their shifts, see exactly how much they should have been paid
 - [x] App styled with Tailwind CSS — clean professional look, navy/white palette (Validated in Phase 02: tailwind-css-redesign)
 - [x] Status indicators (Paid Correctly / Underpaid) use green/red colour coding (Validated in Phase 02: tailwind-css-redesign)
 - [x] Loading states and error messages shown clearly when API calls fail or are slow (Validated in Phase 02: tailwind-css-redesign)
-- [ ] Graceful fallback to hardcoded rates when proxy is unreachable
+- [x] Graceful fallback to hardcoded rates when proxy is unreachable (Validated in Phase 03: polish — retry + error banner + clearCache wiring)
 
 ### Out of Scope
 
@@ -72,7 +72,7 @@ A worker can enter their shifts, see exactly how much they should have been paid
 - **Codebase:** React 19 SPA (Create React App). All state in App.js. Business logic in helpers.js (minute-by-minute penalty calculation). Service layer in awardRatesService.js. Config in awardConfig.js. ~1,700 LOC source, 61 tests across 7 suites.
 - **Architecture:** `App.js` holds all state. Components are presentational. `calculatePayForTimePeriod` in `helpers.js` accepts `penaltyConfig` to support any award's penalty boundaries. `awardConfig.js` defines 3 awards (MA000012, MA000003, MA000009) with penalty configs, classifications, and allowances.
 - **FWC MAAPI v1:** Official Fair Work Commission API. Integration is live in `awardRatesService.js` with 90-day localStorage caching and Zod validation. API responses are cached but `calculatePay` currently reads from `awardConfig.js` directly — live rate hydration is deferred to v2.
-- **Known tech debt (non-blocking):** `awardRates` state in App.js retained for planned v2 API hydration; `clearCache()` exported but no UI callers yet; `act()` warnings in test console (pre-existing).
+- **Known tech debt (non-blocking):** `awardRates` state in App.js retained for planned v2 API hydration; `act()` warnings in test console (pre-existing). Timer leak warning from retry backoff tests (cosmetic, tests pass).
 
 ## Constraints
 
@@ -91,10 +91,10 @@ A worker can enter their shifts, see exactly how much they should have been paid
 | Keep existing penalty calculation engine | Logic is correct, only rates need to become data-driven | ✓ Good — parameterized with penaltyConfig, zero regressions |
 | `awardConfig.js` as source of truth (not API) | API shape unconfirmed; hydration deferred to v2 | ✓ Good — clean separation, retained awardRates state for v2 |
 | `z.object({}).passthrough()` schema | Permissive until real FWC API response shape confirmed | — Pending (tighten in v2 once shape known) |
-| `clearCache()` exported with no UI callers | Reserved for planned manual cache-clear feature | — Pending (add UI trigger in future milestone) |
+| `clearCache()` called by handleRefreshRates | Forces fresh API call on manual refresh regardless of TTL | ✓ Good — wired in Phase 03 |
 | `OverviewBreakdown` replaces PaySummary | Single output view is simpler than mode toggle | ✓ Good — cleaner UX, no toggle complexity |
 | Inline segment table in OverviewBreakdown | Avoid prop coupling with DetailedBreakdown | ✓ Good — self-contained, independently testable |
 | `actualPaidByDay` empty string = no input | Prevents false Underpaid on untouched rows | ✓ Good — correct UX, $0.01 threshold working |
 
 ---
-*Last updated: 2026-03-09 after v1.1 milestone start*
+*Last updated: 2026-03-22 after Phase 03 complete — v1.1 milestone all phases done*
