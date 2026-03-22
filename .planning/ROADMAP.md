@@ -112,6 +112,11 @@ Plans:
 
 **Requirements mapped:** POLISH-01
 
+**Plans:** 1 plan
+
+Plans:
+- [ ] 03-01-PLAN.md — Retry logic in fetchAwardRates, wire clearCache() in handleRefreshRates, fix error message wording per D-08
+
 **Success Criteria** (what must be TRUE when complete):
 1. A cache status line shows "Rates last updated: [date]" near the award selector
 2. A "Refresh Rates" button triggers `clearCache()` + re-fetch from proxy
@@ -122,7 +127,7 @@ Plans:
 - `getLastCacheUpdateTime()` already exported from `awardRatesService.js` — use directly
 - `clearCache()` already exported — wire to button click in `AwardSelector` or header
 - Error message strings extracted to constants for easy editing
-- Retry is already handled by `axios-retry` in `awardRatesService.js` — verify config is correct (3 retries, exponential backoff)
+- Retry is NOT via axios-retry (service uses native fetch) — implemented as manual for-loop with Math.pow(2, attempt) * 1000 backoff
 
 ---
 
@@ -132,7 +137,7 @@ Plans:
 |-------|------|----------------|--------|-----------|
 | 1 - Netlify Proxy & Live Rate Hydration | Proxy + live rate hydration | 3/3 | Complete | 2026-03-20 |
 | 2 - Tailwind CSS Redesign | Full Tailwind redesign | 4/4 | Complete   | 2026-03-22 |
-| 3 - Polish | Cache indicator + retry | 0/? | Not started | — |
+| 3 - Polish | Cache indicator + retry | 0/1 | Not started | — |
 
 ---
 
@@ -166,3 +171,4 @@ Phase 3 (Polish)
 *Roadmap created: 2026-03-13 (from v1.1 research + PROJECT.md active requirements)*
 *Phase 1 planned: 2026-03-13*
 *Phase 2 planned: 2026-03-22*
+*Phase 3 planned: 2026-03-22*
