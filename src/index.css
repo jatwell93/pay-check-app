@@ -5,13 +5,15 @@
 @layer components {
   /* Shared card surface — white box with border and shadow */
   .card {
-    @apply bg-surface border border-edge rounded-md shadow-sm p-4;
+    @apply bg-surface border border-edge rounded-md shadow-sm p-5;
   }
 }
 
 body {
   margin: 0;
   font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #f8fafc;
@@ -22,9 +24,74 @@ table td {
   font-variant-numeric: tabular-nums;
 }
 
-/* Stop spinner animation for users who prefer reduced motion */
+/* Headings — tighter line-height and optical sizing for Bricolage Grotesque */
+h1, h2, h3, h4 {
+  line-height: 1.2;
+  font-optical-sizing: auto;
+  letter-spacing: -0.01em;
+}
+
+/* ============================================================
+   Animation System
+   ============================================================ */
+
+:root {
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-slide-up {
+  animation: fadeSlideUp 420ms var(--ease-out-quart) both;
+}
+
+.animate-fade-in {
+  animation: fadeIn 220ms var(--ease-out-quart) both;
+}
+
+.animate-slide-down {
+  animation: slideDown 300ms var(--ease-out-quart) both;
+}
+
+/* Smooth expand/collapse using CSS Grid (no height animation) */
+.detail-grid {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 300ms var(--ease-out-quart);
+}
+
+.detail-grid--open {
+  grid-template-rows: 1fr;
+}
+
+.detail-grid-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* Reduced motion — disable all animations and transitions */
 @media (prefers-reduced-motion: reduce) {
-  .animate-spin {
-    animation: none;
+  .animate-spin,
+  .animate-fade-slide-up,
+  .animate-fade-in,
+  .animate-slide-down {
+    animation: none !important;
+  }
+
+  .detail-grid {
+    transition: none !important;
   }
 }

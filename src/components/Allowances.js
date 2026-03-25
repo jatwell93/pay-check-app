@@ -4,7 +4,7 @@ const Allowances = ({ allowances, handleAllowanceChange, classification, allowan
   const pharmacistIds = ['pharmacist', 'experienced-pharmacist', 'pharmacist-in-charge', 'pharmacist-manager'];
   return (
     <div className="md:col-span-1 card">
-      <h2 className="text-xl font-semibold mb-4 text-slate-800 border-b border-edge-subtle pb-2 font-heading">Allowances</h2>
+      <h2 className="text-xl font-bold mb-4 text-slate-800 border-b border-edge-subtle pb-2 font-heading">Allowances</h2>
       <div className="space-y-4">
         {allowanceConfig?.homeMedicineReview != null && (
           <div className="flex items-center gap-2 min-h-[44px]">
@@ -13,7 +13,7 @@ const Allowances = ({ allowances, handleAllowanceChange, classification, allowan
               onChange={() => handleAllowanceChange('homeMedicineReview', !allowances.homeMedicineReview)}
               disabled={!pharmacistIds.includes(classification)}
             />
-            <label htmlFor="homeMedicineReview" className={pharmacistIds.includes(classification) ? "text-sm text-gray-700 cursor-pointer" : "text-sm text-gray-400 cursor-not-allowed"}>
+            <label htmlFor="homeMedicineReview" className={pharmacistIds.includes(classification) ? "text-base text-gray-700 cursor-pointer" : "text-base text-gray-400 cursor-not-allowed"}>
               Home Medicine Reviews (${allowanceConfig.homeMedicineReview}/week)
             </label>
           </div>
@@ -24,7 +24,7 @@ const Allowances = ({ allowances, handleAllowanceChange, classification, allowan
               checked={allowances.laundry}
               onChange={() => handleAllowanceChange('laundry', !allowances.laundry)}
             />
-            <label htmlFor="laundry" className="text-sm text-gray-700 cursor-pointer">Laundry Allowance</label>
+            <label htmlFor="laundry" className="text-base text-gray-700 cursor-pointer">Laundry Allowance</label>
           </div>
         )}
         {allowanceConfig?.brokenHill != null && (
@@ -33,12 +33,12 @@ const Allowances = ({ allowances, handleAllowanceChange, classification, allowan
               checked={allowances.brokenHill}
               onChange={() => handleAllowanceChange('brokenHill', !allowances.brokenHill)}
             />
-            <label htmlFor="brokenHill" className="text-sm text-gray-700 cursor-pointer">Broken Hill Allowance (${allowanceConfig.brokenHill}/week)</label>
+            <label htmlFor="brokenHill" className="text-base text-gray-700 cursor-pointer">Broken Hill Allowance (${allowanceConfig.brokenHill}/week)</label>
           </div>
         )}
         {allowanceConfig?.mealAllowanceOvertime != null && (
           <div className="mt-4">
-            <label htmlFor="mealAllowance" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="mealAllowance" className="block text-base font-medium text-gray-700 mb-1">
               Meal Allowance — how many overtime meals this week?
             </label>
             <input type="number" id="mealAllowance" className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-brand focus:border-brand placeholder-gray-400 text-gray-700"
@@ -49,7 +49,7 @@ const Allowances = ({ allowances, handleAllowanceChange, classification, allowan
         )}
         {allowanceConfig?.mealAllowanceOvertimeExtra != null && (
           <div className="mt-4">
-            <label htmlFor="mealAllowanceExtra" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="mealAllowanceExtra" className="block text-base font-medium text-gray-700 mb-1">
               Extra Meal Allowance — overtime shifts over 4 hours (how many?)
             </label>
             <input type="number" id="mealAllowanceExtra" className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-brand focus:border-brand placeholder-gray-400 text-gray-700"
@@ -60,7 +60,7 @@ const Allowances = ({ allowances, handleAllowanceChange, classification, allowan
         )}
         {allowanceConfig?.motorVehiclePerKm != null && (
           <div className="mt-4">
-            <label htmlFor="motorVehicleKm" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="motorVehicleKm" className="block text-base font-medium text-gray-700 mb-1">
               Motor Vehicle Usage (km)
             </label>
             <input type="number" id="motorVehicleKm" className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-brand focus:border-brand placeholder-gray-400 text-gray-700"

@@ -20,9 +20,9 @@ function AwardSelector({
   successMessage,
 }) {
   return (
-    <div className="mb-6 bg-surface-header border border-edge rounded-md px-4 py-3">
+    <div className="mb-6 bg-surface-header border border-edge rounded-md px-5 py-4">
       <div className="flex flex-wrap items-center gap-3">
-        <label htmlFor="award-select" className="text-sm font-medium text-gray-700 whitespace-nowrap">
+        <label htmlFor="award-select" className="text-base font-medium text-gray-700 whitespace-nowrap">
           Award:
         </label>
         <select
@@ -41,20 +41,20 @@ function AwardSelector({
         <button
           onClick={onRefresh}
           disabled={isLoading}
-          className="px-4 py-2 bg-brand text-white text-sm font-medium rounded-md hover:bg-brand-dark disabled:bg-gray-400 disabled:cursor-not-allowed whitespace-nowrap transition-colors"
+          className="px-4 py-2 bg-brand text-white text-base font-medium rounded-md hover:bg-brand-dark disabled:bg-gray-400 disabled:cursor-not-allowed whitespace-nowrap transition-all duration-150 active:scale-95"
         >
           {isLoading ? 'Refreshing...' : 'Refresh Rates'}
         </button>
       </div>
 
       {lastUpdated && (
-        <p className="text-xs text-gray-500 mt-2">
+        <p className="text-xs text-ink-subtle mt-2">
           Rates last updated {formatDistanceToNow(lastUpdated, { addSuffix: true })}
         </p>
       )}
 
       {successMessage && (
-        <p className="text-xs text-brand font-medium mt-2">{successMessage}</p>
+        <p className="text-xs text-brand font-medium mt-2 animate-fade-in">{successMessage}</p>
       )}
     </div>
   );

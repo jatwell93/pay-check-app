@@ -308,28 +308,28 @@ const App = () => {
   };
   const currentAwardConfig = getAwardConfig(selectedAward);
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-surface-page">
       {/* Navy header — D-01, D-02, D-03 */}
-      <header className="bg-canvas-dark text-white py-4 shadow-md border-b-2 border-brand relative z-50">
+      <header className="bg-canvas-dark text-white py-8 shadow-md border-b-2 border-brand relative z-50 animate-slide-down">
         <div className="max-w-4xl mx-auto px-4">
           <span className="text-xs font-medium text-brand-light tracking-widest uppercase">PharmIQ</span>
           <h1 className="text-3xl font-bold text-white font-heading tracking-tight">Pay Checker</h1>
-          <p className="text-slate-400 text-sm mt-0.5">Check if you're being paid correctly</p>
+          <p className="text-slate-400 text-base mt-0.5">Check if you're being paid correctly</p>
         </div>
       </header>
 
       {/* Error banner — D-09, D-10: below header, above AwardSelector, dismissible */}
       {awardError && (
         <div className="max-w-4xl mx-auto px-4 pt-4">
-          <div className="bg-red-50 border-l-4 border-red-600 p-4 rounded">
+          <div className="bg-critical-bg border-l-4 border-critical p-4 rounded animate-slide-down">
             <div className="flex justify-between items-start">
               <div>
-                <h3 className="font-bold text-red-700 mb-1">Unable to Load Award Rates</h3>
-                <p className="text-red-600 text-sm">{awardError}</p>
+                <h3 className="font-bold text-critical-dark mb-1">Unable to Load Award Rates</h3>
+                <p className="text-critical text-sm">{awardError}</p>
               </div>
               <button
                 onClick={() => setAwardError(null)}
-                className="ml-4 text-red-700 hover:text-red-900 hover:bg-red-100 rounded p-1 font-bold text-lg leading-none transition-colors"
+                className="ml-4 text-critical-dark hover:text-critical hover:bg-critical-bg rounded p-1 font-bold text-lg leading-none transition-colors"
                 aria-label="Dismiss error"
               >
                 ×
@@ -355,7 +355,7 @@ const App = () => {
       )}
 
       {/* Main content */}
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      <main className="max-w-4xl mx-auto px-4 pt-8 pb-16">
         {/* D-04: AwardSelector below header */}
         {/* error={null} — error display handled by the App-level banner above (D-09/D-10) */}
         <AwardSelector
@@ -370,7 +370,7 @@ const App = () => {
         />
 
         {/* D-05: 3-col grid collapses to 1-col on mobile */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <EmployeeDetails
             classification={classification}
             setClassification={setClassification}
@@ -422,7 +422,7 @@ const App = () => {
         />
 
         {/* Footer */}
-        <footer className="text-center text-gray-500 text-sm pb-8">
+        <footer className="text-center text-gray-500 text-sm pt-10 pb-4 border-t border-edge-subtle mt-4">
           <p>This calculator is provided for informational purposes only and should not be considered legal advice.</p>
           <p className="mt-1">
             Always consult the{' '}

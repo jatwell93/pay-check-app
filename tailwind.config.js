@@ -7,7 +7,7 @@ module.exports = {
     extend: {
       fontFamily: {
         sans:    ['DM Sans', 'system-ui', '-apple-system', 'sans-serif'],
-        heading: ['Space Grotesk', 'system-ui', 'sans-serif'],
+        heading: ['Bricolage Grotesque', 'system-ui', 'sans-serif'],
       },
       colors: {
         // Brand — primary action colour and accent
@@ -40,6 +40,24 @@ module.exports = {
         // Canvas — dark hero/header backgrounds
         canvas: {
           dark:    '#0f172a',  // slate-900
+        },
+        // Amber — brand accent for alerts, warnings, discrepancies
+        amber: {
+          DEFAULT: '#D97706',
+          light:   '#FDE68A',
+          dark:    '#92400E',
+          subtle:  '#FFFBEB',
+        },
+        // Semantic — status states
+        success: {
+          DEFAULT: '#10B981',
+          bg:      '#ECFDF5',
+          dark:    '#065F46',
+        },
+        critical: {
+          DEFAULT: '#EF4444',
+          bg:      '#FEF2F2',
+          dark:    '#991B1B',
         },
       },
     },

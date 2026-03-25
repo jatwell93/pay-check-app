@@ -2,9 +2,9 @@ import React from 'react';
 
 const ImportantNotes = ({ awardName = 'selected award', overtimeThresholdHours = 38 }) => {
   return (
-    <div className="mb-8 card">
-      <h2 className="text-xl font-semibold mb-4 text-slate-800 border-b border-edge-subtle pb-2 font-heading">Important Notes</h2>
-      <ul className="space-y-2 text-sm text-slate-600 list-disc list-inside">
+    <div className="mb-8 bg-surface border border-edge border-l-4 border-l-amber rounded-md shadow-sm p-5">
+      <h2 className="text-xl font-bold mb-4 text-slate-800 border-b border-edge-subtle pb-2 font-heading">Important Notes</h2>
+      <ul className="space-y-2 text-base text-slate-600 list-disc list-inside">
         <li>This calculator is based on the {awardName} effective July 1, 2024.</li>
         <li>For overnight shifts, enter times normally (e.g., 10:00 PM to 6:00 AM).</li>
         <li>Overtime is calculated based on weekly hours exceeding {overtimeThresholdHours} hours for full-time and part-time employees.</li>

@@ -13,11 +13,11 @@ const EmployeeDetails = ({
 
   return (
     <div className="md:col-span-2 card">
-      <h2 className="text-xl font-semibold mb-4 text-slate-800 border-b border-edge-subtle pb-2 font-heading">Employee Details</h2>
+      <h2 className="text-xl font-bold mb-4 text-slate-800 border-b border-edge-subtle pb-2 font-heading">Employee Details</h2>
 
       <div className="mb-3">
         <label
-          className="block text-sm font-medium text-gray-700 mb-1"
+          className="block text-base font-medium text-gray-700 mb-1"
           htmlFor="classification"
         >
           Classification
@@ -35,9 +35,9 @@ const EmployeeDetails = ({
       </div>
 
       {classification === 'above-award' && (
-        <div className="mb-4">
+        <div className="mb-4 animate-fade-slide-up">
           <label
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-base font-medium text-gray-700 mb-1"
             htmlFor="customRate"
           >
             Custom Hourly Rate
@@ -55,12 +55,12 @@ const EmployeeDetails = ({
       )}
 
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-base font-medium text-gray-700 mb-1">
           Employment Type
         </label>
         <div className="flex flex-wrap gap-4">
           {['full-time', 'part-time', 'casual'].map(type => (
-            <label key={type} className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+            <label key={type} className="flex items-center gap-2 text-base text-gray-700 cursor-pointer">
               <input
                 type="radio"
                 name="employmentType"
@@ -76,7 +76,7 @@ const EmployeeDetails = ({
       </div>
 
       <div className="mb-0">
-        <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="age">
+        <label className="block text-base font-medium text-gray-700 mb-1" htmlFor="age">
           Age
         </label>
         <select

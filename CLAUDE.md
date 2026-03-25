@@ -40,3 +40,21 @@ Penalty boundaries split shifts into segments: midnight–07:00 (125%), 07:00–
 ### Award Reference
 
 Pharmacy Industry Award MA000012, effective July 1, 2024. All base rates are hardcoded in `pharmacyAwardRates` inside `App.js`. Junior rates only apply to Pharmacy Assistant Levels 1 and 2.
+
+## Design Context
+
+### Users
+Pharmacy, retail, and hospitality workers (often young, often on mobile) checking whether they were paid correctly after a shift. The context is potentially stressful — they suspect underpayment and need to trust the tool's output. Mobile-first usage is common.
+
+### Brand Personality
+Approachable, trustworthy, and on the worker's side. Not corporate HR software — this is a personal advocate. Three words: **Clear, Warm, Confident.**
+
+### Aesthetic Direction
+Light mode. Teal brand (#0f766e) is strong and should be preserved. Typography uses Bricolage Grotesque for headings (bold personality, distinctive) + DM Sans for body (humanist, warm, readable). Anti-reference: cold, clinical fintech dashboards with gray everywhere.
+
+### Design Principles
+1. **Clarity over decoration** — every typographic choice should make data easier to read, not just more beautiful
+2. **Hierarchy through contrast** — headings should be unmistakably different from body text in weight, size, and family
+3. **Readable at small sizes** — body and label text must be ≥16px; workers reading on mobile after a shift need comfortable text
+4. **Warm but precise** — rounded, humanist letterforms that feel approachable, paired with tabular numerics for data accuracy
+5. **Mobile-first** — type scale tuned for small screens first
