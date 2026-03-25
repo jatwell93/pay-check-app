@@ -108,10 +108,10 @@ describe('AwardSelector', () => {
     expect(screen.queryByText(/rates updated/i)).not.toBeInTheDocument();
   });
 
-  // NEW: successMessage renders with green text styling
-  test('successMessage renders with green text class when provided', () => {
+  // NEW: successMessage renders with teal text styling
+  test('successMessage renders with teal text class when provided', () => {
     const { container } = render(<AwardSelector {...defaultProps} successMessage="Rates refreshed successfully" />);
-    const successEl = container.querySelector('.text-green-600');
+    const successEl = container.querySelector('.text-teal-700');
     expect(successEl).toBeInTheDocument();
     expect(successEl).toHaveTextContent('Rates refreshed successfully');
   });

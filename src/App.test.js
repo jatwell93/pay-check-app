@@ -147,7 +147,7 @@ describe('App integration tests', () => {
     expect(true).toBe(true);
   });
 
-  test('header renders with title "Pay Check App"', async () => {
+  test('header renders with title "Pay Checker"', async () => {
     getCachedAwardRates.mockReturnValue(null);
     fetchAwardRates.mockResolvedValue(mockRatesData);
     getLastCacheUpdateTime.mockReturnValue(new Date());
@@ -155,7 +155,7 @@ describe('App integration tests', () => {
     render(<App />);
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Pay Check App');
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Pay Checker');
     });
   });
 

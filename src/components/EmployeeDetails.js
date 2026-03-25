@@ -13,7 +13,7 @@ const EmployeeDetails = ({
 
   return (
     <div className="md:col-span-2 bg-white border border-gray-200 rounded-md shadow-sm p-4">
-      <h2 className="text-xl font-semibold mb-4 text-gray-800 border-b border-gray-200 pb-2">Employee Details</h2>
+      <h2 className="text-xl font-semibold mb-4 text-slate-800 border-b border-slate-200 pb-2 font-heading">Employee Details</h2>
 
       <div className="mb-4">
         <label
@@ -26,7 +26,7 @@ const EmployeeDetails = ({
           value={classification}
           onChange={(e) => setClassification(e.target.value)}
           id="classification"
-          className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 bg-white"
+          className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-700 focus:border-transparent text-gray-700 bg-white"
         >
           {classifications.map(option => (
             <option key={option.id} value={option.id}>{option.name}</option>
@@ -45,7 +45,7 @@ const EmployeeDetails = ({
           <input
             type="number"
             id="customRate"
-            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 text-gray-700"
+            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-700 focus:border-transparent placeholder-gray-400 text-gray-700"
             value={customRate}
             onChange={handleCustomRateChange}
             min={0}
@@ -66,7 +66,7 @@ const EmployeeDetails = ({
                 value={type}
                 checked={employmentType === type}
                 onChange={() => setEmploymentType(type)}
-                className="accent-blue-600 cursor-pointer"
+                className="accent-teal-700 cursor-pointer"
               />
               {type.charAt(0).toUpperCase() + type.slice(1)}
             </label>
@@ -80,7 +80,7 @@ const EmployeeDetails = ({
         </label>
         <select
           id="age"
-          className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-700 bg-white disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+          className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-700 focus:border-transparent text-gray-700 bg-white disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
           value={age}
           onChange={(e) => setAge(e.target.value)}
           disabled={!juniorClassificationIds.includes(classification)}

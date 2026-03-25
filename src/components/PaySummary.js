@@ -3,7 +3,7 @@ import React from 'react';
 const PaySummary = ({ results, showDetails, setShowDetails }) => {
     return (
         <div className="md:col-span-1 p-4 border rounded-md bg-gray-50">
-            <h2 className="text-xl font-semibold mb-4 text-blue-700">Pay Summary</h2>
+            <h2 className="text-xl font-semibold mb-4 text-teal-700 font-heading">Pay Summary</h2>
 
             {results ? (
                 <div className="space-y-3">
@@ -38,7 +38,7 @@ const PaySummary = ({ results, showDetails, setShowDetails }) => {
 
                     <button
                         onClick={() => setShowDetails(!showDetails)}
-                        className="mt-4 w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                        className="mt-4 w-full py-2 bg-teal-700 text-white rounded hover:bg-teal-800 transition"
                     >
                         {showDetails ? 'Hide Details' : 'Show Details'}
                     </button>

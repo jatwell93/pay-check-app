@@ -310,10 +310,11 @@ const App = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navy header — D-01, D-02, D-03 */}
-      <header className="bg-slate-900 text-white py-4 shadow-md">
+      <header className="bg-slate-900 text-white py-4 shadow-md border-b-2 border-teal-700">
         <div className="max-w-4xl mx-auto px-4">
-          <h1 className="text-3xl font-bold text-white">Pay Check App</h1>
-          <p className="text-gray-300 text-sm mt-1">Check if you're being paid correctly</p>
+          <span className="text-xs font-medium text-teal-400 tracking-widest uppercase">PharmIQ</span>
+          <h1 className="text-3xl font-bold text-white font-heading">Pay Checker</h1>
+          <p className="text-slate-400 text-sm mt-0.5">Check if you're being paid correctly</p>
         </div>
       </header>
 
@@ -342,7 +343,7 @@ const App = () => {
       {awardLoading && (
         <div className="fixed inset-0 bg-black/50 z-40 flex items-center justify-center" style={{ top: '68px' }}>
           <div className="bg-white p-8 rounded-lg shadow-2xl">
-            <div className="w-10 h-10 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mx-auto"></div>
+            <div className="w-10 h-10 border-4 border-gray-200 border-t-teal-700 rounded-full animate-spin mx-auto"></div>
             <p className="text-center mt-4 text-gray-600 font-medium">Loading award rates...</p>
           </div>
         </div>
@@ -424,7 +425,7 @@ const App = () => {
               href="https://www.fairwork.gov.au/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-700 underline"
+              className="text-teal-700 hover:text-teal-800 underline"
             >
               Fair Work Ombudsman
             </a>
