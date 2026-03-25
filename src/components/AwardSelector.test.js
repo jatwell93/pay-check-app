@@ -111,7 +111,7 @@ describe('AwardSelector', () => {
   // NEW: successMessage renders with teal text styling
   test('successMessage renders with teal text class when provided', () => {
     const { container } = render(<AwardSelector {...defaultProps} successMessage="Rates refreshed successfully" />);
-    const successEl = container.querySelector('.text-teal-700');
+    const successEl = container.querySelector('.text-brand');
     expect(successEl).toBeInTheDocument();
     expect(successEl).toHaveTextContent('Rates refreshed successfully');
   });

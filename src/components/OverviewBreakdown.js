@@ -10,7 +10,27 @@ const OverviewBreakdown = ({
   onTotalActualPaidChange,
   cycleLength,
 }) => {
-  if (!results) return null;
+  if (!results) {
+    return (
+      <div className="mt-8 mb-8 card">
+        <h2 className="text-xl font-semibold mb-4 text-slate-800 border-b border-edge-subtle pb-2 font-heading">Pay Overview</h2>
+        <div className="py-8 flex flex-col items-center text-center gap-3">
+          <p className="text-sm text-gray-600">
+            Enter your hours above, then click{' '}
+            <span className="font-semibold text-ink-strong">Calculate Pay</span>{' '}
+            to see your breakdown.
+          </p>
+          <div className="flex flex-wrap justify-center gap-x-5 gap-y-1 mt-1 text-xs text-ink-subtle">
+            <span>Day-by-day earnings</span>
+            <span aria-hidden="true">·</span>
+            <span>Penalty rates applied</span>
+            <span aria-hidden="true">·</span>
+            <span>Compare vs actual pay</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const getStatusCell = (calculatedPay, actualPaidStr) => {
     if (!actualPaidStr && actualPaidStr !== 0) {
@@ -23,7 +43,7 @@ const OverviewBreakdown = ({
     const diff = calculatedPay - actual;
     if (Math.abs(diff) <= 0.01) {
       return (
-        <span className="px-2 py-1 bg-teal-100 text-teal-800 rounded text-xs font-medium">
+        <span className="px-2 py-1 bg-brand-muted text-brand-dark rounded text-xs font-medium">
           OK
         </span>
       );
@@ -53,13 +73,13 @@ const OverviewBreakdown = ({
   const periodLabel = cycleLength === 7 ? 'Weekly Actual Paid' : 'Fortnightly Actual Paid';
 
   return (
-    <div className="mb-8 bg-white border border-gray-200 rounded-md shadow-sm p-4">
-      <h2 className="text-xl font-semibold mb-4 text-slate-800 border-b border-slate-200 pb-2 font-heading">Pay Overview</h2>
+    <div className="mt-8 mb-8 card">
+      <h2 className="text-xl font-semibold mb-4 text-slate-800 border-b border-edge-subtle pb-2 font-heading">Pay Overview</h2>
 
       <div className="overflow-x-auto mb-4">
         <table className="w-full border-collapse min-w-[600px]">
           <thead>
-            <tr className="bg-slate-100">
+            <tr className="bg-surface-header">
               <th className="p-2 text-left text-sm font-semibold text-gray-700">Day</th>
               <th className="p-2 text-left text-sm font-semibold text-gray-700">Hours</th>
               <th className="p-2 text-left text-sm font-semibold text-gray-700">Calculated</th>
@@ -72,8 +92,16 @@ const OverviewBreakdown = ({
             {results.dailyBreakdown.map((day, index) => (
               <React.Fragment key={index}>
                 <tr
-                  className={`cursor-pointer hover:bg-teal-50 ${selectedDayIndex === index ? 'bg-teal-50' : ''}`}
+                  className={`cursor-pointer hover:bg-brand-subtle ${selectedDayIndex === index ? 'bg-brand-subtle' : ''}`}
                   onClick={() => onDayToggle(index)}
+                  tabIndex={0}
+                  aria-expanded={selectedDayIndex === index}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      onDayToggle(index);
+                    }
+                  }}
                 >
                   <td className="p-2">{day.day}</td>
                   <td className="p-2">{day.hours.toFixed(2)}</td>
@@ -85,7 +113,7 @@ const OverviewBreakdown = ({
                       value={actualPaidByDay[index] || ''}
                       onChange={(e) => onActualPaidChange(index, e.target.value)}
                       onClick={(e) => e.stopPropagation()}
-                      className="w-24 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-700 focus:border-transparent text-sm text-gray-700"
+                      className="w-24 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-brand focus:border-brand text-sm text-gray-700"
                     />
                   </td>
                   <td className="p-2">
@@ -101,7 +129,7 @@ const OverviewBreakdown = ({
                     <td colSpan={6} className="p-2 bg-white border-t">
                       <table className="w-full text-sm border-collapse">
                         <thead>
-                          <tr className="bg-slate-50">
+                          <tr className="bg-surface-page">
                             <th className="p-1 text-left text-xs font-semibold text-gray-600">Time</th>
                             <th className="p-1 text-left text-xs font-semibold text-gray-600">Hours</th>
                             <th className="p-1 text-left text-xs font-semibold text-gray-600">Rate Type</th>
@@ -115,7 +143,7 @@ const OverviewBreakdown = ({
                               <td className="p-1">{segment.startTime} - {segment.endTime}</td>
                               <td className="p-1">{segment.hours.toFixed(2)}</td>
                               <td className="p-1">{segment.penaltyDescription}</td>
-                              <td className="p1 text-right">${segment.rate.toFixed(2)}</td>
+                              <td className="p-1 text-right">${segment.rate.toFixed(2)}</td>
                               <td className="p-1 text-right">${segment.pay.toFixed(2)}</td>
                             </tr>
                           ))}
@@ -139,7 +167,7 @@ const OverviewBreakdown = ({
           step="0.01"
           value={totalActualPaid}
           onChange={(e) => onTotalActualPaidChange(e.target.value)}
-          className="w-40 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-700 focus:border-transparent text-sm text-gray-700"
+          className="w-40 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-brand focus:border-brand text-sm text-gray-700"
           placeholder="0.00"
         />
       </div>
@@ -160,13 +188,13 @@ const OverviewBreakdown = ({
                 </span>
                 <span className="text-gray-400">|</span>
                 <span className="text-gray-600">
-                  Difference: <span className={`font-semibold ${(parseFloat(totalActualPaid) - results.total) < -0.01 ? 'text-red-700' : (parseFloat(totalActualPaid) - results.total) > 0.01 ? 'text-amber-700' : 'text-teal-700'}`}>
+                  Difference: <span className={`font-semibold ${(parseFloat(totalActualPaid) - results.total) < -0.01 ? 'text-red-700' : (parseFloat(totalActualPaid) - results.total) > 0.01 ? 'text-amber-700' : 'text-brand'}`}>
                     ${(parseFloat(totalActualPaid) - results.total).toFixed(2)}
                   </span>
                 </span>
                 <span className="text-gray-400">|</span>
                 {Math.abs(parseFloat(totalActualPaid) - results.total) <= 0.01 ? (
-                  <span className="px-2 py-1 bg-teal-100 text-teal-800 rounded text-xs font-medium">OK</span>
+                  <span className="px-2 py-1 bg-brand-muted text-brand-dark rounded text-xs font-medium">OK</span>
                 ) : parseFloat(totalActualPaid) < results.total ? (
                   <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs font-medium">Underpaid</span>
                 ) : (

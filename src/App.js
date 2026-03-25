@@ -310,10 +310,10 @@ const App = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navy header — D-01, D-02, D-03 */}
-      <header className="bg-slate-900 text-white py-4 shadow-md border-b-2 border-teal-700">
+      <header className="bg-canvas-dark text-white py-4 shadow-md border-b-2 border-brand relative z-50">
         <div className="max-w-4xl mx-auto px-4">
-          <span className="text-xs font-medium text-teal-400 tracking-widest uppercase">PharmIQ</span>
-          <h1 className="text-3xl font-bold text-white font-heading">Pay Checker</h1>
+          <span className="text-xs font-medium text-brand-light tracking-widest uppercase">PharmIQ</span>
+          <h1 className="text-3xl font-bold text-white font-heading tracking-tight">Pay Checker</h1>
           <p className="text-slate-400 text-sm mt-0.5">Check if you're being paid correctly</p>
         </div>
       </header>
@@ -329,7 +329,7 @@ const App = () => {
               </div>
               <button
                 onClick={() => setAwardError(null)}
-                className="ml-4 text-red-700 hover:text-red-900 hover:bg-red-100 rounded p-1 font-bold text-lg leading-none"
+                className="ml-4 text-red-700 hover:text-red-900 hover:bg-red-100 rounded p-1 font-bold text-lg leading-none transition-colors"
                 aria-label="Dismiss error"
               >
                 ×
@@ -339,18 +339,23 @@ const App = () => {
         </div>
       )}
 
+      {/* Screen-reader live region for loading state */}
+      <div role="status" aria-live="polite" className="sr-only">
+        {awardLoading ? 'Loading award rates, please wait.' : ''}
+      </div>
+
       {/* Loading overlay — D-08: covers content area, header remains visible */}
       {awardLoading && (
-        <div className="fixed inset-0 bg-black/50 z-40 flex items-center justify-center" style={{ top: '68px' }}>
+        <div className="fixed inset-0 bg-black/50 z-40 flex items-center justify-center">
           <div className="bg-white p-8 rounded-lg shadow-2xl">
-            <div className="w-10 h-10 border-4 border-gray-200 border-t-teal-700 rounded-full animate-spin mx-auto"></div>
+            <div className="w-10 h-10 border-4 border-gray-200 border-t-brand rounded-full animate-spin mx-auto"></div>
             <p className="text-center mt-4 text-gray-600 font-medium">Loading award rates...</p>
           </div>
         </div>
       )}
 
       {/* Main content */}
-      <main className="max-w-4xl mx-auto px-4 py-6">
+      <main className="max-w-4xl mx-auto px-4 py-8">
         {/* D-04: AwardSelector below header */}
         {/* error={null} — error display handled by the App-level banner above (D-09/D-10) */}
         <AwardSelector
@@ -365,7 +370,7 @@ const App = () => {
         />
 
         {/* D-05: 3-col grid collapses to 1-col on mobile */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <EmployeeDetails
             classification={classification}
             setClassification={setClassification}
@@ -425,7 +430,7 @@ const App = () => {
               href="https://www.fairwork.gov.au/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-teal-700 hover:text-teal-800 underline"
+              className="text-brand hover:text-brand-dark underline"
             >
               Fair Work Ombudsman
             </a>

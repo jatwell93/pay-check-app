@@ -2,10 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  /* Shared card surface — white box with border and shadow */
+  .card {
+    @apply bg-surface border border-edge rounded-md shadow-sm p-4;
+  }
+}
+
 body {
   margin: 0;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #f8fafc;
+}
+
+/* Align decimal points in monetary amounts and numeric table data */
+table td {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Stop spinner animation for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin {
+    animation: none;
+  }
 }
