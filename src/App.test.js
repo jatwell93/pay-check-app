@@ -101,50 +101,40 @@ describe('App integration tests', () => {
       expect(awardSelect).not.toBeDisabled();
     });
 
-    expect(screen.getByText('Pharmacy Industry Award')).toBeInTheDocument();
-    expect(screen.getByText('General Retail Industry Award')).toBeInTheDocument();
-    expect(screen.getByText('Hospitality Industry (General) Award')).toBeInTheDocument();
+    // Use queryAllByText or specific roles since it might appear in options AND in notes
+    const pharmacyOptions = screen.queryAllByText(/Pharmacy Industry Award/);
+    expect(pharmacyOptions.length).toBeGreaterThanOrEqual(1);
+    
+    const retailOptions = screen.queryAllByText(/General Retail Industry Award/);
+    expect(retailOptions.length).toBeGreaterThanOrEqual(1);
+
+    const hospitalityOptions = screen.queryAllByText(/Hospitality Industry \(General\) Award/);
+    expect(hospitalityOptions.length).toBeGreaterThanOrEqual(1);
   });
 
-  // REG-01: weekly pay cycle — OverviewBreakdown renders with day rows after Calculate
   test('weekly pay cycle renders 7 overview rows', async () => {
-    // Return empty rates map so calculatePay falls back to getAwardConfig (hardcoded shape)
-    // This ensures the test doesn't depend on mockRatesData having the full awardConfig shape.
     getCachedAwardRates.mockReturnValue(null);
     fetchAwardRates.mockResolvedValue({});
     getLastCacheUpdateTime.mockReturnValue(new Date());
 
     render(<App />);
 
-    // Wait for award select to be enabled (loading complete)
     await waitFor(() => {
       const awardSelect = document.getElementById('award-select');
       expect(awardSelect).not.toBeDisabled();
     });
 
-    // Fill in time for Monday (first day row) — start and end time inputs
     const startInputs = document.querySelectorAll('input[type="time"]');
-    // First pair of time inputs corresponds to Monday (index 0 = startTime, 1 = endTime)
     fireEvent.change(startInputs[0], { target: { value: '09:00' } });
     fireEvent.change(startInputs[1], { target: { value: '17:00' } });
 
-    // Click Calculate Pay
-    const calcButton = screen.getByText('Calculate Pay');
+    const calcButton = screen.getByRole('button', { name: /Calculate Weekly Total/i });
     fireEvent.click(calcButton);
 
-    // OverviewBreakdown renders day rows — Monday should appear (in both WorkHours and OverviewBreakdown)
     await waitFor(() => {
-      const mondayElements = screen.getAllByText('Monday');
+      const mondayElements = screen.getAllByText(/Monday/i);
       expect(mondayElements.length).toBeGreaterThanOrEqual(1);
     });
-  });
-
-  // REG-01: fortnightly cycle — OverviewBreakdown is cycle-aware via cycleLength prop
-  test('fortnightly pay cycle: OverviewBreakdown accepts cycleLength=14', () => {
-    // REG-01: OverviewBreakdown is cycle-aware via cycleLength prop.
-    // Fortnightly support confirmed by component unit tests in 03-01.
-    // App.js passes results.dailyBreakdown.length as cycleLength automatically.
-    expect(true).toBe(true);
   });
 
   test('header renders with title "Pay Checker"', async () => {
@@ -155,7 +145,7 @@ describe('App integration tests', () => {
     render(<App />);
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Pay Checker');
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Pay Checker/i);
     });
   });
 
@@ -166,14 +156,11 @@ describe('App integration tests', () => {
 
     render(<App />);
 
-    // Wait for error banner to appear
     await screen.findByText("Couldn't load award rates. Using Pharmacy defaults — Refresh to try again.");
 
-    // Click the dismiss button
     const dismissBtn = screen.getByRole('button', { name: /dismiss error/i });
     fireEvent.click(dismissBtn);
 
-    // Banner should be gone
     await waitFor(() => {
       expect(screen.queryByText("Couldn't load award rates. Using Pharmacy defaults — Refresh to try again.")).not.toBeInTheDocument();
     });
@@ -181,7 +168,6 @@ describe('App integration tests', () => {
 
   test('handleRefreshRates shows D-08 error wording when refresh fails after all retries', async () => {
     getCachedAwardRates.mockReturnValue(null);
-    // First call (initial load) resolves; subsequent call (manual refresh) rejects
     fetchAwardRates
       .mockResolvedValueOnce(mockRatesData)
       .mockRejectedValue(new Error('Network error'));
@@ -189,15 +175,12 @@ describe('App integration tests', () => {
 
     render(<App />);
 
-    // Wait for initial load to complete (select is enabled)
     await waitFor(() => {
       expect(document.getElementById('award-select')).not.toBeDisabled();
     });
 
-    // Click "Refresh Rates" button
-    fireEvent.click(screen.getByText('Refresh Rates'));
+    fireEvent.click(screen.getByRole('button', { name: /Sync Live Rates/i }));
 
-    // D-08: exact error wording must appear in banner
     const errorMsg = await screen.findByText(
       "Couldn't connect to Fair Work Commission — using saved rates"
     );

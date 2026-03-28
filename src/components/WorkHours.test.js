@@ -13,13 +13,13 @@ const defaultProps = {
 describe('WorkHours — Calculate button disabled state', () => {
   test('Calculate Pay button is enabled when isLoading is false', () => {
     render(<WorkHours {...defaultProps} isLoading={false} />);
-    const button = screen.getByRole('button', { name: /calculate pay/i });
+    const button = screen.getByRole('button', { name: /Calculate Weekly Total/i });
     expect(button).not.toBeDisabled();
   });
 
   test('Calculate Pay button is disabled when isLoading is true', () => {
     render(<WorkHours {...defaultProps} isLoading={true} />);
-    const button = screen.getByRole('button', { name: /calculate pay/i });
+    const button = screen.getByRole('button', { name: /Calculate Weekly Total/i });
     expect(button).toBeDisabled();
   });
 });

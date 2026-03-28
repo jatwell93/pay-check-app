@@ -3,32 +3,30 @@
 @tailwind utilities;
 
 @layer components {
-  /* Shared card surface — white box with border and shadow */
+  /* PharmIQ Card — matches design tokens */
   .card {
-    @apply bg-surface border border-edge rounded-md shadow-sm p-5;
+    @apply bg-white border border-edge-light rounded-lg shadow-sm p-6 transition-all;
   }
 }
 
 body {
   margin: 0;
-  font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
-  font-size: 1rem;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f8fafc;
+  background-color: #F8FAFC;
+  color: #475569;
 }
 
-/* Align decimal points in monetary amounts and numeric table data */
-table td {
-  font-variant-numeric: tabular-nums;
-}
-
-/* Headings — tighter line-height and optical sizing for Bricolage Grotesque */
+/* Headings — Space Grotesk */
 h1, h2, h3, h4 {
-  line-height: 1.2;
-  font-optical-sizing: auto;
-  letter-spacing: -0.01em;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  line-height: 1.25;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #0F172A;
 }
 
 /* ============================================================

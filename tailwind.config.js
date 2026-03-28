@@ -6,59 +6,72 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans:    ['DM Sans', 'system-ui', '-apple-system', 'sans-serif'],
-        heading: ['Bricolage Grotesque', 'system-ui', 'sans-serif'],
+        sans:    ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        heading: ['Space Grotesk', 'system-ui', 'sans-serif'],
+        mono:    ['JetBrains Mono', 'Fira Code', 'monospace'],
       },
       colors: {
         // Brand — primary action colour and accent
         brand: {
-          DEFAULT: '#0f766e',  // teal-700
-          dark:    '#115e59',  // teal-800 — hover / pressed
-          light:   '#2dd4bf',  // teal-400 — on dark backgrounds
-          subtle:  '#f0fdfa',  // teal-50  — row highlights
-          muted:   '#ccfbf1',  // teal-100 — badge backgrounds
-        },
-        // Surfaces — backgrounds for page, cards, table headers
-        surface: {
-          DEFAULT: '#ffffff',
-          page:    '#f8fafc',  // slate-50
-          header:  '#f1f5f9',  // slate-100
-        },
-        // Edges — borders for cards, inputs, dividers
-        edge: {
-          DEFAULT: '#e5e7eb',  // gray-200
-          input:   '#d1d5db',  // gray-300
-          subtle:  '#e2e8f0',  // slate-200
-        },
-        // Ink — text colours
-        ink: {
-          DEFAULT: '#374151',  // gray-700
-          strong:  '#1e293b',  // slate-800
-          subtle:  '#94a3b8',  // slate-400
-          muted:   '#9ca3af',  // gray-400
-        },
-        // Canvas — dark hero/header backgrounds
-        canvas: {
-          dark:    '#0f172a',  // slate-900
-        },
-        // Amber — brand accent for alerts, warnings, discrepancies
-        amber: {
-          DEFAULT: '#D97706',
-          light:   '#FDE68A',
-          dark:    '#92400E',
-          subtle:  '#FFFBEB',
+          teal:    '#0F766E',
+          'teal-light': '#14B8A6',
+          'teal-dark': '#0D5D5A',
+          'teal-50': '#F0FDFA',
+          'teal-100': '#CCFBF1',
+          amber:   '#D97706',
+          'amber-light': '#FDE68A',
+          'amber-dark': '#92400E',
+          'amber-50': '#FFFBEB',
+          navy:    '#0F172A',
+          'navy-mid': '#1E3A5F',
+          sky:     '#0EA5E9',
         },
         // Semantic — status states
         success: {
           DEFAULT: '#10B981',
           bg:      '#ECFDF5',
-          dark:    '#065F46',
+        },
+        warning: {
+          DEFAULT: '#D97706',
+          bg:      '#FFFBEB',
         },
         critical: {
           DEFAULT: '#EF4444',
           bg:      '#FEF2F2',
-          dark:    '#991B1B',
         },
+        info: {
+          DEFAULT: '#0EA5E9',
+          bg:      '#F0F9FF',
+        },
+        // Neutral surfaces
+        surface: {
+          DEFAULT: '#FFFFFF',
+          page:    '#F8FAFC',
+        },
+        // Neutral edges
+        edge: {
+          light:   '#E2E8F0',
+          mid:     '#CBD5E1',
+        },
+        // Ink — text colours
+        ink: {
+          primary: '#0F172A',
+          secondary: '#475569',
+          muted:   '#94A3B8',
+        },
+      },
+      borderRadius: {
+        sm: '4px',
+        md: '8px',
+        lg: '12px',
+        xl: '16px',
+      },
+      boxShadow: {
+        xs: '0 1px 2px rgba(15,23,42,0.06)',
+        sm: '0 1px 3px rgba(15,23,42,0.10), 0 1px 2px rgba(15,23,42,0.06)',
+        md: '0 4px 6px rgba(15,23,42,0.07), 0 2px 4px rgba(15,23,42,0.06)',
+        lg: '0 10px 15px rgba(15,23,42,0.10), 0 4px 6px rgba(15,23,42,0.05)',
+        xl: '0 20px 25px rgba(15,23,42,0.10), 0 8px 10px rgba(15,23,42,0.04)',
       },
     },
   },

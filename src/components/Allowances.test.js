@@ -37,6 +37,6 @@ describe('Allowances', () => {
   it('renders meal allowance for Retail config', () => {
     render(<Allowances allowances={defaultAllowances} handleAllowanceChange={noop}
       classification="retail-employee-1" allowanceConfig={retailAllowanceConfig} />);
-    expect(screen.getByLabelText(/Meal Allowance/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Overtime Meals/i)).toBeInTheDocument();
   });
 });
