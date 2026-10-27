@@ -1,0 +1,31 @@
+digraph BrandAlign {
+    graph [
+        goal="Execute the brand-alignment plan in .fabro/plans/brand-alignment.md",
+        model_stylesheet="* { backend: api; model: glm-5.3; provider: zai; }",
+        stall_timeout="2h"
+    ]
+    rankdir=LR
+
+    start [shape=Mdiamond, label="Start"]
+    exit  [shape=Msquare, label="Exit"]
+
+    toolchain [label="Toolchain", script="node --version && npm --version", max_retries=0, timeout="2m"]
+    deps      [label="Install deps", script="npm ci", max_retries=0, timeout="15m"]
+    preflight [label="Preflight gates", script="CI=true npm test -- --watchAll=false 2>&1 && CI=true npm run build 2>&1", max_retries=0, timeout="15m"]
+    implement [label="Implement", prompt="@prompts/implement.md", timeout="2h", fidelity="full"]
+    review    [label="Review + UBS", prompt="@prompts/review.md", timeout="1h"]
+    verify    [label="Verify", script="CI=true npm test -- --watchAll=false 2>&1 && CI=true npm run build 2>&1 && ubs -q . 2>&1 | tail -60", goal_gate=true, retry_target="fixup", timeout="20m"]
+    fixup     [label="Fixup", prompt="@prompts/fixup.md", max_visits=3, timeout="1h"]
+
+    start -> toolchain
+    toolchain -> deps       [condition="outcome=succeeded"]
+    toolchain -> exit
+    deps -> preflight       [condition="outcome=succeeded"]
+    deps -> exit
+    preflight -> implement  [condition="outcome=succeeded"]
+    preflight -> exit
+    implement -> review -> verify
+    verify -> exit          [condition="outcome=succeeded"]
+    verify -> fixup
+    fixup -> verify
+}
