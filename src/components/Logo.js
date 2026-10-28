@@ -36,7 +36,7 @@ function HexIcon({ fillColor, barColor, strokeOnly = false }) {
 }
 
 function Wordmark({ pharmColor, iqColor }) {
-  const font = "'Space Grotesk', 'Sora', system-ui, sans-serif";
+  const font = "'Bricolage Grotesque', 'DM Sans', system-ui, sans-serif";
   return (
     <>
       <text
