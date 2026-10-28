@@ -8,8 +8,9 @@ workers to check whether they were paid correctly after a shift.
 
 - `brand-identity-pharma-apps/brand-identity/brand-guidelines.md` — the umbrella
   PharmIQ brand source. This app follows the **consumer pairing** from its Quick
-  Reference (Bricolage Grotesque + DM Sans) and the shared teal/amber colour
-  system; it does not use the platform display or UI faces.
+  Reference (Fraunces + Source Sans 3) and the shared teal/amber colour
+  system; it shares the platform display face (Fraunces) but not the platform
+  UI faces.
 - `tailwind.config.js` — the token source for this app (`brand.*`, semantic,
   `surface`, `edge`, `ink`, `fontFamily`, `borderRadius`, `boxShadow`).
 - `.impeccable.md` — users, personality, and design principles.
@@ -55,11 +56,11 @@ in classnames, no inline style colours.
 
 The consumer pairing from the umbrella brand guide:
 
-- **Headings: Bricolage Grotesque** (`font-heading`, also the `h1–h4` stack in
-  `src/index.css`). Bold weights, tight tracking — personality and visual
-  weight without sacrificing legibility.
-- **Body: DM Sans** (`font-sans`, the body default in `src/index.css`).
-  Humanist and warm at reading sizes.
+- **Headings: Fraunces** (`font-heading`, also the `h1–h4` stack in
+  `src/index.css`). Optical-size serif, bold weights, tight tracking — a warm,
+  editorial advocate voice with real personality.
+- **Body: Source Sans 3** (`font-sans`, the body default in `src/index.css`).
+  Humanist, highly legible at reading sizes, true tabular figures.
 - Both are loaded from Google Fonts in `public/index.html` — keep that link to
   these two families only.
 - Body and label text ≥16px; workers reading on mobile after a shift need
@@ -128,5 +129,5 @@ loading states. Colour never carries meaning alone — pair it with text.
 - No coloured side-stripe borders above 1px on cards, list items, or callouts
 - No monospace as a costume; code/measurement only
 - No platform (non-consumer) typefaces on this surface — headings and body
-  come from the Bricolage Grotesque + DM Sans pairing only
+  come from the Fraunces + Source Sans 3 pairing only
 - No hardcoded colours bypassing the token system
