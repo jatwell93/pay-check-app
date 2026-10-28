@@ -20,23 +20,32 @@ export const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday',
 // It returns an object { multiplier: number, description: string }
 const getPenaltyRateDetails = (day, time, employmentType, classification, penaltyConfig) => {
     const isAboveAwardClassification = classification === 'above-award';
+    // Casual penalty interaction is award-specific. Awards may define optional
+    // casual* multipliers (as multiples of the loaded casual base rate) that
+    // override the standard day/window multipliers; awards that don't define
+    // them (e.g. MA000012) keep the standard multiplier.
+    const isCasual = !isAboveAwardClassification && employmentType === 'casual';
 
     // Saturday penalty
-    if (day === 'Saturday') return { multiplier: penaltyConfig.saturdayMultiplier, description: 'Saturday Rate (' + Math.round(penaltyConfig.saturdayMultiplier * 100) + '%)' };
-
-    // Sunday or Public Holiday penalty
-    if (day === 'Sunday') return { multiplier: penaltyConfig.sundayMultiplier, description: 'Sunday Rate (' + Math.round(penaltyConfig.sundayMultiplier * 100) + '%)' };
-    if (day === 'Public Holiday') return { multiplier: penaltyConfig.phMultiplier, description: 'Public Holiday Rate (' + Math.round(penaltyConfig.phMultiplier * 100) + '%)' };
-
-
-    // Casual loading (only applies to standard award rates, not above award)
-    if (!isAboveAwardClassification && employmentType === 'casual' && day !== 'Public Holiday') {
-        // If it's casual and not a public holiday, the casual loading applies.
-        // We return the casualLoadingMultiplier here, and it will be multiplied by the base rate later.
-        return { multiplier: penaltyConfig.casualLoadingMultiplier, description: 'Casual Loading (' + Math.round(penaltyConfig.casualLoadingMultiplier * 100) + '%)' };
+    if (day === 'Saturday') {
+        const multiplier = isCasual ? (penaltyConfig.casualSaturdayMultiplier ?? penaltyConfig.saturdayMultiplier) : penaltyConfig.saturdayMultiplier;
+        return { multiplier, description: 'Saturday Rate (' + Math.round(multiplier * 100) + '%)' };
     }
 
-    // Early morning (00:00 to earlyMorningThreshold) and evening (eveningThreshold to 23:59) shift penalty
+    // Sunday or Public Holiday penalty
+    if (day === 'Sunday') {
+        const multiplier = isCasual ? (penaltyConfig.casualSundayMultiplier ?? penaltyConfig.sundayMultiplier) : penaltyConfig.sundayMultiplier;
+        return { multiplier, description: 'Sunday Rate (' + Math.round(multiplier * 100) + '%)' };
+    }
+    if (day === 'Public Holiday') {
+        const multiplier = isCasual ? (penaltyConfig.casualPublicHolidayMultiplier ?? penaltyConfig.phMultiplier) : penaltyConfig.phMultiplier;
+        return { multiplier, description: 'Public Holiday Rate (' + Math.round(multiplier * 100) + '%)' };
+    }
+
+    // Early morning (00:00 to earlyMorningThreshold) and evening (eveningThreshold to 23:59) shift penalty.
+    // These window checks come BEFORE the casual-loading fallback so casuals also
+    // attract window penalties where the award pays them (awards that do not
+    // distinguish casuals fall through to the same multiplier via the ?? chain).
     const [hours, minutes] = time.split(':').map(Number);
     const totalMinutesInDay = hours * 60 + minutes;
 
@@ -49,16 +58,25 @@ const getPenaltyRateDetails = (day, time, employmentType, classification, penalt
         (totalMinutesInDay >= earlyMorningStartMinutes && totalMinutesInDay < earlyMorningEndMinutes)
     ) {
          // Apply the early morning shift loading
-         return { multiplier: penaltyConfig.earlyMorningMultiplier, description: 'Early Morning Shift (' + Math.round(penaltyConfig.earlyMorningMultiplier * 100) + '%)' };
+         const multiplier = isCasual ? (penaltyConfig.casualEarlyMorningMultiplier ?? penaltyConfig.earlyMorningMultiplier) : penaltyConfig.earlyMorningMultiplier;
+         return { multiplier, description: 'Early Morning Shift (' + Math.round(multiplier * 100) + '%)' };
     }
 
     if (
          (totalMinutesInDay >= eveningStartMinutes && totalMinutesInDay <= eveningEndMinutes)
     ) {
          // Apply the evening shift loading
-         return { multiplier: penaltyConfig.eveningMultiplier, description: 'Evening Shift (' + Math.round(penaltyConfig.eveningMultiplier * 100) + '%)' };
+         const multiplier = isCasual ? (penaltyConfig.casualEveningMultiplier ?? penaltyConfig.eveningMultiplier) : penaltyConfig.eveningMultiplier;
+         return { multiplier, description: 'Evening Shift (' + Math.round(multiplier * 100) + '%)' };
     }
 
+
+    // Casual loading (only applies to standard award rates, not above award)
+    if (!isAboveAwardClassification && employmentType === 'casual') {
+        // If it's casual and no day/window penalty applies, the casual loading applies.
+        // We return the casualLoadingMultiplier here, and it will be multiplied by the base rate later.
+        return { multiplier: penaltyConfig.casualLoadingMultiplier, description: 'Casual Loading (' + Math.round(penaltyConfig.casualLoadingMultiplier * 100) + '%)' };
+    }
 
     // If none of the above penalties apply, return the normal rate multiplier and description
     return { multiplier: 1, description: 'Ordinary Rate (100%)' };
@@ -234,4 +252,42 @@ export const calculatePayForTimePeriod = (day, startTime, endTime, baseRate, emp
         pay: totalPay,
         breakdown
     };
+};
+
+/**
+ * Weekly overtime calculation, driven entirely by the award's penaltyConfig.
+ *
+ * Config knobs:
+ *  - overtimeThresholdHours:   ordinary hours cap before overtime starts (both awards: 38)
+ *  - overtimeFirstTierHours:   hours paid at overtimeFirstTierMultiplier before the
+ *                              second tier kicks in (MA000012: 2h, MA000004: 3h; defaults to 2)
+ *  - overtimeAppliesToCasuals: casuals receive weekly overtime (MA000004 only; default false)
+ *
+ * For full-time/part-time employees the tiers are computed on the full-time
+ * base rate for the classification; casuals (when eligible) use their own
+ * (loaded) casual base rate.
+ *
+ * @param {number} totalHours  - total paid hours for the week
+ * @param {number} baseRate    - the employee's effective base rate
+ * @param {number} ftBaseRate  - full-time/part-time base rate for the classification
+ * @param {string} employmentType - 'full-time' | 'part-time' | 'casual'
+ * @param {object} penaltyConfig - the selected award's penaltyConfig
+ * @returns {{ overtimeHours: number, overtimePay: number }}
+ */
+export const calculateOvertimePay = (totalHours, baseRate, ftBaseRate, employmentType, penaltyConfig) => {
+    const isEligible = employmentType !== 'casual' || penaltyConfig.overtimeAppliesToCasuals === true;
+    if (!isEligible || totalHours <= penaltyConfig.overtimeThresholdHours) {
+        return { overtimeHours: 0, overtimePay: 0 };
+    }
+
+    const overtimeHours = totalHours - penaltyConfig.overtimeThresholdHours;
+    const firstTierHours = penaltyConfig.overtimeFirstTierHours ?? 2;
+    const firstTier = Math.min(overtimeHours, firstTierHours);
+    const remainingHours = overtimeHours - firstTier;
+    const overtimeBaseRate = employmentType === 'casual' ? baseRate : ftBaseRate;
+
+    const overtimePay = (firstTier * overtimeBaseRate * penaltyConfig.overtimeFirstTierMultiplier) +
+        (remainingHours * overtimeBaseRate * penaltyConfig.overtimeSecondTierMultiplier);
+
+    return { overtimeHours, overtimePay };
 };

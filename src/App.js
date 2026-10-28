@@ -6,15 +6,15 @@ import WorkHours from './components/WorkHours';
 import AwardSelector from './components/AwardSelector';
 import ImportantNotes from './components/ImportantNotes';
 import Logo from './components/Logo';
-import { calculatePayForTimePeriod, weekDays } from './helpers';
+import { calculatePayForTimePeriod, calculateOvertimePay, weekDays } from './helpers';
 import { fetchAwardRates, getCachedAwardRates, getLastCacheUpdateTime, clearCache } from './services/awardRatesService';
 import { getAwardConfig } from './config/awardConfig';
 
-const AWARD_IDS = ['MA000012', 'MA000003', 'MA000009'];
+const AWARD_IDS = ['MA000012', 'MA000004', 'MA000009'];
 
 const awardMetadata = {
   'MA000012': { name: 'Pharmacy Industry Award' },
-  'MA000003': { name: 'General Retail Industry Award' },
+  'MA000004': { name: 'General Retail Industry Award' },
   'MA000009': { name: 'Hospitality Industry (General) Award' },
 };
 
@@ -144,9 +144,12 @@ const App = () => {
   };
 
   const calculatePay = () => {
+    const baseAwardConfig = getAwardConfig(selectedAward);
+    // Live FWC data only overrides base rates when the hydrated shape is present;
+    // penalty config, classifications and allowances always come from awardConfig.
     const selectedAwardConfig = (awardRates && awardRates[selectedAward]?.baseRates)
-      ? awardRates[selectedAward]
-      : getAwardConfig(selectedAward);
+      ? { ...baseAwardConfig, baseRates: awardRates[selectedAward].baseRates }
+      : baseAwardConfig;
     let baseRate;
     if (classification === 'above-award') {
       if(customRate){
@@ -199,29 +202,25 @@ const App = () => {
       }
     })
     
-    let overtimeHours = 0;
-    let overtimePay = 0; 
-    if (employmentType !== "casual" && totalHours > selectedAwardConfig.penaltyConfig.overtimeThresholdHours) {
-        overtimeHours = totalHours - selectedAwardConfig.penaltyConfig.overtimeThresholdHours;
-        const first2Hours = Math.min(overtimeHours, 2);
-        const remainingHours = overtimeHours - first2Hours;
-        const nonCasualBaseRate = selectedAwardConfig.baseRates.fullTimePartTime[classification]?.base ?? baseRate;
-
-        overtimePay = (first2Hours * nonCasualBaseRate * selectedAwardConfig.penaltyConfig.overtimeFirstTierMultiplier) +
-          (remainingHours * nonCasualBaseRate * selectedAwardConfig.penaltyConfig.overtimeSecondTierMultiplier);
-        totalPay = totalPay - (overtimeHours * baseRate);
+    const ftBaseRate = selectedAwardConfig.baseRates.fullTimePartTime[classification]?.base ?? baseRate;
+    const { overtimeHours, overtimePay } = calculateOvertimePay(
+      totalHours, baseRate, ftBaseRate, employmentType, selectedAwardConfig.penaltyConfig
+    );
+    if (overtimeHours > 0) {
+      // Replace the ordinary-rate pay for the overtime hours with tiered overtime pay.
+      totalPay = totalPay - (overtimeHours * baseRate);
     }
     
     let totalAllowances = 0;
     let allowanceBreakdown = [];
     
-    if (allowances.homeMedicineReview) {
-        const hmrAmount = selectedAwardConfig.allowances.homeMedicineReview ?? 0;
+    if (allowances.homeMedicineReview && selectedAwardConfig.allowances.homeMedicineReview != null) {
+        const hmrAmount = selectedAwardConfig.allowances.homeMedicineReview;
         totalAllowances += hmrAmount;
         allowanceBreakdown.push({ name: 'Home Medicine Reviews', amount: hmrAmount });
     }
 
-    if (allowances.laundry) {
+    if (allowances.laundry && (selectedAwardConfig.allowances.laundryFullTime != null || selectedAwardConfig.allowances.laundryPartTimeCasual != null)) {
         const laundryAmount = employmentType === "full-time"
             ? (selectedAwardConfig.allowances.laundryFullTime ?? 0)
             : (selectedAwardConfig.allowances.laundryPartTimeCasual ?? 0) * dailyBreakdown.length;
@@ -229,25 +228,25 @@ const App = () => {
         allowanceBreakdown.push({ name: 'Laundry Allowance', amount: laundryAmount });
     }
 
-    if (allowances.brokenHill) {
-        const brokenHillAmount = selectedAwardConfig.allowances.brokenHill ?? 0;
+    if (allowances.brokenHill && selectedAwardConfig.allowances.brokenHill != null) {
+        const brokenHillAmount = selectedAwardConfig.allowances.brokenHill;
         totalAllowances += brokenHillAmount;
         allowanceBreakdown.push({ name: 'Broken Hill Allowance', amount: brokenHillAmount });
     }
 
-    if (allowances.motorVehicleKm > 0) {
+    if (allowances.motorVehicleKm > 0 && selectedAwardConfig.allowances.motorVehiclePerKm != null) {
         const vehicleAmount = allowances.motorVehicleKm * (selectedAwardConfig.allowances.motorVehiclePerKm ?? 0);
         totalAllowances += vehicleAmount;
         allowanceBreakdown.push({ name: 'Motor Vehicle Allowance', amount: vehicleAmount });
     }
 
-    if (allowances.mealAllowance > 0) {
+    if (allowances.mealAllowance > 0 && selectedAwardConfig.allowances.mealAllowanceOvertime != null) {
         const mealAmount = allowances.mealAllowance * (selectedAwardConfig.allowances.mealAllowanceOvertime ?? 0);
         totalAllowances += mealAmount;
         allowanceBreakdown.push({ name: 'Meal Allowance (Overtime)', amount: mealAmount });
     }
 
-    if (allowances.mealAllowanceExtra > 0) {
+    if (allowances.mealAllowanceExtra > 0 && selectedAwardConfig.allowances.mealAllowanceOvertimeExtra != null) {
         const mealExtraAmount = allowances.mealAllowanceExtra * (selectedAwardConfig.allowances.mealAllowanceOvertimeExtra ?? 0);
         totalAllowances += mealExtraAmount;
         allowanceBreakdown.push({ name: 'Extra Meal Allowance (Overtime > 4 hours)', amount: mealExtraAmount });
@@ -281,14 +280,14 @@ const App = () => {
             <div>
               <h1 className="text-2xl font-bold text-white font-heading tracking-tight flex items-center gap-2">
                 Pay Checker
-                <span className="text-[10px] bg-brand-teal px-1.5 py-0.5 rounded uppercase tracking-wider font-sans">Module</span>
+                <span className="text-xs bg-brand-teal px-1.5 py-0.5 rounded uppercase tracking-wider font-sans">Module</span>
               </h1>
-              <p className="text-slate-400 text-sm mt-0.5">Professional assurance and wage compliance</p>
+              <p className="text-ink-muted text-sm mt-0.5">Professional assurance and wage compliance</p>
             </div>
           </div>
           <div className="text-right hidden md:block">
             <p className="text-xs text-brand-teal-light font-medium uppercase tracking-widest">PharmIQ Ecosystem</p>
-            <p className="text-[10px] text-slate-500 mt-1 italic">"Infrastructure for Choice. Clarity for Growth."</p>
+            <p className="text-xs text-ink-muted mt-1 italic">"Infrastructure for Choice. Clarity for Growth."</p>
           </div>
         </div>
       </header>
@@ -296,7 +295,7 @@ const App = () => {
       {/* Error banner */}
       {awardError && (
         <div className="max-w-4xl mx-auto px-4 pt-4">
-          <div className="bg-critical-bg border-l-4 border-critical p-4 rounded-md shadow-sm animate-slide-down">
+          <div className="bg-critical-bg border border-critical/40 p-4 rounded-md shadow-sm animate-slide-down">
             <div className="flex justify-between items-start">
               <div>
                 <h3 className="font-bold text-ink-primary mb-1">Unable to Load Award Rates</h3>
@@ -394,6 +393,7 @@ const App = () => {
         <ImportantNotes
           awardName={currentAwardConfig?.name || 'selected award'}
           overtimeThresholdHours={currentAwardConfig?.penaltyConfig?.overtimeThresholdHours || 38}
+          casualOvertimeEligible={currentAwardConfig?.penaltyConfig?.overtimeAppliesToCasuals === true}
         />
 
         {/* Footer */}

@@ -94,23 +94,23 @@ test('getLastCacheUpdateTime returns null when no cache entry exists', () => {
 
 test('clearCache(awardId) removes only the specific versioned key from localStorage', () => {
   store[makeKey('MA000012')] = JSON.stringify({ data: {}, timestamp: Date.now(), expiry: Date.now() + 1000 });
-  store[makeKey('MA000003')] = JSON.stringify({ data: {}, timestamp: Date.now(), expiry: Date.now() + 1000 });
+  store[makeKey('MA000004')] = JSON.stringify({ data: {}, timestamp: Date.now(), expiry: Date.now() + 1000 });
 
   clearCache('MA000012');
 
   expect(store[makeKey('MA000012')]).toBeUndefined();
-  expect(store[makeKey('MA000003')]).toBeDefined();
+  expect(store[makeKey('MA000004')]).toBeDefined();
 });
 
 test('clearCache() with no argument removes all keys matching the award_rates_v1_ prefix', () => {
   store[makeKey('MA000012')] = JSON.stringify({ data: {}, timestamp: Date.now(), expiry: Date.now() + 1000 });
-  store[makeKey('MA000003')] = JSON.stringify({ data: {}, timestamp: Date.now(), expiry: Date.now() + 1000 });
+  store[makeKey('MA000004')] = JSON.stringify({ data: {}, timestamp: Date.now(), expiry: Date.now() + 1000 });
   store['unrelated_key'] = 'should remain';
 
   clearCache();
 
   expect(store[makeKey('MA000012')]).toBeUndefined();
-  expect(store[makeKey('MA000003')]).toBeUndefined();
+  expect(store[makeKey('MA000004')]).toBeUndefined();
   expect(store['unrelated_key']).toBe('should remain');
 });
 

@@ -13,7 +13,7 @@ const DetailedBreakdown = ({ results }) => {
         {results.dailyBreakdown.map((day, index) => (
           <div key={index} className="mb-4 p-3 border rounded bg-white">
             <h4 className="font-medium text-lg">{day.day} (${day.pay.toFixed(2)})</h4>
-            <p className="text-base text-gray-600 mb-2">
+            <p className="text-base text-ink-secondary mb-2">
               {day.startTime} - {day.endTime} ({day.hours.toFixed(2)} hours)
             </p>
 

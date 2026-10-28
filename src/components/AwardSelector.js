@@ -73,7 +73,7 @@ function AwardSelector({
           </button>
           
           {lastUpdated && (
-            <p className="text-[10px] text-ink-muted mt-2 text-right uppercase tracking-wider font-medium">
+            <p className="text-xs text-ink-muted mt-2 text-right uppercase tracking-wider font-medium">
               Verified {formatDistanceToNow(lastUpdated, { addSuffix: true })}
             </p>
           )}

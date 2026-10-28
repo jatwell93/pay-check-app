@@ -1,12 +1,14 @@
 /**
  * awardConfig.js — Single source of truth for all award configurations.
  *
- * Keyed by FWC award ID (MA000012, MA000003, MA000009).
+ * Keyed by FWC award ID (MA000012, MA000004, MA000009).
  * Each entry contains: penaltyConfig, classifications, ageOptions,
  * juniorClassificationIds, baseRates, juniorPercentages, allowances.
  *
  * MA000012 base rates are byte-for-byte identical to pharmacyAwardRates in App.js.
- * MA000003 and MA000009 contain realistic stub values (will be replaced by API data in v2).
+ * MA000004 (General Retail Industry Award) holds the full GRIA dataset effective
+ * 1 July 2024 — see docs/award-assumptions.md for the provenance of every value.
+ * MA000009 contains realistic stub values (will be replaced by API data in v2).
  *
  * Do NOT import from helpers.js or App.js — this file is self-contained.
  */
@@ -122,21 +124,35 @@ const awardConfig = {
     },
   },
 
-  MA000003: {
-    awardId: 'MA000003',
+  MA000004: {
+    awardId: 'MA000004',
     name: 'General Retail Industry Award',
     penaltyConfig: {
+      // GRIA penalty structure effective 1 July 2024 (see docs/award-assumptions.md).
+      // Ordinary span Monday–Friday is 7:00am–6:00pm; work outside the span is
+      // paid at overtime rates (150%) — before 7:00am and after 6:00pm.
       earlyMorningThreshold: 420,          // 07:00 in minutes from midnight
-      eveningThreshold: 1320,              // 22:00 in minutes from midnight
-      earlyMorningMultiplier: 1.25,
-      eveningMultiplier: 1.25,
-      casualLoadingMultiplier: 1.25,
-      saturdayMultiplier: 1.25,
-      sundayMultiplier: 2.0,
-      phMultiplier: 2.25,
+      eveningThreshold: 1080,              // 18:00 in minutes from midnight
+      earlyMorningMultiplier: 1.5,
+      eveningMultiplier: 1.5,
+      casualLoadingMultiplier: 1.0,        // casual baseRates below already include the 25% GRIA casual loading
+      saturdayMultiplier: 1.5,
+      sundayMultiplier: 1.5,
+      phMultiplier: 2.5,
+      // Casual day/evening penalties are multiples of the (loaded) casual base
+      // rate, sized to land on the GRIA loading-inclusive totals: Saturday 175%,
+      // Sunday 200%, public holiday 250%, evening/early-morning 150%.
+      casualSaturdayMultiplier: 1.4,
+      casualSundayMultiplier: 1.6,
+      casualPublicHolidayMultiplier: 2.0,
+      casualEveningMultiplier: 1.2,
+      casualEarlyMorningMultiplier: 1.2,
+      // Overtime: 150% for the first 3 hours, 200% thereafter (Mon–Sat).
       overtimeThresholdHours: 38,
+      overtimeFirstTierHours: 3,
       overtimeFirstTierMultiplier: 1.5,
       overtimeSecondTierMultiplier: 2.0,
+      overtimeAppliesToCasuals: true,
     },
     classifications: [
       { id: 'retail-employee-1', name: 'Retail Employee Level 1' },
@@ -144,36 +160,38 @@ const awardConfig = {
       { id: 'retail-employee-3', name: 'Retail Employee Level 3' },
       { id: 'retail-employee-4', name: 'Retail Employee Level 4' },
       { id: 'retail-employee-5', name: 'Retail Employee Level 5' },
-      { id: 'retail-supervisor', name: 'Retail Supervisor' },
+      { id: 'retail-employee-6', name: 'Retail Employee Level 6' },
       { id: 'above-award', name: 'Above Award' },
     ],
     ageOptions: sharedAgeOptions,
-    juniorClassificationIds: ['retail-employee-1'],
+    juniorClassificationIds: ['retail-employee-1', 'retail-employee-2'],
     baseRates: {
       fullTimePartTime: {
-        'retail-employee-1': { base: 24.01 },
-        'retail-employee-2': { base: 24.77 },
-        'retail-employee-3': { base: 25.73 },
-        'retail-employee-4': { base: 27.26 },
-        'retail-employee-5': { base: 28.79 },
-        'retail-supervisor': { base: 30.47 },
+        'retail-employee-1': { base: 24.10 },
+        'retail-employee-2': { base: 24.53 },
+        'retail-employee-3': { base: 24.97 },
+        'retail-employee-4': { base: 25.83 },
+        'retail-employee-5': { base: 26.70 },
+        'retail-employee-6': { base: 29.08 },
       },
       casual: {
-        'retail-employee-1': { base: 30.01 },
-        'retail-employee-2': { base: 30.96 },
-        'retail-employee-3': { base: 32.16 },
-        'retail-employee-4': { base: 34.08 },
-        'retail-employee-5': { base: 35.99 },
-        'retail-supervisor': { base: 38.09 },
+        'retail-employee-1': { base: 30.13 },
+        'retail-employee-2': { base: 30.66 },
+        'retail-employee-3': { base: 31.21 },
+        'retail-employee-4': { base: 32.29 },
+        'retail-employee-5': { base: 33.38 },
+        'retail-employee-6': { base: 36.35 },
       },
     },
+    // Keys match the age-option ids ('16', '17', ...) so the App junior-rate
+    // lookup resolves directly.
     juniorPercentages: {
       'under-16': 0.45,
-      'age-16': 0.5,
-      'age-17': 0.6,
-      'age-18': 0.7,
-      'age-19': 0.8,
-      'age-20': 0.9,
+      '16': 0.5,
+      '17': 0.6,
+      '18': 0.7,
+      '19': 0.8,
+      '20': 0.9,
     },
     allowances: {
       mealAllowanceOvertime: 16.65,

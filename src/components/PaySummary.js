@@ -44,7 +44,7 @@ const PaySummary = ({ results, showDetails, setShowDetails }) => {
                     </button>
                 </div>
             ) : (
-                <div className="text-gray-500 italic">
+                <div className="text-ink-muted italic">
                     Enter your work hours and click "Calculate Pay" to see your estimated weekly pay
                 </div>
             )}

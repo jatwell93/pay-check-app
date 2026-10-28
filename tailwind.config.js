@@ -6,8 +6,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans:    ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        heading: ['Space Grotesk', 'system-ui', 'sans-serif'],
+        sans:    ['Hanken Grotesk', 'system-ui', '-apple-system', 'sans-serif'],
+        heading: ['Bricolage Grotesque', 'system-ui', 'sans-serif'],
         mono:    ['JetBrains Mono', 'Fira Code', 'monospace'],
       },
       colors: {

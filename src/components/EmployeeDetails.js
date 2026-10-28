@@ -14,7 +14,7 @@ const EmployeeDetails = ({
   return (
     <div className="card h-full">
       <div className="flex items-center gap-2 mb-6 border-b border-edge-light pb-4">
-        <div className="h-2 w-2 rounded-full bg-brand-teal animate-pulse"></div>
+        <div className="h-2 w-2 rounded-full bg-brand-teal"></div>
         <h2 className="text-lg font-bold text-ink-primary">Employee Details</h2>
       </div>
 
@@ -91,7 +91,7 @@ const EmployeeDetails = ({
               Age-Based Rate
             </label>
             {!juniorClassificationIds.includes(classification) && (
-              <span className="text-[10px] bg-slate-100 text-ink-muted px-2 py-0.5 rounded uppercase font-bold tracking-tight">Not Applicable</span>
+              <span className="text-xs bg-slate-100 text-ink-muted px-2 py-0.5 rounded uppercase font-bold tracking-tight">Not Applicable</span>
             )}
           </div>
           <select
@@ -106,7 +106,7 @@ const EmployeeDetails = ({
             ))}
           </select>
           {juniorClassificationIds.includes(classification) && (
-            <p className="text-[10px] text-ink-muted mt-2 italic flex items-center gap-1">
+            <p className="text-xs text-ink-muted mt-2 italic flex items-center gap-1">
               <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
               Junior rates apply to this classification
             </p>

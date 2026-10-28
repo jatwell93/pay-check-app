@@ -4,7 +4,7 @@ import AwardSelector from './AwardSelector';
 
 const mockAwardMetadata = {
   'MA000012': { name: 'Pharmacy Industry Award' },
-  'MA000003': { name: 'General Retail Industry Award' },
+  'MA000004': { name: 'General Retail Industry Award' },
   'MA000009': { name: 'Hospitality Industry (General) Award' },
 };
 
@@ -43,8 +43,8 @@ describe('AwardSelector', () => {
     const onSelectAward = jest.fn();
     render(<AwardSelector {...defaultProps} onSelectAward={onSelectAward} />);
     const select = screen.getByRole('combobox');
-    fireEvent.change(select, { target: { value: 'MA000003' } });
-    expect(onSelectAward).toHaveBeenCalledWith('MA000003');
+    fireEvent.change(select, { target: { value: 'MA000004' } });
+    expect(onSelectAward).toHaveBeenCalledWith('MA000004');
   });
 
   test('renders "Sync Live Rates" button', () => {

@@ -21,7 +21,7 @@ const FWC_AWARD_SCHEMA = z.object({}).passthrough();
  * Validates responses with Zod before caching.
  * Returns a map of { awardId: validatedData }.
  *
- * @param {string[]} awardIds — e.g. ['MA000012', 'MA000003', 'MA000009']
+ * @param {string[]} awardIds — e.g. ['MA000012', 'MA000004', 'MA000009']
  * @returns {Promise<Object>}
  */
 export async function fetchAwardRates(awardIds) {
@@ -51,7 +51,7 @@ export async function fetchAwardRates(awardIds) {
 
       const data = await response.json();
 
-      // data is expected to be keyed by awardId: { MA000012: {...}, MA000003: {...}, ... }
+      // data is expected to be keyed by awardId: { MA000012: {...}, MA000004: {...}, ... }
       // This shape comes from FWC API via the proxy — exact structure TBD once API tested.
       // hydrateAwardRates() will transform raw FWC data to awardConfig shape.
       const ratesMap = {};
