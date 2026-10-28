@@ -281,14 +281,14 @@ const App = () => {
             <div>
               <h1 className="text-2xl font-bold text-white font-heading tracking-tight flex items-center gap-2">
                 Pay Checker
-                <span className="text-[10px] bg-brand-teal px-1.5 py-0.5 rounded uppercase tracking-wider font-sans">Module</span>
+                <span className="text-xs bg-brand-teal px-1.5 py-0.5 rounded uppercase tracking-wider font-sans">Module</span>
               </h1>
-              <p className="text-slate-400 text-sm mt-0.5">Professional assurance and wage compliance</p>
+              <p className="text-edge-light text-sm mt-0.5">Professional assurance and wage compliance</p>
             </div>
           </div>
           <div className="text-right hidden md:block">
             <p className="text-xs text-brand-teal-light font-medium uppercase tracking-widest">PharmIQ Ecosystem</p>
-            <p className="text-[10px] text-slate-500 mt-1 italic">"Infrastructure for Choice. Clarity for Growth."</p>
+            <p className="text-xs text-edge-mid mt-1 italic">"Infrastructure for Choice. Clarity for Growth."</p>
           </div>
         </div>
       </header>
@@ -296,7 +296,7 @@ const App = () => {
       {/* Error banner */}
       {awardError && (
         <div className="max-w-4xl mx-auto px-4 pt-4">
-          <div className="bg-critical-bg border-l-4 border-critical p-4 rounded-md shadow-sm animate-slide-down">
+          <div className="bg-critical-bg border border-critical/20 p-4 rounded-md shadow-sm animate-slide-down">
             <div className="flex justify-between items-start">
               <div>
                 <h3 className="font-bold text-ink-primary mb-1">Unable to Load Award Rates</h3>
@@ -304,7 +304,7 @@ const App = () => {
               </div>
               <button
                 onClick={() => setAwardError(null)}
-                className="ml-4 text-ink-muted hover:text-critical transition-colors"
+                className="ml-4 text-ink-secondary hover:text-critical transition-colors"
                 aria-label="Dismiss error"
               >
                 ×
@@ -326,7 +326,7 @@ const App = () => {
             <div className="w-12 h-12 border-4 border-brand-teal-50 border-t-brand-teal rounded-full animate-spin mx-auto mb-4"></div>
             <Logo size={24} className="mx-auto mb-2" />
             <p className="text-ink-primary font-medium">Hydrating live award rates...</p>
-            <p className="text-ink-muted text-xs mt-1 italic">Verifying against FWC national standards</p>
+            <p className="text-ink-secondary text-xs mt-1 italic">Verifying against FWC national standards</p>
           </div>
         </div>
       )}
@@ -397,7 +397,7 @@ const App = () => {
         />
 
         {/* Footer */}
-        <footer className="text-center text-ink-muted text-sm pt-10 pb-4 border-t border-edge-light mt-8">
+        <footer className="text-center text-ink-secondary text-sm pt-10 pb-4 border-t border-edge-light mt-8">
           <div className="flex justify-center mb-6 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all">
              <Logo size={24} variant="wordmark" color="mono" monoColor="#94A3B8" />
           </div>

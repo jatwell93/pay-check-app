@@ -11,7 +11,7 @@ const DetailedBreakdown = ({ results }) => {
       <div className="mb-6">
         <h3 className="text-lg font-semibold mb-3 text-brand-teal font-heading">Daily Pay</h3>
         {results.dailyBreakdown.map((day, index) => (
-          <div key={index} className="mb-4 p-3 border rounded bg-white">
+          <div key={index} className="py-4 border-b border-edge-light first:pt-0 last:border-b-0 last:pb-0">
             <h4 className="font-medium text-lg">{day.day} (<span className="tabular-nums">${day.pay.toFixed(2)}</span>)</h4>
             <p className="text-base text-ink-secondary mb-2">
               {day.startTime} - {day.endTime} (<span className="tabular-nums">{day.hours.toFixed(2)}</span> hours)
@@ -47,7 +47,7 @@ const DetailedBreakdown = ({ results }) => {
       {results.overtimeHours > 0 && (
         <div className="mb-6">
           <h3 className="text-lg font-semibold mb-3 text-brand-teal font-heading">Overtime</h3>
-          <div className="p-3 border rounded bg-white">
+          <div>
             <p><span className="tabular-nums">{results.overtimeHours.toFixed(2)}</span> hours over standard 38 hours</p>
             <p>First 2 hours at time and a half, remaining at double time</p>
             <p className="font-medium mt-2">Total overtime: <span className="tabular-nums">${results.overtimePay.toFixed(2)}</span></p>
@@ -59,7 +59,7 @@ const DetailedBreakdown = ({ results }) => {
       {results.allowances > 0 && (
         <div className="mb-6">
           <h3 className="text-lg font-semibold mb-3 text-brand-teal font-heading">Allowances</h3>
-          <div className="p-3 border rounded bg-white">
+          <div>
             <table className="w-full">
               <thead>
                 <tr className="bg-surface-page">

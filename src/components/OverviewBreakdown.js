@@ -29,7 +29,7 @@ const OverviewBreakdown = ({
               Enter your shift hours above and click <span className="text-brand-teal font-bold">Calculate Weekly Total</span> to generate your professional pay audit.
             </p>
           </div>
-          <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-[10px] text-ink-muted font-bold uppercase tracking-widest">
+          <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-ink-secondary font-bold uppercase tracking-widest">
             <span className="flex items-center gap-1"><span className="h-1 w-1 rounded-full bg-brand-teal"></span> Penalty Rates</span>
             <span className="flex items-center gap-1"><span className="h-1 w-1 rounded-full bg-brand-teal"></span> Overtime Audit</span>
             <span className="flex items-center gap-1"><span className="h-1 w-1 rounded-full bg-brand-teal"></span> Allowance Check</span>
@@ -41,29 +41,29 @@ const OverviewBreakdown = ({
 
   const getStatusBadge = (calculatedPay, actualPaidStr) => {
     if (!actualPaidStr && actualPaidStr !== 0) {
-      return <span className="text-[10px] text-ink-muted font-bold uppercase tracking-tight italic">Pending Input</span>;
+      return <span className="text-xs text-ink-secondary font-bold uppercase tracking-tight italic">Pending Input</span>;
     }
     const actual = parseFloat(actualPaidStr);
     if (isNaN(actual)) {
-      return <span className="text-[10px] text-ink-muted font-bold uppercase tracking-tight italic">Pending Input</span>;
+      return <span className="text-xs text-ink-secondary font-bold uppercase tracking-tight italic">Pending Input</span>;
     }
     const diff = calculatedPay - actual;
     if (Math.abs(diff) <= 0.01) {
       return (
-        <span className="px-2 py-0.5 bg-success-bg text-success border border-success/20 rounded-full text-[10px] font-bold uppercase tracking-wider">
+        <span className="px-2 py-0.5 bg-success-bg text-success border border-success/20 rounded-full text-xs font-bold uppercase tracking-wider">
           Verified OK
         </span>
       );
     }
     if (diff > 0.01) {
       return (
-        <span className="px-2 py-0.5 bg-critical-bg text-critical border border-critical/20 rounded-full text-[10px] font-bold uppercase tracking-wider">
+        <span className="px-2 py-0.5 bg-critical-bg text-critical border border-critical/20 rounded-full text-xs font-bold uppercase tracking-wider">
           Underpaid
         </span>
       );
     }
     return (
-      <span className="px-2 py-0.5 bg-brand-amber-50 text-brand-amber-dark border border-brand-amber/20 rounded-full text-[10px] font-bold uppercase tracking-wider">
+      <span className="px-2 py-0.5 bg-brand-amber-50 text-brand-amber-dark border border-brand-amber/20 rounded-full text-xs font-bold uppercase tracking-wider">
         Discrepancy
       </span>
     );
@@ -131,7 +131,7 @@ const OverviewBreakdown = ({
                     <td className="px-6 py-4 text-sm font-bold text-ink-primary tabular-nums">${day.pay.toFixed(2)}</td>
                     <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                       <div className="relative w-28 group/input">
-                        <span className="absolute left-2 top-1/2 -translate-y-1/2 text-sm font-bold text-ink-muted group-focus-within/input:text-brand-teal transition-colors">$</span>
+                        <span className="absolute left-2 top-1/2 -translate-y-1/2 text-sm font-bold text-ink-secondary group-focus-within/input:text-brand-teal transition-colors">$</span>
                         <input
                           type="number"
                           step="0.01"
@@ -164,7 +164,7 @@ const OverviewBreakdown = ({
                             </h4>
                             <table className="w-full text-xs">
                               <thead>
-                                <tr className="text-ink-muted border-b border-edge-light">
+                                <tr className="text-ink-secondary border-b border-edge-light">
                                   <th className="text-left font-bold pb-2">Shift Segment</th>
                                   <th className="text-left font-bold pb-2">Audit Hours</th>
                                   <th className="text-left font-bold pb-2">Rate Applied</th>
@@ -180,7 +180,7 @@ const OverviewBreakdown = ({
                                     <td className="py-2">
                                       <span className="text-ink-secondary">{segment.penaltyDescription}</span>
                                     </td>
-                                    <td className="py-2 text-right text-ink-muted italic tabular-nums">${segment.rate.toFixed(2)}/h</td>
+                                    <td className="py-2 text-right text-ink-secondary italic tabular-nums">${segment.rate.toFixed(2)}/h</td>
                                     <td className="py-2 text-right text-brand-teal font-bold tabular-nums">${segment.pay.toFixed(2)}</td>
                                   </tr>
                                 ))}
@@ -203,7 +203,7 @@ const OverviewBreakdown = ({
               {periodLabel}
             </label>
             <div className="relative group/input">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-ink-muted group-focus-within/input:text-brand-teal">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-ink-secondary group-focus-within/input:text-brand-teal">$</span>
               <input
                 type="number"
                 step="0.01"
@@ -246,11 +246,11 @@ const OverviewBreakdown = ({
                           ${(parseFloat(totalActualPaid) - results.total).toFixed(2)}
                         </p>
                         {Math.abs(parseFloat(totalActualPaid) - results.total) <= 0.01 ? (
-                          <span className="px-2 py-0.5 bg-brand-teal text-white rounded text-[10px] font-bold uppercase tracking-widest">Perfect Match</span>
+                          <span className="px-2 py-0.5 bg-brand-teal text-white rounded text-xs font-bold uppercase tracking-widest">Perfect Match</span>
                         ) : parseFloat(totalActualPaid) < results.total ? (
-                          <span className="px-2 py-0.5 bg-critical text-white rounded text-[10px] font-bold uppercase tracking-widest">Underpaid</span>
+                          <span className="px-2 py-0.5 bg-critical text-white rounded text-xs font-bold uppercase tracking-widest">Underpaid</span>
                         ) : (
-                          <span className="px-2 py-0.5 bg-brand-amber-dark text-white rounded text-[10px] font-bold uppercase tracking-widest">Overpaid</span>
+                          <span className="px-2 py-0.5 bg-brand-amber-dark text-white rounded text-xs font-bold uppercase tracking-widest">Overpaid</span>
                         )}
                       </div>
                     </div>
