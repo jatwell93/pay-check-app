@@ -23,7 +23,7 @@ const Allowances = ({ allowances, handleAllowanceChange, classification, allowan
         <label htmlFor={id} className={`text-sm font-semibold ${disabled ? 'text-ink-muted' : 'text-ink-primary'} cursor-pointer`}>
           {label}
         </label>
-        {description && <p className="text-[10px] text-ink-muted mt-0.5">{description}</p>}
+        {description && <p className="text-sm text-ink-secondary mt-0.5">{description}</p>}
       </div>
     </div>
   );

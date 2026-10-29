@@ -3,3 +3,6 @@ node_modules/
 brand-identity-pharma-apps/
 .impeccable/
 .planning/
+.claude/
+.fabro/
+build/

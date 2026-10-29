@@ -91,12 +91,12 @@ const EmployeeDetails = ({
               Age-Based Rate
             </label>
             {!juniorClassificationIds.includes(classification) && (
-              <span className="text-[10px] bg-slate-100 text-ink-muted px-2 py-0.5 rounded uppercase font-bold tracking-tight">Not Applicable</span>
+              <span className="text-[10px] bg-surface-page text-ink-muted px-2 py-0.5 rounded uppercase font-bold tracking-tight">Not Applicable</span>
             )}
           </div>
           <select
             id="age"
-            className="w-full p-2.5 border border-edge-mid rounded-md shadow-sm focus:ring-2 focus:ring-brand-teal focus:border-brand-teal text-ink-primary bg-white disabled:bg-slate-50 disabled:text-ink-muted disabled:cursor-not-allowed transition-all"
+            className="w-full p-2.5 border border-edge-mid rounded-md shadow-sm focus:ring-2 focus:ring-brand-teal focus:border-brand-teal text-ink-primary bg-white disabled:bg-surface-page disabled:text-ink-muted disabled:cursor-not-allowed transition-all"
             value={age}
             onChange={(e) => setAge(e.target.value)}
             disabled={!juniorClassificationIds.includes(classification)}
@@ -106,7 +106,7 @@ const EmployeeDetails = ({
             ))}
           </select>
           {juniorClassificationIds.includes(classification) && (
-            <p className="text-[10px] text-ink-muted mt-2 italic flex items-center gap-1">
+            <p className="text-sm text-ink-secondary mt-2 italic flex items-center gap-1">
               <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
               Junior rates apply to this classification
             </p>
