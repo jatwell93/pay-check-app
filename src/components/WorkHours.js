@@ -61,7 +61,7 @@ const WorkHours = ({ weeklyData, handleTimeChange, handlePublicHolidayChange, ca
       </div>
 
       <div className="mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <p className="text-sm text-ink-muted italic">
+        <p className="text-sm text-ink-secondary italic">
           * Enter 24h time. Leave empty if no shift was worked.
         </p>
         <button

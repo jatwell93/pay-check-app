@@ -14,7 +14,7 @@ const EmployeeDetails = ({
   return (
     <div className="card h-full">
       <div className="flex items-center gap-2 mb-6 border-b border-edge-light pb-4">
-        <div className="h-2 w-2 rounded-full bg-brand-teal animate-pulse"></div>
+        <div className="h-2 w-2 rounded-full bg-brand-teal"></div>
         <h2 className="text-lg font-bold text-ink-primary">Employee Details</h2>
       </div>
 
@@ -47,7 +47,7 @@ const EmployeeDetails = ({
               Above-Award Hourly Rate
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted font-bold">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-secondary font-bold">$</span>
               <input
                 type="number"
                 id="customRate"
@@ -91,7 +91,7 @@ const EmployeeDetails = ({
               Age-Based Rate
             </label>
             {!juniorClassificationIds.includes(classification) && (
-              <span className="text-[10px] bg-surface-page text-ink-muted px-2 py-0.5 rounded uppercase font-bold tracking-tight">Not Applicable</span>
+              <span className="text-xs bg-surface-page text-ink-secondary px-2 py-0.5 rounded uppercase font-bold tracking-tight">Not Applicable</span>
             )}
           </div>
           <select

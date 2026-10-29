@@ -9,7 +9,7 @@ const ImportantNotes = ({ awardName = 'selected award', overtimeThresholdHours =
         </svg>
         <h2 className="text-lg font-bold text-brand-amber-dark">Industrial Compliance Notes</h2>
       </div>
-      <ul className="space-y-3 text-base text-brand-amber-dark/80">
+      <ul className="space-y-3 text-base text-brand-amber-dark">
         <li className="flex gap-2">
           <span className="text-brand-amber-dark font-bold">•</span>
           <span>Calculations based on <strong>{awardName}</strong> (Effective July 1, 2024).</span>
