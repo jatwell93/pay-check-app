@@ -6,7 +6,7 @@ const Allowances = ({ allowances, handleAllowanceChange, classification, allowan
   const CheckboxItem = ({ id, label, checked, onChange, disabled, description }) => (
     <div className={`flex items-start gap-3 p-3 rounded-lg border transition-all ${
       checked ? 'bg-brand-teal-50 border-brand-teal-100' : 'bg-white border-edge-light hover:border-brand-teal-50'
-    } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+    } ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
     onClick={() => !disabled && onChange()}
     >
       <div className="flex items-center h-5">
@@ -23,7 +23,7 @@ const Allowances = ({ allowances, handleAllowanceChange, classification, allowan
         <label htmlFor={id} className={`text-sm font-semibold ${disabled ? 'text-ink-muted' : 'text-ink-primary'} cursor-pointer`}>
           {label}
         </label>
-        {description && <p className="text-[10px] text-ink-muted mt-0.5">{description}</p>}
+        {description && <p className="text-xs text-ink-muted mt-0.5">{description}</p>}
       </div>
     </div>
   );
@@ -79,7 +79,7 @@ const Allowances = ({ allowances, handleAllowanceChange, classification, allowan
                   value={allowances.mealAllowance} min="0"
                   onChange={(e) => handleAllowanceChange('mealAllowance', e.target.value)}
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-ink-muted uppercase">Qty</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-ink-muted uppercase">Qty</span>
               </div>
             </div>
           )}
@@ -96,7 +96,7 @@ const Allowances = ({ allowances, handleAllowanceChange, classification, allowan
                   value={allowances.mealAllowanceExtra} min="0"
                   onChange={(e) => handleAllowanceChange('mealAllowanceExtra', e.target.value)}
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-ink-muted uppercase">Qty</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-ink-muted uppercase">Qty</span>
               </div>
             </div>
           )}
@@ -113,7 +113,7 @@ const Allowances = ({ allowances, handleAllowanceChange, classification, allowan
                   value={allowances.motorVehicleKm} min="0"
                   onChange={(e) => handleAllowanceChange('motorVehicleKm', e.target.value)}
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-ink-muted uppercase">KM</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-ink-muted uppercase">KM</span>
               </div>
             </div>
           )}

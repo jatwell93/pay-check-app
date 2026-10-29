@@ -50,7 +50,7 @@ Pharmacy, retail, and hospitality workers (often young, often on mobile) checkin
 Approachable, trustworthy, and on the worker's side. Not corporate HR software — this is a personal advocate. Three words: **Clear, Warm, Confident.**
 
 ### Aesthetic Direction
-Light mode. Teal brand (#0f766e) is strong and should be preserved. Typography uses Bricolage Grotesque for headings (bold personality, distinctive) + DM Sans for body (humanist, warm, readable). Anti-reference: cold, clinical fintech dashboards with gray everywhere.
+Light mode. Teal brand (#0f766e) is strong and should be preserved. Typography uses Fraunces for headings (optical-size serif — warm, editorial, advocate feel) + Source Sans 3 for body (humanist, highly legible at small sizes, real tabular figures). Anti-reference: cold, clinical fintech dashboards with gray everywhere.
 
 ### Design Principles
 1. **Clarity over decoration** — every typographic choice should make data easier to read, not just more beautiful

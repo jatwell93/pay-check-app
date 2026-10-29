@@ -3,7 +3,7 @@
 import { getAwardConfig } from '../config/awardConfig';
 
 describe('hydrateAwardRates — awardConfig shape contract', () => {
-  const AWARD_IDS = ['MA000012', 'MA000003', 'MA000009'];
+  const AWARD_IDS = ['MA000012', 'MA000004', 'MA000009'];
 
   test.each(AWARD_IDS)('getAwardConfig("%s") has all required penaltyConfig fields', (awardId) => {
     const config = getAwardConfig(awardId);
