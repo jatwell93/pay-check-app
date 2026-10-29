@@ -11,10 +11,10 @@ const DetailedBreakdown = ({ results }) => {
       <div className="mb-6">
         <h3 className="text-lg font-semibold mb-3 text-brand-teal font-heading">Daily Pay</h3>
         {results.dailyBreakdown.map((day, index) => (
-          <div key={index} className="py-4 border-b border-edge-light first:pt-0 last:border-b-0 last:pb-0">
-            <h4 className="font-medium text-lg">{day.day} (<span className="tabular-nums">${day.pay.toFixed(2)}</span>)</h4>
+          <div key={index} className="mb-4 p-3 border rounded bg-white">
+            <h4 className="font-medium text-lg">{day.day} (${day.pay.toFixed(2)})</h4>
             <p className="text-base text-ink-secondary mb-2">
-              {day.startTime} - {day.endTime} (<span className="tabular-nums">{day.hours.toFixed(2)}</span> hours)
+              {day.startTime} - {day.endTime} ({day.hours.toFixed(2)} hours)
             </p>
 
             <table className="w-full text-sm mt-2">

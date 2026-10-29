@@ -29,7 +29,7 @@ const OverviewBreakdown = ({
               Enter your shift hours above and click <span className="text-brand-teal font-bold">Calculate Weekly Total</span> to generate your professional pay audit.
             </p>
           </div>
-          <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-ink-secondary font-bold uppercase tracking-widest">
+          <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-ink-muted font-bold uppercase tracking-widest">
             <span className="flex items-center gap-1"><span className="h-1 w-1 rounded-full bg-brand-teal"></span> Penalty Rates</span>
             <span className="flex items-center gap-1"><span className="h-1 w-1 rounded-full bg-brand-teal"></span> Overtime Audit</span>
             <span className="flex items-center gap-1"><span className="h-1 w-1 rounded-full bg-brand-teal"></span> Allowance Check</span>
@@ -41,11 +41,11 @@ const OverviewBreakdown = ({
 
   const getStatusBadge = (calculatedPay, actualPaidStr) => {
     if (!actualPaidStr && actualPaidStr !== 0) {
-      return <span className="text-xs text-ink-secondary font-bold uppercase tracking-tight italic">Pending Input</span>;
+      return <span className="text-xs text-ink-muted font-bold uppercase tracking-tight italic">Pending Input</span>;
     }
     const actual = parseFloat(actualPaidStr);
     if (isNaN(actual)) {
-      return <span className="text-xs text-ink-secondary font-bold uppercase tracking-tight italic">Pending Input</span>;
+      return <span className="text-xs text-ink-muted font-bold uppercase tracking-tight italic">Pending Input</span>;
     }
     const diff = calculatedPay - actual;
     if (Math.abs(diff) <= 0.01) {
@@ -63,7 +63,7 @@ const OverviewBreakdown = ({
       );
     }
     return (
-      <span className="px-2 py-0.5 bg-brand-amber-50 text-brand-amber-dark border border-brand-amber/20 rounded-full text-xs font-bold uppercase tracking-wider">
+      <span className="px-2 py-0.5 bg-brand-amber-50 text-brand-amber border border-brand-amber/20 rounded-full text-xs font-bold uppercase tracking-wider">
         Discrepancy
       </span>
     );
@@ -131,7 +131,7 @@ const OverviewBreakdown = ({
                     <td className="px-6 py-4 text-sm font-bold text-ink-primary tabular-nums">${day.pay.toFixed(2)}</td>
                     <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                       <div className="relative w-28 group/input">
-                        <span className="absolute left-2 top-1/2 -translate-y-1/2 text-sm font-bold text-ink-secondary group-focus-within/input:text-brand-teal transition-colors">$</span>
+                        <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs font-bold text-ink-muted group-focus-within/input:text-brand-teal transition-colors">$</span>
                         <input
                           type="number"
                           step="0.01"
@@ -213,7 +213,7 @@ const OverviewBreakdown = ({
                 placeholder="0.00"
               />
             </div>
-            <p className="text-sm text-ink-secondary mt-2">Enter the final net amount from your payslip for the full period.</p>
+            <p className="text-xs text-ink-muted mt-2">Enter the final net amount from your payslip for the full period.</p>
           </div>
 
           {/* Weekly Summary panel — flat tinted ground, not a nested card */}
@@ -231,13 +231,13 @@ const OverviewBreakdown = ({
               <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                 <div>
                   <p className="text-xs text-ink-muted uppercase font-bold tracking-tight mb-1">Audit Total</p>
-                  <p className="text-xl font-bold font-heading text-white tabular-nums">${results.total.toFixed(2)}</p>
+                  <p className="text-xl font-bold font-heading text-white">${results.total.toFixed(2)}</p>
                 </div>
                 {totalActualPaid && (
                   <>
                     <div>
                       <p className="text-xs text-ink-muted uppercase font-bold tracking-tight mb-1">Your Payslip</p>
-                      <p className="text-xl font-bold font-heading text-white tabular-nums">${parseFloat(totalActualPaid).toFixed(2)}</p>
+                      <p className="text-xl font-bold font-heading text-white">${parseFloat(totalActualPaid).toFixed(2)}</p>
                     </div>
                     <div className="col-span-2 md:col-span-1">
                       <p className="text-xs text-ink-muted uppercase font-bold tracking-tight mb-1">Discrepancy</p>
@@ -250,7 +250,7 @@ const OverviewBreakdown = ({
                         ) : parseFloat(totalActualPaid) < results.total ? (
                           <span className="px-2 py-0.5 bg-critical text-white rounded text-xs font-bold uppercase tracking-widest">Underpaid</span>
                         ) : (
-                          <span className="px-2 py-0.5 bg-brand-amber-dark text-white rounded text-xs font-bold uppercase tracking-widest">Overpaid</span>
+                          <span className="px-2 py-0.5 bg-brand-amber text-white rounded text-xs font-bold uppercase tracking-widest">Overpaid</span>
                         )}
                       </div>
                     </div>

@@ -15,7 +15,7 @@ const { fetchAwardRates, getCachedAwardRates, getLastCacheUpdateTime } =
 
 const mockRatesData = {
   MA000012: { rates: [] },
-  MA000003: { rates: [] },
+  MA000004: { rates: [] },
   MA000009: { rates: [] },
 };
 
@@ -44,7 +44,7 @@ describe('App integration tests', () => {
     render(<App />);
 
     await waitFor(() => {
-      expect(fetchAwardRates).toHaveBeenCalledWith(['MA000012', 'MA000003', 'MA000009']);
+      expect(fetchAwardRates).toHaveBeenCalledWith(['MA000012', 'MA000004', 'MA000009']);
     });
   });
 
@@ -135,6 +135,47 @@ describe('App integration tests', () => {
       const mondayElements = screen.getAllByText(/Monday/i);
       expect(mondayElements.length).toBeGreaterThanOrEqual(1);
     });
+  });
+
+  test('retail award end-to-end: retail classifications/allowances and GRIA penalty audit', async () => {
+    getCachedAwardRates.mockReturnValue(null);
+    fetchAwardRates.mockResolvedValue(mockRatesData);
+    getLastCacheUpdateTime.mockReturnValue(new Date());
+
+    render(<App />);
+
+    await waitFor(() => {
+      expect(document.getElementById('award-select')).not.toBeDisabled();
+    });
+
+    // Select the General Retail Industry Award (MA000004)
+    fireEvent.change(document.getElementById('award-select'), { target: { value: 'MA000004' } });
+
+    // Employee details reset to the retail classification ladder
+    await waitFor(() => {
+      expect(document.getElementById('classification').value).toBe('retail-employee-1');
+    });
+
+    // Pharmacy-only allowances disappear; the GRIA meal allowance field appears
+    expect(screen.queryByLabelText(/Home Medicine Reviews/i)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/Laundry/i)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/Broken Hill/i)).not.toBeInTheDocument();
+    expect(screen.getByLabelText(/Overtime Meals/i)).toBeInTheDocument();
+
+    // Monday 17:00–21:00 — crosses the GRIA 6:00pm evening window
+    const timeInputs = document.querySelectorAll('input[type="time"]');
+    fireEvent.change(timeInputs[0], { target: { value: '17:00' } });
+    fireEvent.change(timeInputs[1], { target: { value: '21:00' } });
+
+    fireEvent.click(screen.getByRole('button', { name: /Calculate Weekly Total/i }));
+
+    // Retail Employee Level 1 FT ($24.10): 1h @100% + 3h @150% = $132.55
+    const mondayPay = await screen.findByText('$132.55');
+    expect(mondayPay).toBeInTheDocument();
+
+    // Audit trace uses the GRIA penalty structure
+    fireEvent.click(screen.getByText('$132.55').closest('tr'));
+    expect(await screen.findByText('Evening Shift (150%)')).toBeInTheDocument();
   });
 
   test('header renders with title "Pay Checker"', async () => {

@@ -20,7 +20,7 @@ import { calculatePayForTimePeriod } from '../helpers';
 import { getAwardConfig } from '../config/awardConfig';
 
 const pharmacyConfig = getAwardConfig('MA000012');
-const retailConfig = getAwardConfig('MA000003');
+const retailConfig = getAwardConfig('MA000004');
 
 // Base rates from MA000012 (Pharmacy Industry Award, effective July 1, 2024)
 const PHARMACY_FT_RATE = 25.99;  // pharmacy-assistant-1 full-time
@@ -147,29 +147,23 @@ describe('Pharmacy Regression Suite (MA000012)', () => {
   });
 });
 
-describe('Award differentiation tests (must be RED until Plan 02)', () => {
-  it('Saturday Retail (1.25x) should produce LESS pay than Saturday Pharmacy (1.5x) for same base rate and shift', () => {
-    // Both calls use the SAME base rate ($25.99) and SAME shift (Sat 09:00–13:00).
-    // Only the penaltyConfig differs: Pharmacy saturdayMultiplier=1.5, Retail saturdayMultiplier=1.25.
-    //
-    // After Plan 02 (parameterized helpers.js):
-    //   pharmacyPay = 25.99 * 1.5 * 4 = $155.94
-    //   retailPay   = 25.99 * 1.25 * 4 = $129.95
-    //   retailPay < pharmacyPay ✓ GREEN
-    //
-    // With CURRENT helpers.js (hardcoded 1.5x, penaltyConfig argument ignored):
-    //   pharmacyPay = 25.99 * 1.5 * 4 = $155.94
-    //   retailPay   = 25.99 * 1.5 * 4 = $155.94 (same! penaltyConfig ignored)
-    //   retailPay < pharmacyPay → FAILS because values are equal
+describe('Award differentiation tests (penaltyConfig drives the engine)', () => {
+  it('Sunday Retail (150%) produces LESS pay than Sunday Pharmacy (200%) for same base rate and shift', () => {
+    // Both calls use the SAME base rate ($25.99) and SAME shift (Sun 09:00–13:00).
+    // Only the penaltyConfig differs: Pharmacy sundayMultiplier=2.0, Retail sundayMultiplier=1.5.
+    //   pharmacyPay = 25.99 * 2.0 * 4 = $207.92
+    //   retailPay   = 25.99 * 1.5 * 4 = $155.94
+    //   retailPay < pharmacyPay
     const pharmacyPay = calculatePayForTimePeriod(
-      'Saturday', '09:00', '13:00', PHARMACY_FT_RATE, 'full-time', '', 'pharmacy-assistant-1',
+      'Sunday', '09:00', '13:00', PHARMACY_FT_RATE, 'full-time', '', 'pharmacy-assistant-1',
       pharmacyConfig.penaltyConfig
     );
     const retailPay = calculatePayForTimePeriod(
-      'Saturday', '09:00', '13:00', PHARMACY_FT_RATE, 'full-time', '', 'retail-employee-1',
+      'Sunday', '09:00', '13:00', PHARMACY_FT_RATE, 'full-time', '', 'retail-employee-1',
       retailConfig.penaltyConfig
     );
-    // This assertion is RED until Plan 02 makes helpers.js respect the penaltyConfig arg
     expect(retailPay.pay).toBeLessThan(pharmacyPay.pay);
+    expect(pharmacyPay.pay).toBeCloseTo(207.92, 2);
+    expect(retailPay.pay).toBeCloseTo(155.94, 2);
   });
 });
