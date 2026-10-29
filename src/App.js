@@ -303,7 +303,7 @@ const App = () => {
               </div>
               <button
                 onClick={() => setAwardError(null)}
-                className="ml-4 text-ink-muted hover:text-critical transition-colors"
+                className="ml-4 text-ink-secondary hover:text-critical transition-colors"
                 aria-label="Dismiss error"
               >
                 ×
@@ -325,7 +325,7 @@ const App = () => {
             <div className="w-12 h-12 border-4 border-brand-teal-50 border-t-brand-teal rounded-full animate-spin mx-auto mb-4"></div>
             <Logo size={24} className="mx-auto mb-2" />
             <p className="text-ink-primary font-medium">Hydrating live award rates...</p>
-            <p className="text-ink-muted text-xs mt-1 italic">Verifying against FWC national standards</p>
+            <p className="text-ink-secondary text-xs mt-1 italic">Verifying against FWC national standards</p>
           </div>
         </div>
       )}
@@ -397,7 +397,7 @@ const App = () => {
         />
 
         {/* Footer */}
-        <footer className="text-center text-ink-muted text-sm pt-10 pb-4 border-t border-edge-light mt-8">
+        <footer className="text-center text-ink-secondary text-sm pt-10 pb-4 border-t border-edge-light mt-8">
           <div className="flex justify-center mb-6 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all">
              <Logo size={24} variant="wordmark" color="mono" monoColor="#94A3B8" />
           </div>

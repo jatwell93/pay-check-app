@@ -9,13 +9,13 @@ const ImportantNotes = ({ awardName = 'selected award', overtimeThresholdHours =
         </svg>
         <h2 className="text-lg font-bold text-brand-amber-dark">Industrial Compliance Notes</h2>
       </div>
-      <ul className="space-y-3 text-sm text-brand-amber-dark/80">
+      <ul className="space-y-3 text-base text-brand-amber-dark">
         <li className="flex gap-2">
-          <span className="text-brand-amber font-bold">•</span>
+          <span className="text-brand-amber-dark font-bold">•</span>
           <span>Calculations based on <strong>{awardName}</strong> (Effective July 1, 2024).</span>
         </li>
         <li className="flex gap-2">
-          <span className="text-brand-amber font-bold">•</span>
+          <span className="text-brand-amber-dark font-bold">•</span>
           <span><strong>Overnight Shifts:</strong> Enter normally (e.g. 22:00 to 06:00) — system handles cross-day penalty calculations.</span>
         </li>
         <li className="flex gap-2">
@@ -23,11 +23,11 @@ const ImportantNotes = ({ awardName = 'selected award', overtimeThresholdHours =
           <span><strong>Overtime:</strong> Automated threshold detection at <strong>{overtimeThresholdHours} hours</strong> for {casualOvertimeEligible ? 'all employees, including casuals' : 'FT/PT employees'}.</span>
         </li>
         <li className="flex gap-2">
-          <span className="text-brand-amber font-bold">•</span>
+          <span className="text-brand-amber-dark font-bold">•</span>
           <span><strong>Junior Rates:</strong> Dynamically applied based on age-weighted classification logic.</span>
         </li>
         <li className="flex gap-2">
-          <span className="text-brand-amber font-bold">•</span>
+          <span className="text-brand-amber-dark font-bold">•</span>
           <span><strong>Disclaimer:</strong> This is a professional assurance tool for estimation. Always consult FWC for binding legal interpretations.</span>
         </li>
       </ul>

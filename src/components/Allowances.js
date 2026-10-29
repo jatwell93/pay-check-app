@@ -6,7 +6,7 @@ const Allowances = ({ allowances, handleAllowanceChange, classification, allowan
   const CheckboxItem = ({ id, label, checked, onChange, disabled, description }) => (
     <div className={`flex items-start gap-3 p-3 rounded-lg border transition-all ${
       checked ? 'bg-brand-teal-50 border-brand-teal-100' : 'bg-white border-edge-light hover:border-brand-teal-50'
-    } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+    } ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
     onClick={() => !disabled && onChange()}
     >
       <div className="flex items-center h-5">

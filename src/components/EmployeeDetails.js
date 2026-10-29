@@ -47,7 +47,7 @@ const EmployeeDetails = ({
               Above-Award Hourly Rate
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted font-bold">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-secondary font-bold">$</span>
               <input
                 type="number"
                 id="customRate"
@@ -96,7 +96,7 @@ const EmployeeDetails = ({
           </div>
           <select
             id="age"
-            className="w-full p-2.5 border border-edge-mid rounded-md shadow-sm focus:ring-2 focus:ring-brand-teal focus:border-brand-teal text-ink-primary bg-white disabled:bg-slate-50 disabled:text-ink-muted disabled:cursor-not-allowed transition-all"
+            className="w-full p-2.5 border border-edge-mid rounded-md shadow-sm focus:ring-2 focus:ring-brand-teal focus:border-brand-teal text-ink-primary bg-white disabled:bg-surface-page disabled:text-ink-muted disabled:cursor-not-allowed transition-all"
             value={age}
             onChange={(e) => setAge(e.target.value)}
             disabled={!juniorClassificationIds.includes(classification)}

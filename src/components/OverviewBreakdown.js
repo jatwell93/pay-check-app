@@ -13,7 +13,7 @@ const OverviewBreakdown = ({
 }) => {
   if (!results) {
     return (
-      <div className="mt-12 mb-8 card border-dashed border-2 border-edge-light bg-slate-50/50">
+      <div className="mt-12 mb-8 card border-dashed border-2 border-edge-light bg-surface-page/50">
         <div className="flex items-center gap-2 mb-6 border-b border-edge-light pb-4">
           <div className="h-2 w-2 rounded-full bg-ink-muted"></div>
           <h2 className="text-lg font-bold text-ink-primary">Pay Overview</h2>
@@ -76,7 +76,7 @@ const OverviewBreakdown = ({
     const diff = calculatedPay - actual;
     const isNegative = diff < -0.01;
     return (
-      <span className={`text-sm font-bold ${isNegative ? 'text-brand-amber' : diff > 0.01 ? 'text-critical' : 'text-success'}`}>
+      <span className={`text-sm font-bold tabular-nums ${isNegative ? 'text-brand-amber' : diff > 0.01 ? 'text-critical' : 'text-success'}`}>
         {isNegative ? '+' : diff > 0.01 ? '-' : ''}${Math.abs(diff).toFixed(2)}
       </span>
     );
@@ -95,7 +95,7 @@ const OverviewBreakdown = ({
         <div className="overflow-x-auto -mx-6 mb-8">
           <table className="w-full border-collapse min-w-[600px]">
             <thead>
-              <tr className="bg-slate-50 border-y border-edge-light">
+              <tr className="bg-surface-page border-y border-edge-light">
                 <th className="px-6 py-3 text-left text-xs font-bold text-brand-teal-dark uppercase tracking-wider">Day</th>
                 <th className="px-6 py-3 text-left text-xs font-bold text-brand-teal-dark uppercase tracking-wider">Audit Hours</th>
                 <th className="px-6 py-3 text-left text-xs font-bold text-brand-teal-dark uppercase tracking-wider">Calculated Pay</th>
@@ -108,7 +108,7 @@ const OverviewBreakdown = ({
               {results.dailyBreakdown.map((day, index) => (
                 <React.Fragment key={index}>
                   <tr
-                    className={`cursor-pointer transition-colors duration-150 group ${selectedDayIndex === index ? 'bg-brand-teal-50' : 'hover:bg-slate-50'}`}
+                    className={`cursor-pointer transition-colors duration-150 group ${selectedDayIndex === index ? 'bg-brand-teal-50' : 'hover:bg-surface-page'}`}
                     onClick={() => onDayToggle(index)}
                     tabIndex={0}
                     aria-expanded={selectedDayIndex === index}
@@ -127,8 +127,8 @@ const OverviewBreakdown = ({
                         {day.day}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-ink-secondary">{day.hours.toFixed(2)}h</td>
-                    <td className="px-6 py-4 text-sm font-bold text-ink-primary">${day.pay.toFixed(2)}</td>
+                    <td className="px-6 py-4 text-sm text-ink-secondary tabular-nums">{day.hours.toFixed(2)}h</td>
+                    <td className="px-6 py-4 text-sm font-bold text-ink-primary tabular-nums">${day.pay.toFixed(2)}</td>
                     <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                       <div className="relative w-28 group/input">
                         <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs font-bold text-ink-muted group-focus-within/input:text-brand-teal transition-colors">$</span>
@@ -139,7 +139,7 @@ const OverviewBreakdown = ({
                           onChange={(e) => onActualPaidChange(index, e.target.value)}
                           onClick={(e) => e.stopPropagation()}
                           placeholder="0.00"
-                          className="w-full pl-5 pr-2 py-1.5 border border-edge-mid rounded bg-white focus:ring-2 focus:ring-brand-teal focus:border-brand-teal text-sm font-medium text-ink-primary transition-all"
+                          className="w-full pl-5 pr-2 py-1.5 border border-edge-mid rounded bg-white focus:ring-2 focus:ring-brand-teal focus:border-brand-teal text-sm font-medium text-ink-primary tabular-nums transition-all"
                         />
                       </div>
                     </td>
@@ -154,7 +154,7 @@ const OverviewBreakdown = ({
                   {selectedDayIndex === index && (
                     <tr>
                       <td colSpan={6} className="px-6 py-0 bg-white border-none">
-                        <div className="animate-fade-in border-x border-b border-brand-teal-100 rounded-b-lg mb-4 shadow-inner bg-slate-50/30">
+                        <div className="animate-fade-in border-x border-b border-brand-teal-100 rounded-b-lg mb-4 shadow-inner bg-surface-page/30">
                           <div className="p-4 overflow-x-auto">
                             <h4 className="text-xs font-bold text-brand-teal-dark uppercase tracking-widest mb-3 flex items-center gap-2">
                               <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -164,7 +164,7 @@ const OverviewBreakdown = ({
                             </h4>
                             <table className="w-full text-xs">
                               <thead>
-                                <tr className="text-ink-muted border-b border-edge-light">
+                                <tr className="text-ink-secondary border-b border-edge-light">
                                   <th className="text-left font-bold pb-2">Shift Segment</th>
                                   <th className="text-left font-bold pb-2">Audit Hours</th>
                                   <th className="text-left font-bold pb-2">Rate Applied</th>
@@ -172,16 +172,16 @@ const OverviewBreakdown = ({
                                   <th className="text-right font-bold pb-2">Segment Total</th>
                                 </tr>
                               </thead>
-                              <tbody className="divide-y divide-slate-100">
+                              <tbody className="divide-y divide-edge-light">
                                 {day.segments.map((segment, segIndex) => (
                                   <tr key={segIndex} className="group/seg">
                                     <td className="py-2 text-ink-secondary">{segment.startTime} - {segment.endTime}</td>
-                                    <td className="py-2 text-ink-primary font-medium">{segment.hours.toFixed(2)}h</td>
+                                    <td className="py-2 text-ink-primary font-medium tabular-nums">{segment.hours.toFixed(2)}h</td>
                                     <td className="py-2">
                                       <span className="text-ink-secondary">{segment.penaltyDescription}</span>
                                     </td>
-                                    <td className="py-2 text-right text-ink-muted italic">${segment.rate.toFixed(2)}/h</td>
-                                    <td className="py-2 text-right text-brand-teal font-bold">${segment.pay.toFixed(2)}</td>
+                                    <td className="py-2 text-right text-ink-secondary italic tabular-nums">${segment.rate.toFixed(2)}/h</td>
+                                    <td className="py-2 text-right text-brand-teal font-bold tabular-nums">${segment.pay.toFixed(2)}</td>
                                   </tr>
                                 ))}
                               </tbody>
@@ -203,22 +203,22 @@ const OverviewBreakdown = ({
               {periodLabel}
             </label>
             <div className="relative group/input">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-ink-muted group-focus-within/input:text-brand-teal">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-ink-secondary group-focus-within/input:text-brand-teal">$</span>
               <input
                 type="number"
                 step="0.01"
                 value={totalActualPaid}
                 onChange={(e) => onTotalActualPaidChange(e.target.value)}
-                className="w-full pl-7 pr-3 py-2.5 border border-edge-mid rounded-md shadow-sm focus:ring-2 focus:ring-brand-teal focus:border-brand-teal text-lg font-bold text-ink-primary transition-all"
+                className="w-full pl-7 pr-3 py-2.5 border border-edge-mid rounded-md shadow-sm focus:ring-2 focus:ring-brand-teal focus:border-brand-teal text-lg font-bold text-ink-primary tabular-nums transition-all"
                 placeholder="0.00"
               />
             </div>
             <p className="text-xs text-ink-muted mt-2">Enter the final net amount from your payslip for the full period.</p>
           </div>
 
-          {/* Weekly Summary Card */}
+          {/* Weekly Summary panel — flat tinted ground, not a nested card */}
           {actualPaidByDay.some(x => x !== '' && x !== null && !isNaN(parseFloat(x))) && (
-            <div className="flex-1 bg-brand-navy rounded-lg p-5 text-white shadow-lg animate-fade-slide-up relative overflow-hidden">
+            <div className="flex-1 bg-brand-navy rounded-lg p-5 text-white animate-fade-slide-up relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-10">
                  <Logo color="white" size={64} variant="icon" />
               </div>
@@ -242,7 +242,7 @@ const OverviewBreakdown = ({
                     <div className="col-span-2 md:col-span-1">
                       <p className="text-xs text-ink-muted uppercase font-bold tracking-tight mb-1">Discrepancy</p>
                       <div className="flex items-center gap-2">
-                        <p className={`text-xl font-extrabold font-heading ${(parseFloat(totalActualPaid) - results.total) < -0.01 ? 'text-critical' : (parseFloat(totalActualPaid) - results.total) > 0.01 ? 'text-brand-amber' : 'text-brand-teal-light'}`}>
+                        <p className={`text-xl font-extrabold font-heading tabular-nums ${(parseFloat(totalActualPaid) - results.total) < -0.01 ? 'text-critical' : (parseFloat(totalActualPaid) - results.total) > 0.01 ? 'text-brand-amber' : 'text-brand-teal-light'}`}>
                           ${(parseFloat(totalActualPaid) - results.total).toFixed(2)}
                         </p>
                         {Math.abs(parseFloat(totalActualPaid) - results.total) <= 0.01 ? (

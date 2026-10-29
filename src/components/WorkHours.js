@@ -11,7 +11,7 @@ const WorkHours = ({ weeklyData, handleTimeChange, handlePublicHolidayChange, ca
       <div className="overflow-x-auto -mx-6">
         <table className="w-full border-collapse min-w-[500px]">
           <thead>
-            <tr className="bg-slate-50 border-y border-edge-light">
+            <tr className="bg-surface-page border-y border-edge-light">
               <th className="px-6 py-3 text-left text-xs font-bold text-brand-teal-dark uppercase tracking-wider">Day</th>
               <th className="px-6 py-3 text-left text-xs font-bold text-brand-teal-dark uppercase tracking-wider">Start Time</th>
               <th className="px-6 py-3 text-left text-xs font-bold text-brand-teal-dark uppercase tracking-wider">End Time</th>
@@ -61,7 +61,7 @@ const WorkHours = ({ weeklyData, handleTimeChange, handlePublicHolidayChange, ca
       </div>
 
       <div className="mt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <p className="text-xs text-ink-muted italic">
+        <p className="text-sm text-ink-secondary italic">
           * Enter 24h time. Leave empty if no shift was worked.
         </p>
         <button
