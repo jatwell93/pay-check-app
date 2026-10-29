@@ -1,6 +1,6 @@
 digraph BrandAlign {
     graph [
-        goal="Execute the brand-alignment plan in .fabro/plans/brand-alignment.md",
+        goal="Execute the retail-award plan in .fabro/plans/retail-award.md",
         model_stylesheet="* { backend: api; model: glm-5.3; provider: zai; }",
         stall_timeout="2h"
     ]
