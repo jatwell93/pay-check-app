@@ -142,3 +142,24 @@ land on those totals:
 8. Overtime: 150% first 3 hours, then 200%; casuals overtime-eligible.
 9. Meal allowance $16.65; vehicle $0.99/km.
 10. Junior percentages 45/50/60/70/80/90.
+
+---
+
+## 10. Known limitations — flagged for a later run
+
+1. **HIGA casual penalty composition is not modelled.** Under the real
+   Hospitality Industry (General) Award, casuals earn the 25% loading *plus*
+   the applicable window penalty (additive composition). This app's engine
+   expresses one multiplier applied to the already-loaded casual base, so
+   additive "loading + penalty" cannot be represented. After PR #6
+   (`fix/casual-window-fallback`), an MA000009 casual in a penalty window falls
+   back to the loading floor (1.25) — coherent but below true award pay.
+   Fixing this properly needs either an additive-composition flag in
+   `penaltyConfig` (e.g. `casualPenaltyComposition: 'additive'` with the
+   multiplier applied to the *unloaded* base, or a separate penalty-amount
+   field) plus verified HIGA casual penalty values. Scope for a future run:
+   model + data + tests, following the pattern in §8.
+2. **GRIA award facts pending verification** — see checklist in §9 before the
+   retail numbers are trusted for real-world advice.
+3. **MAPD → baseRates transformer absent** — live API data still can't feed
+   the calculator; `awardConfig.js` remains the effective source (§8.4).
