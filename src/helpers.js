@@ -57,16 +57,20 @@ const getPenaltyRateDetails = (day, time, employmentType, classification, penalt
     if (
         (totalMinutesInDay >= earlyMorningStartMinutes && totalMinutesInDay < earlyMorningEndMinutes)
     ) {
-         // Apply the early morning shift loading
-         const multiplier = isCasual ? (penaltyConfig.casualEarlyMorningMultiplier ?? penaltyConfig.earlyMorningMultiplier) : penaltyConfig.earlyMorningMultiplier;
+         // Apply the early morning shift loading. For casuals without an award-
+         // specific override, fall back to the casual loading — a casual must
+         // never be paid below the loading floor on ordinary-time minutes
+         // (e.g. MA000009 evening 1.15 < loading 1.25).
+         const multiplier = isCasual ? (penaltyConfig.casualEarlyMorningMultiplier ?? penaltyConfig.casualLoadingMultiplier) : penaltyConfig.earlyMorningMultiplier;
          return { multiplier, description: 'Early Morning Shift (' + Math.round(multiplier * 100) + '%)' };
     }
 
     if (
          (totalMinutesInDay >= eveningStartMinutes && totalMinutesInDay <= eveningEndMinutes)
     ) {
-         // Apply the evening shift loading
-         const multiplier = isCasual ? (penaltyConfig.casualEveningMultiplier ?? penaltyConfig.eveningMultiplier) : penaltyConfig.eveningMultiplier;
+         // Apply the evening shift loading. Casual fallback is the loading
+         // floor, not the FT window multiplier — see early-morning branch.
+         const multiplier = isCasual ? (penaltyConfig.casualEveningMultiplier ?? penaltyConfig.casualLoadingMultiplier) : penaltyConfig.eveningMultiplier;
          return { multiplier, description: 'Evening Shift (' + Math.round(multiplier * 100) + '%)' };
     }
 
