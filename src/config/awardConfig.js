@@ -105,13 +105,15 @@ const awardConfig = {
         'pharmacist-manager': { base: 54.96 },
       },
     },
+    // Keys must match sharedAgeOptions ids ('16', '17', ...) — App.js looks up
+    // juniorPercentages[age]. 'age-*' keys silently resolved to 100%.
     juniorPercentages: {
       'under-16': 0.45,
-      'age-16': 0.5,
-      'age-17': 0.6,
-      'age-18': 0.7,
-      'age-19': 0.8,
-      'age-20': 0.9,
+      '16': 0.5,
+      '17': 0.6,
+      '18': 0.7,
+      '19': 0.8,
+      '20': 0.9,
     },
     allowances: {
       homeMedicineReview: 17.96,
@@ -183,8 +185,8 @@ const awardConfig = {
         'retail-employee-6': { base: 36.35 },
       },
     },
-    // Keys match the age-option ids ('16', '17', ...) so the App junior-rate
-    // lookup resolves directly.
+    // Keys must match sharedAgeOptions ids ('16', '17', ...) — App.js looks up
+    // juniorPercentages[age]. 'age-*' keys silently resolved to 100%.
     juniorPercentages: {
       'under-16': 0.45,
       '16': 0.5,
@@ -241,13 +243,15 @@ const awardConfig = {
         'hospitality-employee-5': { base: 35.05 },
       },
     },
+    // Keys must match sharedAgeOptions ids ('16', '17', ...) — App.js looks up
+    // juniorPercentages[age]. 'age-*' keys silently resolved to 100%.
     juniorPercentages: {
       'under-16': 0.45,
-      'age-16': 0.5,
-      'age-17': 0.6,
-      'age-18': 0.7,
-      'age-19': 0.8,
-      'age-20': 0.9,
+      '16': 0.5,
+      '17': 0.6,
+      '18': 0.7,
+      '19': 0.8,
+      '20': 0.9,
     },
     allowances: {
       mealAllowanceOvertime: 14.99,
