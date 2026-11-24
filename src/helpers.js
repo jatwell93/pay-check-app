@@ -14,6 +14,19 @@ const calculateBreakTime = (totalHours) => {
     }
 };
 
+const cents = value => Math.round((value + Number.EPSILON) * 100) / 100;
+
+const nextRosterDay = (day, offset) => {
+    if (day === 'Public Holiday') return day;
+    const index = weekDays.indexOf(day);
+    return index < 0 ? day : weekDays[(index + offset) % weekDays.length];
+};
+
+const clockTime = absoluteMinute => {
+    const minute = ((absoluteMinute % 1440) + 1440) % 1440;
+    return `${String(Math.floor(minute / 60)).padStart(2, '0')}:${String(minute % 60).padStart(2, '0')}`;
+};
+
 export const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 // Function to get penalty rate multiplier AND description
@@ -255,6 +268,126 @@ export const calculatePayForTimePeriod = (day, startTime, endTime, baseRate, emp
         hours: totalHoursWithBreaks,
         pay: totalPay,
         breakdown
+    };
+};
+
+/**
+ * Classify a roster as one continuous award week. Unlike the legacy single-shift
+ * helper, unpaid breaks are removed before a minute can consume ordinary or
+ * overtime capacity. Segment amounts are rounded first so every displayed row
+ * reconciles exactly with its day and weekly totals.
+ */
+export const calculateWeeklyPay = (weeklyData, baseRate, employmentType, customRate, classification, penaltyConfig = DEFAULT_PENALTY_CONFIG) => {
+    const currentBaseRate = classification === 'above-award' && customRate !== '' && !isNaN(parseFloat(customRate))
+        ? parseFloat(customRate) : baseRate;
+    const overtimeEligible = employmentType !== 'casual' || penaltyConfig.overtimeAppliesToCasuals === true;
+    const thresholdMinutes = Math.round(penaltyConfig.overtimeThresholdHours * 60);
+    const firstTierMinutes = Math.round((penaltyConfig.overtimeFirstTierHours ?? 2) * 60);
+    let paidMinutes = 0;
+    const dailyBreakdown = [];
+
+    weeklyData.forEach(dayData => {
+        if (!dayData.startTime || !dayData.endTime) return;
+        const [startHour, startMinute] = dayData.startTime.split(':').map(Number);
+        const [endHour, endMinute] = dayData.endTime.split(':').map(Number);
+        const start = startHour * 60 + startMinute;
+        let end = endHour * 60 + endMinute;
+        if (end < start) end += 1440;
+        const grossMinutes = end - start;
+        const breakMinutes = Math.round(calculateBreakTime(grossMinutes / 60) * 60);
+        const breakStart = start + 4 * 60;
+        const breakEnd = breakStart + breakMinutes;
+        const minuteRows = [];
+
+        for (let minute = start; minute < end; minute += 1) {
+            if (breakMinutes && minute >= breakStart && minute < breakEnd) continue;
+            const dayOffset = Math.floor(minute / 1440);
+            const minuteDay = nextRosterDay(dayData.day, dayOffset);
+            const ordinary = getPenaltyRateDetails(minuteDay, clockTime(minute), employmentType, classification, penaltyConfig);
+            const overtimeIndex = paidMinutes - thresholdMinutes;
+            const isOvertime = overtimeEligible && paidMinutes >= thresholdMinutes;
+            let multiplier = ordinary.multiplier;
+            let description = ordinary.description;
+            let tier = null;
+
+            if (isOvertime) {
+                tier = overtimeIndex < firstTierMinutes ? 'First Tier' : 'Second Tier';
+                const tierMultiplier = tier === 'First Tier'
+                    ? penaltyConfig.overtimeFirstTierMultiplier
+                    : penaltyConfig.overtimeSecondTierMultiplier;
+                // Weekend/public-holiday ordinary penalties remain a floor. In
+                // particular, Sunday never drops to the 150% first tier.
+                multiplier = Math.max(tierMultiplier, ordinary.multiplier);
+                const dayPrefix = ['Saturday', 'Sunday', 'Public Holiday'].includes(minuteDay) ? `${minuteDay} ` : '';
+                description = `${dayPrefix}Overtime — ${tier} (${Math.round(multiplier * 100)}%)`;
+            }
+
+            const previous = minuteRows[minuteRows.length - 1];
+            if (previous && previous.end === minute && previous.day === minuteDay &&
+                previous.penaltyMultiplier === multiplier && previous.penaltyDescription === description) {
+                previous.end += 1;
+                previous.minutes += 1;
+            } else {
+                minuteRows.push({
+                    start: minute, end: minute + 1, minutes: 1, day: minuteDay,
+                    rate: currentBaseRate, penaltyMultiplier: multiplier,
+                    penaltyDescription: description, isOvertime
+                });
+            }
+            paidMinutes += 1;
+        }
+
+        let breakdown = minuteRows.map(row => ({
+            startTime: clockTime(row.start),
+            endTime: clockTime(row.end),
+            day: row.day,
+            hours: row.minutes / 60,
+            rate: row.rate,
+            penaltyMultiplier: row.penaltyMultiplier,
+            penaltyDescription: row.penaltyDescription,
+            pay: cents(row.rate * row.penaltyMultiplier * row.minutes / 60),
+            isOvertime: row.isOvertime
+        }));
+
+        if (breakMinutes) {
+            breakdown.push({
+                startTime: `${clockTime(breakStart)} (estimated)`,
+                endTime: `${clockTime(breakEnd)} (estimated)`,
+                day: nextRosterDay(dayData.day, Math.floor(breakStart / 1440)),
+                hours: breakMinutes / 60,
+                rate: currentBaseRate,
+                penaltyMultiplier: 0,
+                penaltyDescription: 'Unpaid Break (estimated placement)',
+                pay: 0,
+                isUnpaidBreak: true,
+                isOvertime: false
+            });
+            breakdown.sort((a, b) => {
+                const aMinute = parseInt(a.startTime, 10) * 60 + parseInt(a.startTime.slice(3), 10);
+                const bMinute = parseInt(b.startTime, 10) * 60 + parseInt(b.startTime.slice(3), 10);
+                return aMinute - bMinute;
+            });
+        }
+
+        const pay = cents(breakdown.reduce((sum, segment) => sum + segment.pay, 0));
+        dailyBreakdown.push({
+            day: dayData.day, startTime: dayData.startTime, endTime: dayData.endTime,
+            hours: (grossMinutes - breakMinutes) / 60, pay, segments: breakdown
+        });
+    });
+
+    const paidSegments = dailyBreakdown.flatMap(day => day.segments).filter(segment => !segment.isUnpaidBreak);
+    const overtimePay = cents(paidSegments.filter(segment => segment.isOvertime).reduce((sum, segment) => sum + segment.pay, 0));
+    const totalPay = cents(paidSegments.filter(segment => !segment.isOvertime).reduce((sum, segment) => sum + segment.pay, 0));
+    const overtimeMinutes = Math.max(0, overtimeEligible ? paidMinutes - thresholdMinutes : 0);
+    return {
+        totalHours: paidMinutes / 60,
+        ordinaryHours: (paidMinutes - overtimeMinutes) / 60,
+        overtimeHours: overtimeMinutes / 60,
+        totalPay,
+        overtimePay,
+        total: cents(totalPay + overtimePay),
+        dailyBreakdown
     };
 };
 
