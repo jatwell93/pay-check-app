@@ -6,7 +6,7 @@ import WorkHours from './components/WorkHours';
 import AwardSelector from './components/AwardSelector';
 import ImportantNotes from './components/ImportantNotes';
 import Logo from './components/Logo';
-import { calculatePayForTimePeriod, calculateOvertimePay, weekDays } from './helpers';
+import { calculatePayForTimePeriod, calculateOvertimePay, calculateWeeklyPay, weekDays } from './helpers';
 import { fetchAwardRates, getCachedAwardRates, getLastCacheUpdateTime, clearCache } from './services/awardRatesService';
 import { getAwardConfig } from './config/awardConfig';
 
@@ -174,8 +174,20 @@ const App = () => {
     let totalHours = 0;
     let totalPay = 0;
     let dailyBreakdown = [];
+    let overtimeHours;
+    let overtimePay;
     
-    weeklyData.forEach(dayData => {
+    const usePharmacyWeeklyEngine = selectedAward === 'MA000012' && employmentType !== 'casual';
+    if (usePharmacyWeeklyEngine) {
+      const weeklyResult = calculateWeeklyPay(
+        weeklyData, baseRate, employmentType, customRate, classification, selectedAwardConfig.penaltyConfig
+      );
+      totalHours = weeklyResult.totalHours;
+      totalPay = weeklyResult.totalPay;
+      dailyBreakdown = weeklyResult.dailyBreakdown;
+      overtimeHours = weeklyResult.overtimeHours;
+      overtimePay = weeklyResult.overtimePay;
+    } else weeklyData.forEach(dayData => {
         if (dayData.startTime && dayData.endTime) {
             const dayResult = calculatePayForTimePeriod(
                 dayData.day,
@@ -203,12 +215,14 @@ const App = () => {
     })
     
     const ftBaseRate = selectedAwardConfig.baseRates.fullTimePartTime[classification]?.base ?? baseRate;
-    const { overtimeHours, overtimePay } = calculateOvertimePay(
-      totalHours, baseRate, ftBaseRate, employmentType, selectedAwardConfig.penaltyConfig
-    );
-    if (overtimeHours > 0) {
-      // Replace the ordinary-rate pay for the overtime hours with tiered overtime pay.
-      totalPay = totalPay - (overtimeHours * baseRate);
+    if (!usePharmacyWeeklyEngine) {
+      ({ overtimeHours, overtimePay } = calculateOvertimePay(
+        totalHours, baseRate, ftBaseRate, employmentType, selectedAwardConfig.penaltyConfig
+      ));
+      if (overtimeHours > 0) {
+        // Replace the ordinary-rate pay for the overtime hours with tiered overtime pay.
+        totalPay = totalPay - (overtimeHours * baseRate);
+      }
     }
     
     let totalAllowances = 0;
