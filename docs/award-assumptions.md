@@ -145,7 +145,36 @@ land on those totals:
 
 ---
 
-## 10. Known limitations — flagged for a later run
+## 10. Pharmacy weekly overtime model (MA000012)
+
+The Pharmacy full-time and part-time calculation uses one cumulative award week
+in roster order. Paid minutes remain ordinary until the configured **38-hour**
+threshold is exhausted; later paid minutes are overtime. The first cumulative
+**2 overtime hours** use the configured 150% tier and all later overtime uses
+the configured 200% tier. An ordinary Saturday, Sunday, or public-holiday
+penalty remains a floor, so a Sunday overtime minute is never reduced to the
+150% first tier.
+
+Unpaid meal-break minutes are removed before they can consume ordinary or
+overtime capacity. Because the app records only shift start and end times, not
+the actual break time, it estimates the unpaid break at **four hours after the
+shift starts**. Audit rows mark both the break time and its placement as
+estimated. Overnight shifts are split at midnight so each paid minute receives
+the penalty for its resulting roster day.
+
+This is the repository's configured calculation model, not a reproduction of
+the older Fair Work Ombudsman guide figures. The Level 4 regression deliberately
+uses the repository's **$29.03/hour** base rate and its configured ordinary,
+weekend, public-holiday, and overtime multipliers. The older guide's $28.28 rate
+and different ordinary weekend figures are not substituted into this fixture.
+Daily segment amounts are rounded to cents and summed so audit rows reconcile to
+daily and weekly totals; allowances are then added once.
+
+The model does not add daily overtime, maximum-span, minimum-engagement, or
+rostering-rule tests beyond the configured weekly threshold. Those remain
+separate award-coverage gaps rather than implicit behavior of this calculation.
+
+## 11. Known limitations — flagged for a later run
 
 1. **HIGA casual penalty composition is not modelled.** Under the real
    Hospitality Industry (General) Award, casuals earn the 25% loading *plus*

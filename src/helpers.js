@@ -14,7 +14,11 @@ const calculateBreakTime = (totalHours) => {
     }
 };
 
-const cents = value => Math.round((value + Number.EPSILON) * 100) / 100;
+const cents = value => {
+    const scaled = value * 100;
+    const floatingPointTolerance = Math.abs(scaled) * Number.EPSILON;
+    return Math.round(scaled + floatingPointTolerance) / 100;
+};
 
 const nextRosterDay = (day, offset) => {
     if (day === 'Public Holiday') return day;
@@ -337,37 +341,36 @@ export const calculateWeeklyPay = (weeklyData, baseRate, employmentType, customR
             paidMinutes += 1;
         }
 
-        let breakdown = minuteRows.map(row => ({
-            startTime: clockTime(row.start),
-            endTime: clockTime(row.end),
-            day: row.day,
-            hours: row.minutes / 60,
-            rate: row.rate,
-            penaltyMultiplier: row.penaltyMultiplier,
-            penaltyDescription: row.penaltyDescription,
-            pay: cents(row.rate * row.penaltyMultiplier * row.minutes / 60),
-            isOvertime: row.isOvertime
-        }));
-
         if (breakMinutes) {
-            breakdown.push({
-                startTime: `${clockTime(breakStart)} (estimated)`,
-                endTime: `${clockTime(breakEnd)} (estimated)`,
+            minuteRows.push({
+                start: breakStart,
+                end: breakEnd,
+                minutes: breakMinutes,
                 day: nextRosterDay(dayData.day, Math.floor(breakStart / 1440)),
-                hours: breakMinutes / 60,
                 rate: currentBaseRate,
                 penaltyMultiplier: 0,
                 penaltyDescription: 'Unpaid Break (estimated placement)',
-                pay: 0,
                 isUnpaidBreak: true,
                 isOvertime: false
             });
-            breakdown.sort((a, b) => {
-                const aMinute = parseInt(a.startTime, 10) * 60 + parseInt(a.startTime.slice(3), 10);
-                const bMinute = parseInt(b.startTime, 10) * 60 + parseInt(b.startTime.slice(3), 10);
-                return aMinute - bMinute;
-            });
+            minuteRows.sort((a, b) => a.start - b.start);
         }
+
+        const breakdown = minuteRows.map(row => {
+            const suffix = row.isUnpaidBreak ? ' (estimated)' : '';
+            return {
+                startTime: clockTime(row.start) + suffix,
+                endTime: clockTime(row.end) + suffix,
+                day: row.day,
+                hours: row.minutes / 60,
+                rate: row.rate,
+                penaltyMultiplier: row.penaltyMultiplier,
+                penaltyDescription: row.penaltyDescription,
+                pay: cents(row.rate * row.penaltyMultiplier * row.minutes / 60),
+                isUnpaidBreak: Boolean(row.isUnpaidBreak),
+                isOvertime: row.isOvertime
+            };
+        });
 
         const pay = cents(breakdown.reduce((sum, segment) => sum + segment.pay, 0));
         dailyBreakdown.push({

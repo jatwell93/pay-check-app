@@ -16,7 +16,7 @@
  * DO NOT modify production code (helpers.js, App.js) in this task.
  */
 
-import { calculatePayForTimePeriod } from '../helpers';
+import { calculatePayForTimePeriod, calculateWeeklyPay } from '../helpers';
 import { getAwardConfig } from '../config/awardConfig';
 
 const pharmacyConfig = getAwardConfig('MA000012');
@@ -144,6 +144,175 @@ describe('Pharmacy Regression Suite (MA000012)', () => {
       expect(result.pay).toBeCloseTo(216.06, 2);
       expect(result.hours).toBeCloseTo(7.5, 2);
     });
+  });
+});
+
+describe('Pharmacy weekly overtime classification', () => {
+  const weeklyPay = shifts => calculateWeeklyPay(
+    shifts.map(([day, startTime, endTime]) => ({ day, startTime, endTime, publicHoliday: false })),
+    29.03,
+    'full-time',
+    '',
+    'pharmacy-assistant-4',
+    pharmacyConfig.penaltyConfig
+  );
+
+  it('keeps exactly 38 paid hours ordinary', () => {
+    const result = weeklyPay([
+      ['Monday', '09:00', '19:00'],
+      ['Tuesday', '09:00', '19:00'],
+      ['Wednesday', '09:00', '19:00'],
+      ['Thursday', '09:00', '19:00'],
+    ]);
+
+    expect(result.totalHours).toBe(38);
+    expect(result.ordinaryHours).toBe(38);
+    expect(result.overtimeHours).toBe(0);
+    expect(result.overtimePay).toBe(0);
+  });
+
+  it('applies Saturday and Sunday ordinary penalties below 38 hours', () => {
+    const result = weeklyPay([
+      ['Saturday', '09:00', '13:00'],
+      ['Sunday', '09:00', '13:00'],
+    ]);
+
+    expect(result.overtimeHours).toBe(0);
+    expect(result.dailyBreakdown[0].pay).toBe(174.18);
+    expect(result.dailyBreakdown[0].segments[0]).toMatchObject({
+      penaltyDescription: 'Saturday Rate (150%)',
+      penaltyMultiplier: 1.5,
+      isOvertime: false,
+    });
+    expect(result.dailyBreakdown[1].pay).toBe(232.24);
+    expect(result.dailyBreakdown[1].segments[0]).toMatchObject({
+      penaltyDescription: 'Sunday Rate (200%)',
+      penaltyMultiplier: 2,
+      isOvertime: false,
+    });
+  });
+
+  it('uses the Sunday penalty floor when the first overtime minute falls on Sunday', () => {
+    const result = weeklyPay([
+      ['Monday', '09:00', '18:00'],
+      ['Tuesday', '09:00', '18:00'],
+      ['Wednesday', '09:00', '18:00'],
+      ['Thursday', '09:00', '18:00'],
+      ['Sunday', '09:00', '14:00'],
+    ]);
+    const sunday = result.dailyBreakdown[4];
+
+    expect(result.ordinaryHours).toBe(38);
+    expect(result.overtimeHours).toBe(1);
+    expect(sunday.pay).toBe(290.3);
+    expect(sunday.segments).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        startTime: '13:00',
+        endTime: '14:00',
+        penaltyDescription: 'Sunday Overtime — First Tier (200%)',
+        penaltyMultiplier: 2,
+        isOvertime: true,
+      }),
+    ]));
+  });
+
+  it('attributes post-midnight overtime to Sunday', () => {
+    const result = weeklyPay([
+      ['Monday', '09:00', '19:00'],
+      ['Tuesday', '09:00', '19:00'],
+      ['Wednesday', '09:00', '19:00'],
+      ['Friday', '09:00', '18:00'],
+      ['Saturday', '23:00', '02:00'],
+    ]);
+    const overnight = result.dailyBreakdown[4];
+
+    expect(result.ordinaryHours).toBe(38);
+    expect(result.overtimeHours).toBe(2);
+    expect(overnight.segments).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        startTime: '23:00',
+        endTime: '00:00',
+        day: 'Saturday',
+        isOvertime: false,
+      }),
+      expect.objectContaining({
+        startTime: '00:00',
+        endTime: '02:00',
+        day: 'Sunday',
+        penaltyDescription: 'Sunday Overtime — First Tier (200%)',
+        isOvertime: true,
+      }),
+    ]));
+  });
+
+  it('never lets estimated unpaid break minutes consume overtime capacity', () => {
+    const result = weeklyPay([
+      ['Monday', '09:00', '19:00'],
+      ['Tuesday', '09:00', '19:00'],
+      ['Wednesday', '09:00', '19:00'],
+      ['Thursday', '09:00', '14:00'],
+      ['Friday', '09:00', '15:00'],
+    ]);
+    const friday = result.dailyBreakdown[4];
+
+    expect(result.totalHours).toBe(39);
+    expect(result.ordinaryHours).toBe(38);
+    expect(result.overtimeHours).toBe(1);
+    expect(friday.segments).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        startTime: '13:00 (estimated)',
+        endTime: '13:30 (estimated)',
+        penaltyDescription: 'Unpaid Break (estimated placement)',
+        isUnpaidBreak: true,
+        isOvertime: false,
+      }),
+      expect.objectContaining({
+        startTime: '14:00',
+        endTime: '15:00',
+        penaltyDescription: 'Overtime — First Tier (150%)',
+        isOvertime: true,
+      }),
+    ]));
+  });
+
+  it('keeps the overnight audit in shift order when an estimated break follows midnight', () => {
+    const result = weeklyPay([['Saturday', '22:00', '06:00']]);
+
+    expect(result.dailyBreakdown[0].segments.map(({ day, startTime, endTime }) =>
+      [day, startTime, endTime]
+    )).toEqual([
+      ['Saturday', '22:00', '00:00'],
+      ['Sunday', '00:00', '02:00'],
+      ['Sunday', '02:00 (estimated)', '02:30 (estimated)'],
+      ['Sunday', '02:30', '06:00'],
+    ]);
+  });
+
+  it('rounds an exact half-cent Sunday segment up before summing the day', () => {
+    const result = weeklyPay([['Sunday', '05:00', '19:15']]);
+
+    expect(result.dailyBreakdown[0].segments[2].pay).toBe(566.09);
+    expect(result.dailyBreakdown[0].pay).toBe(798.33);
+    expect(result.total).toBe(798.33);
+  });
+
+  it('reconciles the Level 4 54.25-hour fixture across ordinary and overtime segments', () => {
+    const result = weeklyPay([
+      ['Monday', '09:00', '19:00'],
+      ['Tuesday', '09:00', '18:00'],
+      ['Wednesday', '09:00', '17:00'],
+      ['Thursday', '09:00', '17:00'],
+      ['Friday', '09:00', '17:30'],
+      ['Saturday', '09:00', '17:00'],
+      ['Sunday', '09:00', '15:15'],
+    ]);
+
+    expect(result.ordinaryHours).toBe(38);
+    expect(result.overtimeHours).toBe(16.25);
+    expect(result.dailyBreakdown[4].pay).toBe(290.3);
+    expect(result.dailyBreakdown[5].pay).toBe(435.45);
+    expect(result.dailyBreakdown[6].pay).toBe(333.85);
+    expect(result.total).toBe(2017.61);
   });
 });
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent, within } from '@testing-library/react';
 import App from './App';
 
 // Mock awardRatesService module
@@ -135,6 +135,91 @@ describe('App integration tests', () => {
       const mondayElements = screen.getAllByText(/Monday/i);
       expect(mondayElements.length).toBeGreaterThanOrEqual(1);
     });
+  });
+
+  test('Pharmacy Level 4 weekly overtime reconciles daily audit rows and total', async () => {
+    getCachedAwardRates.mockReturnValue(null);
+    fetchAwardRates.mockResolvedValue(mockRatesData);
+    getLastCacheUpdateTime.mockReturnValue(new Date());
+
+    render(<App />);
+
+    await waitFor(() => {
+      expect(document.getElementById('award-select')).not.toBeDisabled();
+    });
+
+    fireEvent.change(document.getElementById('classification'), {
+      target: { value: 'pharmacy-assistant-4' },
+    });
+
+    const roster = [
+      ['Monday', '09:00', '19:00'],
+      ['Tuesday', '09:00', '18:00'],
+      ['Wednesday', '09:00', '17:00'],
+      ['Thursday', '09:00', '17:00'],
+      ['Friday', '09:00', '17:30'],
+      ['Saturday', '09:00', '17:00'],
+      ['Sunday', '09:00', '15:15'],
+    ];
+    roster.forEach(([day, startTime, endTime]) => {
+      fireEvent.change(screen.getByLabelText(`${day} start time`), { target: { value: startTime } });
+      fireEvent.change(screen.getByLabelText(`${day} end time`), { target: { value: endTime } });
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /Calculate Weekly Total/i }));
+
+    expect(await screen.findByText('$290.30')).toBeInTheDocument();
+    expect(screen.getByText('$435.45')).toBeInTheDocument();
+    expect(screen.getByText('$333.85')).toBeInTheDocument();
+
+    const expectedAudit = {
+      Friday: [
+        ['4.00h', 'Ordinary Rate (100%)', '$116.12'],
+        ['0.50h', 'Unpaid Break (estimated placement)', '$0.00'],
+        ['1.00h', 'Ordinary Rate (100%)', '$29.03'],
+        ['2.00h', 'Overtime — First Tier (150%)', '$87.09'],
+        ['1.00h', 'Overtime — Second Tier (200%)', '$58.06'],
+      ],
+      Saturday: [
+        ['4.00h', 'Saturday Overtime — Second Tier (200%)', '$232.24'],
+        ['0.50h', 'Unpaid Break (estimated placement)', '$0.00'],
+        ['3.50h', 'Saturday Overtime — Second Tier (200%)', '$203.21'],
+      ],
+      Sunday: [
+        ['4.00h', 'Sunday Overtime — Second Tier (200%)', '$232.24'],
+        ['0.50h', 'Unpaid Break (estimated placement)', '$0.00'],
+        ['1.75h', 'Sunday Overtime — Second Tier (200%)', '$101.61'],
+      ],
+    };
+    let ordinaryHours = 0;
+    let overtimeHours = 0;
+
+    const dailyAmounts = ['$275.79', '$246.76', '$217.73', '$217.73', '$290.30', '$435.45', '$333.85'];
+    for (const [index, [day]] of roster.entries()) {
+      const dayRow = screen.getAllByText(dailyAmounts[index]).map(cell => cell.closest('tr')).find(row =>
+        row.cells[0].textContent.trim() === day
+      );
+      fireEvent.click(dayRow);
+      const audit = within(dayRow.nextElementSibling).getByRole('table');
+      const rows = within(audit).getAllByRole('row').slice(1).map(row => {
+        const [, hours, rate, , amount] = within(row).getAllByRole('cell');
+        return [hours.textContent, rate.textContent, amount.textContent];
+      });
+
+      if (expectedAudit[day]) expect(rows).toEqual(expectedAudit[day]);
+      for (const [hours, rate] of rows) {
+        if (rate.includes('Overtime')) overtimeHours += parseFloat(hours);
+        if (rate.startsWith('Ordinary')) ordinaryHours += parseFloat(hours);
+      }
+    }
+    expect(ordinaryHours.toFixed(2)).toBe('38.00');
+    expect(overtimeHours.toFixed(2)).toBe('16.25');
+
+    const payslipInputs = screen.getAllByPlaceholderText('0.00');
+    fireEvent.change(payslipInputs[0], { target: { value: '275.79' } });
+    fireEvent.change(payslipInputs[payslipInputs.length - 1], { target: { value: '2017.61' } });
+    expect(await screen.findAllByText('$2017.61')).toHaveLength(2);
+    expect(screen.getByText('Perfect Match')).toBeInTheDocument();
   });
 
   test('retail award end-to-end: retail classifications/allowances and GRIA penalty audit', async () => {
